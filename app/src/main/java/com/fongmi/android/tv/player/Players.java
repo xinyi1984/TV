@@ -138,7 +138,7 @@ public class Players implements Player.Listener, IMediaPlayer.Listener, Analytic
         exoPlayer.setAudioAttributes(AudioAttributes.DEFAULT, true);
         exoPlayer.addAnalyticsListener(new EventLogger());
         exoPlayer.setHandleAudioBecomingNoisy(true);
-        view.setRender(Setting.getRender());
+        //view.setRender(Setting.getRender());
         exoPlayer.addAnalyticsListener(this);
         exoPlayer.setPlayWhenReady(true);
         exoPlayer.addListener(this);
