@@ -941,11 +941,11 @@ public class VideoActivity extends BaseActivity implements Clock.Callback, Custo
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && isInPictureInPictureMode()) pictureMode = true;
         boolean controlVisible = isVisible(mBinding.control.getRoot());
         boolean visible = (!controlVisible || isLock()) && !pictureMode;
-        mBinding.display.clock.setVisibility(Setting.isDisplayTime() && visible  ? View.VISIBLE : View.GONE);
-        mBinding.display.netspeed.setVisibility(Setting.isDisplaySpeed() && visible ? View.VISIBLE : View.GONE);
-        mBinding.display.duration.setVisibility(Setting.isDisplayDuration() && visible ? View.VISIBLE : View.GONE);
-        mBinding.display.progress.setVisibility(Setting.isDisplayMiniProgress() && visible && (mPlayers.isVod()) ? View.VISIBLE : View.GONE);
-        mBinding.display.titleLayout.setVisibility(Setting.isDisplayVideoTitle()&& visible ? View.VISIBLE : View.GONE);
+        mBinding.display.clock.setVisibility(Setting.isDisplayTime() && visible && isFullscreen() && !isInPictureInPictureMode() ? View.VISIBLE : View.GONE);
+        mBinding.display.netspeed.setVisibility(Setting.isDisplaySpeed() && visible && isFullscreen() && !isInPictureInPictureMode() ? View.VISIBLE : View.GONE); 
+        mBinding.display.duration.setVisibility(Setting.isDisplayDuration() && visible && isFullscreen() && !isInPictureInPictureMode() ? View.VISIBLE : View.GONE);
+        mBinding.display.progress.setVisibility(Setting.isDisplayMiniProgress() && visible && (mPlayers.isVod()) && isFullscreen() && !isInPictureInPictureMode() ? View.VISIBLE : View.GONE);
+        mBinding.display.titleLayout.setVisibility(Setting.isDisplayVideoTitle() && visible && isFullscreen() && !isInPictureInPictureMode() ? View.VISIBLE : View.GONE); 
     }
 
     private void onTimeChangeDisplaySpeed() {
