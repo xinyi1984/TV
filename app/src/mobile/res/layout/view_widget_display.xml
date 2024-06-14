@@ -83,6 +83,8 @@
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_alignParentBottom="true"
+        android:progressTint="@color/white"
+        android:progressBackgroundTint="@color/transparent"
         android:layout_marginTop="0dp"
         android:layout_marginBottom="0dp"
         android:max="100"
