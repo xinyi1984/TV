@@ -798,10 +798,10 @@ public class VideoActivity extends BaseActivity implements CustomKeyDownVod.List
 
     private void showDisplayInfo() {
         mBinding.display.clock.setVisibility(Setting.isDisplayTime() || isVisible(mBinding.widget.info)  ? View.VISIBLE : View.GONE);
-        mBinding.display.netspeed.setVisibility(Setting.isDisplaySpeed() && !isVisible(mBinding.control.getRoot()) ? View.VISIBLE : View.GONE);
-        mBinding.display.duration.setVisibility(Setting.isDisplayDuration() && !isVisible(mBinding.control.getRoot()) ? View.VISIBLE : View.GONE);
-        mBinding.display.progress.setVisibility(Setting.isDisplayMiniProgress() && !isVisible(mBinding.control.getRoot()) && (mPlayers.isVod()) ? View.VISIBLE : View.GONE);
-        mBinding.display.titleLayout.setVisibility(Setting.isDisplayVideoTitle() && !isVisible(mBinding.control.getRoot()) ? View.VISIBLE : View.GONE);
+        mBinding.display.netspeed.setVisibility(Setting.isDisplaySpeed() && !isVisible(mBinding.widget.info) && !isVisible(mBinding.control.getRoot()) || (isVisible(mBinding.widget.info) && !isVisible(mBinding.control.getRoot())) ? View.VISIBLE : View.GONE);
+        mBinding.display.duration.setVisibility(Setting.isDisplayDuration() && !isVisible(mBinding.widget.info) && !isVisible(mBinding.control.getRoot()) || (isVisible(mBinding.widget.info) && !isVisible(mBinding.control.getRoot())) ? View.VISIBLE : View.GONE);
+        mBinding.display.progress.setVisibility(Setting.isDisplayMiniProgress() && !isVisible(mBinding.widget.info) && !isVisible(mBinding.control.getRoot()) && (mPlayers.isVod()) || (isVisible(mBinding.widget.info) && !isVisible(mBinding.control.getRoot())) ? View.VISIBLE : View.GONE);
+        mBinding.display.titleLayout.setVisibility(Setting.isDisplayVideoTitle() && !isVisible(mBinding.widget.info) && !isVisible(mBinding.control.getRoot()) || (!isVisible(mBinding.widget.info) && isVisible(mBinding.control.getRoot())) ? View.VISIBLE : View.GONE);
     }
 
     private void onTimeChangeDisplaySpeed() {
