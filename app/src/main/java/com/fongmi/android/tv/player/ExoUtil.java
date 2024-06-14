@@ -67,7 +67,7 @@ public class ExoUtil {
     private static Cache cache;
 
     public static LoadControl buildLoadControl() {
-        return new DefaultLoadControl(Setting.getBuffer());
+        return new DefaultLoadControl();
     }
 
     public static TrackSelector buildTrackSelector() {
@@ -116,7 +116,7 @@ public class ExoUtil {
 
     private static String getMimeType(String format, int errorCode) {
         if (format != null) return format;
-        if (errorCode == PlaybackException.ERROR_CODE_PARSING_MANIFEST_UNSUPPORTED || errorCode == PlaybackException.ERROR_CODE_PARSING_MANIFEST_MALFORMED) return MimeTypes.APPLICATION_OCTET;
+        //if (errorCode == PlaybackException.ERROR_CODE_PARSING_MANIFEST_UNSUPPORTED || errorCode == PlaybackException.ERROR_CODE_PARSING_MANIFEST_MALFORMED) return MimeTypes.APPLICATION_OCTET;
         if (errorCode == PlaybackException.ERROR_CODE_PARSING_CONTAINER_UNSUPPORTED || errorCode == PlaybackException.ERROR_CODE_PARSING_CONTAINER_MALFORMED) return MimeTypes.APPLICATION_M3U8;
         return null;
     }
@@ -157,9 +157,9 @@ public class ExoUtil {
         if (!subs.isEmpty()) builder.setSubtitleConfigurations(getSubtitles(subs));
         if (drm != null) builder.setDrmConfiguration(drm.get());
         if (mimeType != null) builder.setMimeType(mimeType);
-        builder.setAllowChunklessPreparation(decode == Players.HARD);
-        builder.setForceUseRtpTcp(Setting.getRtsp() == 1);
-        builder.setAds(Setting.isRemoveAd() ? Arrays.asList("9999") : Sniffer.getRegex(uri));
+        //builder.setAllowChunklessPreparation(decode == Players.HARD);
+        //builder.setForceUseRtpTcp(Setting.getRtsp() == 1);
+        //builder.setAds(Setting.isRemoveAd() ? Arrays.asList("9999") : Sniffer.getRegex(uri));
         return builder.build();
     }
 
