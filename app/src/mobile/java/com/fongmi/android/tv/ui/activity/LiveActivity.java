@@ -45,7 +45,7 @@ import com.fongmi.android.tv.impl.LiveCallback;
 import com.fongmi.android.tv.impl.PassCallback;
 import com.fongmi.android.tv.impl.SubtitleCallback;
 import com.fongmi.android.tv.model.LiveViewModel;
-import com.fongmi.android.tv.player.ExoUtil;
+import com.fongmi.android.tv.player.exo.ExoUtil;
 import com.fongmi.android.tv.player.Players;
 import com.fongmi.android.tv.server.Server;
 import com.fongmi.android.tv.service.PlaybackService;
@@ -613,14 +613,12 @@ public class LiveActivity extends BaseActivity implements Clock.Callback, Custom
             public void onResourceReady(@NonNull Drawable resource, @Nullable Transition<? super Drawable> transition) {
                 getExo().setDefaultArtwork(resource);
                 getIjk().setDefaultArtwork(resource);
-                setMetadata();
             }
 
             @Override
             public void onLoadFailed(@Nullable Drawable error) {
                 getExo().setDefaultArtwork(error);
                 getIjk().setDefaultArtwork(error);
-                setMetadata();
             }
 
             @Override
@@ -674,6 +672,7 @@ public class LiveActivity extends BaseActivity implements Clock.Callback, Custom
         mEpgDataAdapter.setSelected(item);
         mViewModel.getUrl(mChannel, item);
         mPlayers.clear();
+        mPlayers.stop();
         showProgress();
         hideEpg();
     }
@@ -733,6 +732,7 @@ public class LiveActivity extends BaseActivity implements Clock.Callback, Custom
         LiveConfig.get().setKeep(mChannel);
         mViewModel.getUrl(mChannel);
         mPlayers.clear();
+        mPlayers.stop();
         showProgress();
     }
 
@@ -774,6 +774,7 @@ public class LiveActivity extends BaseActivity implements Clock.Callback, Custom
     @Override
     public void setLive(Live item) {
         LiveConfig.get().setHome(item);
+        mPlayers.reset();
         mPlayers.stop();
         resetAdapter();
         hideControl();
@@ -853,10 +854,9 @@ public class LiveActivity extends BaseActivity implements Clock.Callback, Custom
     }
 
     private void setMetadata() {
-        String logo = mChannel == null ? "" : mChannel.getLogo();
         String title = mBinding.widget.name.getText().toString();
         String artist = mBinding.widget.play.getText().toString();
-        mPlayers.setMetadata(title, artist, logo, mBinding.exo);
+        mPlayers.setMetadata(title, artist, mChannel.getLogo());
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -884,6 +884,7 @@ public class LiveActivity extends BaseActivity implements Clock.Callback, Custom
 
     private void onError(ErrorEvent event) {
         showError(event.getMsg());
+        mPlayers.reset();
         mPlayers.stop();
         startFlow();
     }
@@ -1143,7 +1144,7 @@ public class LiveActivity extends BaseActivity implements Clock.Callback, Custom
         super.onUserLeaveHint();
         if (isRedirect()) return;
         if (isLock()) App.post(this::onLock, 500);
-        if (mPlayers.haveTrack(C.TRACK_TYPE_VIDEO)) mPiP.enter(this, mPlayers.getVideoSize(), Setting.getLiveScale());
+        if (mPlayers.haveTrack(C.TRACK_TYPE_VIDEO)) mPiP.enter(this, mPlayers.getVideoWidth(), mPlayers.getVideoHeight(), Setting.getLiveScale());
     }
 
     @Override

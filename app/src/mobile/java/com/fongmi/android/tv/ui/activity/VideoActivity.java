@@ -63,7 +63,7 @@ import com.fongmi.android.tv.event.PlayerEvent;
 import com.fongmi.android.tv.event.RefreshEvent;
 import com.fongmi.android.tv.impl.SubtitleCallback;
 import com.fongmi.android.tv.model.SiteViewModel;
-import com.fongmi.android.tv.player.ExoUtil;
+import com.fongmi.android.tv.player.exo.ExoUtil;
 import com.fongmi.android.tv.player.Players;
 import com.fongmi.android.tv.player.Source;
 import com.fongmi.android.tv.player.danmu.Parser;
@@ -492,6 +492,7 @@ public class VideoActivity extends BaseActivity implements Clock.Callback, Custo
         mBinding.swipeLayout.setEnabled(false);
         mBinding.scroll.scrollTo(0, 0);
         mClock.setCallback(null);
+        mPlayers.reset();
         mPlayers.stop();
         getDetail();
     }
@@ -594,6 +595,7 @@ public class VideoActivity extends BaseActivity implements Clock.Callback, Custo
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         updateHistory(episode, replay);
         mPlayers.clear();
+        mPlayers.stop();
         showProgress();
         setMetadata();
         hidePreview();
@@ -1098,16 +1100,13 @@ public class VideoActivity extends BaseActivity implements Clock.Callback, Custo
                 getExo().setDefaultArtwork(resource);
                 getIjk().setDefaultArtwork(resource);
                 showPreview(resource);
-                setMetadata();
             }
 
             @Override
             public void onLoadFailed(@Nullable Drawable error) {
                 getExo().setDefaultArtwork(error);
                 getIjk().setDefaultArtwork(error);
-                hideProgress();
                 hidePreview();
-                setMetadata();
             }
 
             @Override
@@ -1320,11 +1319,10 @@ public class VideoActivity extends BaseActivity implements Clock.Callback, Custo
     }
 
     private void setMetadata() {
-        String logo = mHistory == null ? "" : mHistory.getVodPic();
-        String title = mHistory == null ? getName() : mHistory.getVodName();
-        String artist = mEpisodeAdapter.isEmpty() ? "" : getEpisode().getName();
-        artist = title.equals(artist) ? "" : getString(R.string.play_now, artist);
-        mPlayers.setMetadata(title, artist, logo, mBinding.exo);
+        String title = mHistory.getVodName();
+        String episode = getEpisode().getName();
+        String artist = title.equals(episode) ? "" : getString(R.string.play_now, episode);
+        mPlayers.setMetadata(title, artist, mHistory.getVodPic());
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -1357,6 +1355,7 @@ public class VideoActivity extends BaseActivity implements Clock.Callback, Custo
         Track.delete(getHistoryKey());
         showError(event.getMsg());
         mClock.setCallback(null);
+        mPlayers.reset();
         mPlayers.stop();
         startFlow();
     }
@@ -1694,7 +1693,7 @@ public class VideoActivity extends BaseActivity implements Clock.Callback, Custo
         super.onUserLeaveHint();
         if (isRedirect()) return;
         if (isLock()) App.post(this::onLock, 500);
-        if (mPlayers.haveTrack(C.TRACK_TYPE_VIDEO)) mPiP.enter(this, mPlayers.getVideoSize(), getScale());
+        if (mPlayers.haveTrack(C.TRACK_TYPE_VIDEO)) mPiP.enter(this, mPlayers.getVideoWidth(), mPlayers.getVideoHeight(), getScale());
     }
 
     @Override
@@ -1703,13 +1702,11 @@ public class VideoActivity extends BaseActivity implements Clock.Callback, Custo
         if (isInPictureInPictureMode) {
             PlaybackService.start(mPlayers);
             mBinding.danmaku.hide();
-            enterFullscreen();
             setSubtitle(10);
             hideControl();
             hideSheet();
         } else {
             showDanmu();
-            exitFullscreen();
             setForeground(true);
             PlaybackService.stop();
             if (isStop()) finish();
@@ -1719,8 +1716,8 @@ public class VideoActivity extends BaseActivity implements Clock.Callback, Custo
     @Override
     public void onConfigurationChanged(@NonNull Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        if (isPort() && newConfig.orientation == 1 && !isRotate()) exitFullscreen();
-        if (isPort() && newConfig.orientation == 2) enterFullscreen();
+        if (isAutoRotate() && isPort() && newConfig.orientation == 1 && !isRotate()) exitFullscreen();
+        if (isAutoRotate() && isPort() && newConfig.orientation == 2) enterFullscreen();
         if (isFullscreen()) Util.hideSystemUI(this);
     }
 
