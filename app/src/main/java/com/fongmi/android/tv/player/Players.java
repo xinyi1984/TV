@@ -136,7 +136,7 @@ public class Players implements Player.Listener, IMediaPlayer.Listener, ParseCal
         exoPlayer = new ExoPlayer.Builder(App.get()).setLoadControl(ExoUtil.buildLoadControl()).setTrackSelector(ExoUtil.buildTrackSelector()).setRenderersFactory(ExoUtil.buildRenderersFactory(decode)).setMediaSourceFactory(ExoUtil.buildMediaSourceFactory()).build();
         exoPlayer.setAudioAttributes(AudioAttributes.DEFAULT, true);
         exoPlayer.setHandleAudioBecomingNoisy(true);
-        view.setRender(Setting.getRender());
+        //view.setRender(Setting.getRender());
         exoPlayer.setPlayWhenReady(true);
         exoPlayer.addListener(this);
         view.setPlayer(exoPlayer);
