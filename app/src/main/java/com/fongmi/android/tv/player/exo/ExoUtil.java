@@ -105,10 +105,10 @@ public class ExoUtil {
         builder.setRequestMetadata(getRequestMetadata(headers, uri));
         builder.setSubtitleConfigurations(getSubtitleConfigs(subs));
         if (drm != null) builder.setDrmConfiguration(drm.get());
-        builder.setAllowChunklessPreparation(decode == Players.HARD);
+        //builder.setAllowChunklessPreparation(decode == Players.HARD);
         if (mimeType != null) builder.setMimeType(mimeType);
-        builder.setForceUseRtpTcp(Setting.getRtsp() == 1);
-        builder.setAds(Arrays.asList("9999"));
+        //builder.setForceUseRtpTcp(Setting.getRtsp() == 1);
+        //builder.setAds(Arrays.asList("9999"));
         builder.setMediaId(uri.toString());
         return builder.build();
     }
