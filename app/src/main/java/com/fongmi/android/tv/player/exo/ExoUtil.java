@@ -47,7 +47,8 @@ public class ExoUtil {
     }
 
     public static RenderersFactory buildRenderersFactory(int decode) {
-        return new NextRenderersFactory(App.get()).setEnableDecoderFallback(true).setExtensionRendererMode(Players.isSoft(decode) ? DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER : DefaultRenderersFactory.EXTENSION_RENDERER_MODE_ON);
+        if (Players.isHard(decode)) return new DefaultRenderersFactory(App.get()).setEnableDecoderFallback(true).setExtensionRendererMode(DefaultRenderersFactory.EXTENSION_RENDERER_MODE_ON);
+        else return new NextRenderersFactory(App.get()).setEnableDecoderFallback(true).setExtensionRendererMode(DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER);
     }
 
     public static MediaSource.Factory buildMediaSourceFactory() {
