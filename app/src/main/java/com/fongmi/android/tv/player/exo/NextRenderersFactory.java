@@ -12,6 +12,8 @@ import androidx.media3.exoplayer.audio.AudioSink;
 import androidx.media3.exoplayer.mediacodec.MediaCodecSelector;
 import androidx.media3.exoplayer.video.VideoRendererEventListener;
 
+import com.fongmi.android.tv.player.Players;
+
 import java.util.ArrayList;
 
 import io.github.anilbeesetti.nextlib.media3ext.ffdecoder.FfmpegAudioRenderer;
@@ -20,14 +22,19 @@ import io.github.anilbeesetti.nextlib.media3ext.ffdecoder.FfmpegVideoRenderer;
 public class NextRenderersFactory extends DefaultRenderersFactory {
 
     private static final String TAG = NextRenderersFactory.class.getSimpleName();
+    private final int decode;
 
-    public NextRenderersFactory(@NonNull Context context) {
+    public NextRenderersFactory(@NonNull Context context, int decode) {
         super(context);
+        this.decode = decode;
+        setEnableDecoderFallback(true);
+        setExtensionRendererMode(Players.isHard(decode) ? EXTENSION_RENDERER_MODE_ON : EXTENSION_RENDERER_MODE_PREFER);
     }
 
     @Override
     protected void buildAudioRenderers(@NonNull Context context, int extensionRendererMode, @NonNull MediaCodecSelector mediaCodecSelector, boolean enableDecoderFallback, @NonNull AudioSink audioSink, @NonNull Handler eventHandler, @NonNull AudioRendererEventListener eventListener, @NonNull ArrayList<Renderer> out) {
         super.buildAudioRenderers(context, extensionRendererMode, mediaCodecSelector, enableDecoderFallback, audioSink, eventHandler, eventListener, out);
+        if (Players.isHard(decode)) return;
         int extensionRendererIndex = out.size();
         if (extensionRendererMode == EXTENSION_RENDERER_MODE_PREFER) {
             extensionRendererIndex--;
@@ -44,6 +51,7 @@ public class NextRenderersFactory extends DefaultRenderersFactory {
     @Override
     protected void buildVideoRenderers(@NonNull Context context, int extensionRendererMode, @NonNull MediaCodecSelector mediaCodecSelector, boolean enableDecoderFallback, @NonNull Handler eventHandler, @NonNull VideoRendererEventListener eventListener, long allowedVideoJoiningTimeMs, @NonNull ArrayList<Renderer> out) {
         super.buildVideoRenderers(context, extensionRendererMode, mediaCodecSelector, enableDecoderFallback, eventHandler, eventListener, allowedVideoJoiningTimeMs, out);
+        if (Players.isHard(decode)) return;
         int extensionRendererIndex = out.size();
         try {
             Renderer renderer = new FfmpegVideoRenderer(allowedVideoJoiningTimeMs, eventHandler, eventListener, MAX_DROPPED_VIDEO_FRAME_COUNT_TO_NOTIFY);
