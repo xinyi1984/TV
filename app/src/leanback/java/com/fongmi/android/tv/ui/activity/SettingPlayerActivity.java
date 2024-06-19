@@ -65,10 +65,15 @@ public class SettingPlayerActivity extends BaseActivity implements UaCallback, B
         mBinding.caption.setOnClickListener(this::setCaption);
         mBinding.subtitle.setOnClickListener(this::onSubtitle);
         mBinding.caption.setOnLongClickListener(this::onCaption);
+        mBinding.display.setOnClickListener(this::onDisplay);
     }
 
     private void setVisible() {
         mBinding.caption.setVisibility(Setting.hasCaption() ? View.VISIBLE : View.GONE);
+    }
+
+    private void onDisplay(View view) {
+        DisplayDialog.create(this).show();
     }
 
     private void onUa(View view) {
