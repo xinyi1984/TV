@@ -7,8 +7,6 @@ import androidx.annotation.NonNull;
 import androidx.media3.common.util.Log;
 import androidx.media3.exoplayer.DefaultRenderersFactory;
 import androidx.media3.exoplayer.Renderer;
-import androidx.media3.exoplayer.audio.AudioRendererEventListener;
-import androidx.media3.exoplayer.audio.AudioSink;
 import androidx.media3.exoplayer.mediacodec.MediaCodecSelector;
 import androidx.media3.exoplayer.video.VideoRendererEventListener;
 
@@ -16,7 +14,6 @@ import com.fongmi.android.tv.player.Players;
 
 import java.util.ArrayList;
 
-import io.github.anilbeesetti.nextlib.media3ext.ffdecoder.FfmpegAudioRenderer;
 import io.github.anilbeesetti.nextlib.media3ext.ffdecoder.FfmpegVideoRenderer;
 
 public class NextRenderersFactory extends DefaultRenderersFactory {
@@ -29,23 +26,6 @@ public class NextRenderersFactory extends DefaultRenderersFactory {
         this.decode = decode;
         setEnableDecoderFallback(true);
         setExtensionRendererMode(Players.isHard(decode) ? EXTENSION_RENDERER_MODE_ON : EXTENSION_RENDERER_MODE_PREFER);
-    }
-
-    @Override
-    protected void buildAudioRenderers(@NonNull Context context, int extensionRendererMode, @NonNull MediaCodecSelector mediaCodecSelector, boolean enableDecoderFallback, @NonNull AudioSink audioSink, @NonNull Handler eventHandler, @NonNull AudioRendererEventListener eventListener, @NonNull ArrayList<Renderer> out) {
-        super.buildAudioRenderers(context, extensionRendererMode, mediaCodecSelector, enableDecoderFallback, audioSink, eventHandler, eventListener, out);
-        if (Players.isHard(decode)) return;
-        int extensionRendererIndex = out.size();
-        if (extensionRendererMode == EXTENSION_RENDERER_MODE_PREFER) {
-            extensionRendererIndex--;
-        }
-        try {
-            Renderer renderer = new FfmpegAudioRenderer(eventHandler, eventListener, audioSink);
-            out.add(extensionRendererIndex++, renderer);
-            Log.i(TAG, "Loaded FfmpegAudioRenderer.");
-        } catch (Exception e) {
-            throw new RuntimeException("Error instantiating Ffmpeg extension", e);
-        }
     }
 
     @Override
