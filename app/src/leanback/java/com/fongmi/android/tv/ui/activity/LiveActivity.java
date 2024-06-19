@@ -65,11 +65,10 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-public class LiveActivity extends BaseActivity implements Clock.Callback, GroupPresenter.OnClickListener, ChannelPresenter.OnClickListener, EpgDataPresenter.OnClickListener, CustomKeyDownLive.Listener, CustomLiveListView.Callback, TrackDialog.Listener, PassCallback, LiveCallback, SubtitleCallback {
+public class LiveActivity extends BaseActivity implements GroupPresenter.OnClickListener, ChannelPresenter.OnClickListener, EpgDataPresenter.OnClickListener, CustomKeyDownLive.Listener, CustomLiveListView.Callback, TrackDialog.Listener, PassCallback, LiveCallback, SubtitleCallback {
 
     private ActivityLiveBinding mBinding;
     private ArrayObjectAdapter mChannelAdapter;
@@ -121,8 +120,8 @@ public class LiveActivity extends BaseActivity implements Clock.Callback, GroupP
     }
 
     @Override
-    protected void initView() 
-        mClock = Clock.create(Arrays.asList(mBinding.widget.clock, mBinding.display.clock));
+    protected void initView() {
+        mClock = Clock.create(mBinding.widget.clock);
         mKeyDown = CustomKeyDownLive.create(this);
         mPlayers = Players.create(this);
         mHides = new ArrayList<>();
@@ -135,7 +134,6 @@ public class LiveActivity extends BaseActivity implements Clock.Callback, GroupP
         setRecyclerView();
         setSubtitleView();
         setVideoView();
-        setDisplayView();
         setViewModel();
         checkLive();
     }
@@ -195,12 +193,6 @@ public class LiveActivity extends BaseActivity implements Clock.Callback, GroupP
         setSubtitle(Setting.getSubtitle());
         mBinding.exo.getSubtitleView().setStyle(ExoUtil.getCaptionStyle());
         mBinding.exo.getSubtitleView().setApplyEmbeddedStyles(!Setting.isCaption());
-    }
-
-    private void setDisplayView() {
-        mBinding.display.getRoot().setVisibility(View.VISIBLE);
-        mBinding.display.progress.setVisibility(View.GONE);
-        showDisplayInfo();
     }
 
     @Override
@@ -465,22 +457,6 @@ public class LiveActivity extends BaseActivity implements Clock.Callback, GroupP
         App.removeCallbacks(mR1);
     }
 
-    private void showDisplayInfo() {
-        boolean controlVisible = isVisible(mBinding.control.getRoot());
-        boolean visible = !controlVisible;
-        mBinding.display.clock.setVisibility(Setting.isDisplayTime() && visible || isVisible(mBinding.control.getRoot()) ? View.VISIBLE : View.GONE); 
-        mBinding.display.netspeed.setVisibility(Setting.isDisplaySpeed() && visible && !isVisible(mBinding.widget.bottom) && !isVisible(mBinding.control.getRoot()) ? View.VISIBLE : View.GONE); 
-        mBinding.display.duration.setVisibility(View.GONE);
-        mBinding.display.titleLayout.setVisibility(Setting.isDisplayVideoTitle() && visible && !isVisible(mBinding.control.getRoot()) ? View.VISIBLE : View.GONE);
-    }
-
-    private void onTimeChangeDisplaySpeed() {
-        boolean controlVisible = isVisible(mBinding.control.getRoot());
-        boolean visible = !controlVisible;
-        if (Setting.isDisplaySpeed() && visible) Traffic.setSpeed(mBinding.display.netspeed);
-        showDisplayInfo();
-    }
-
     private void hideCenter() {
         mBinding.widget.action.setImageResource(R.drawable.ic_widget_play);
         mBinding.widget.center.setVisibility(View.GONE);
@@ -610,7 +586,6 @@ public class LiveActivity extends BaseActivity implements Clock.Callback, GroupP
         mChannel.loadLogo(mBinding.widget.logo);
         mBinding.widget.name.setText(mChannel.getName());
         mBinding.widget.title.setText(mChannel.getName());
-        mBinding.display.title.setText(mChannel.getName());
         mBinding.widget.line.setText(mChannel.getLineText());
         mBinding.widget.number.setText(mChannel.getNumber());
         mBinding.control.line.setText(mChannel.getLineText());
@@ -671,11 +646,6 @@ public class LiveActivity extends BaseActivity implements Clock.Callback, GroupP
     }
 
     @Override
-    public void onTimeChanged() {
-        onTimeChangeDisplaySpeed();
-    }
-
-    @Override
     public void setLive(Live item) {
         LiveConfig.get().setHome(item);
         mPlayers.reset();
@@ -723,7 +693,6 @@ public class LiveActivity extends BaseActivity implements Clock.Callback, GroupP
         switch (event.getState()) {
             case 0:
                 setTrackVisible(false);
-                mClock.setCallback(this);
                 break;
             case Player.STATE_IDLE:
                 break;
@@ -736,7 +705,6 @@ public class LiveActivity extends BaseActivity implements Clock.Callback, GroupP
                 mPlayers.reset();
                 setTrackVisible(true);
                 mBinding.widget.size.setText(mPlayers.getSizeText());
-                mBinding.display.size.setText(mPlayers.getSizeText());
                 break;
             case Player.STATE_ENDED:
                 checkNext();
