@@ -18,6 +18,7 @@ import com.fongmi.android.tv.ui.dialog.BufferDialog;
 import com.fongmi.android.tv.ui.dialog.SubtitleDialog;
 import com.fongmi.android.tv.ui.dialog.UaDialog;
 import com.fongmi.android.tv.utils.ResUtil;
+import com.fongmi.android.tv.ui.dialog.DisplayDialog;
 
 public class SettingPlayerActivity extends BaseActivity implements UaCallback, BufferCallback, SubtitleCallback {
 
