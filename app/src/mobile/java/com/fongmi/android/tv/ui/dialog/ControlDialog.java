@@ -13,6 +13,7 @@ import androidx.viewbinding.ViewBinding;
 
 import com.fongmi.android.tv.App;
 import com.fongmi.android.tv.R;
+import com.fongmi.android.tv.Setting;
 import com.fongmi.android.tv.bean.History;
 import com.fongmi.android.tv.bean.Parse;
 import com.fongmi.android.tv.databinding.ActivityVideoBinding;
