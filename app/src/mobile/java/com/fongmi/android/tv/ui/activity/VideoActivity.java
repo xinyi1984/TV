@@ -304,10 +304,10 @@ public class VideoActivity extends BaseActivity implements Clock.Callback, Custo
         mDanmakuContext = DanmakuContext.create();
         mBinding.progressLayout.showProgress();
         mBinding.swipeLayout.setEnabled(false);
-        mPlayers = new Players().init(this);
         mObserveDetail = this::setDetail;
         mObservePlayer = this::setPlayer;
         mObserveSearch = this::setSearch;
+        mPlayers = Players.create(this);
         mDialogs = new ArrayList<>();
         mBroken = new ArrayList<>();
         mClock = Clock.create(Arrays.asList(mBinding.display.clock, mBinding.control.time));
