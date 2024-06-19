@@ -41,6 +41,14 @@
             android:layout_gravity="bottom"
             android:visibility="gone" />
 
+        <include
+            android:id="@+id/control"
+            layout="@layout/view_control_vod"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:visibility="gone" />
+
     </FrameLayout>
 
     <TextView
