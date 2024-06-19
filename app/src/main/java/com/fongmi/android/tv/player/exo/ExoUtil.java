@@ -97,7 +97,7 @@ public class ExoUtil {
 
     public static MediaItem getMediaItem(Map<String, String> headers, Uri uri, String mimeType, Drm drm, List<Sub> subs, int decode) {
         MediaItem.Builder builder = new MediaItem.Builder().setUri(uri);
-        builder.setAllowChunklessPreparation(Players.isHard(decode));
+        //builder.setAllowChunklessPreparation(Players.isHard(decode));
         builder.setRequestMetadata(getRequestMetadata(headers, uri));
         builder.setSubtitleConfigurations(getSubtitleConfigs(subs));
         if (drm != null) builder.setDrmConfiguration(drm.get());
