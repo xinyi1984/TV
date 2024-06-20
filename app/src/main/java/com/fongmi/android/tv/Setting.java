@@ -138,11 +138,11 @@ public class Setting {
     }
 
     public static int getBuffer() {
-        return Math.min(Math.max(Prefers.getInt("exo_buffer"), 1), 10);
+        return Math.min(Math.max(Prefers.getInt("buffer"), 1), 10);
     }
 
     public static void putBuffer(int buffer) {
-        Prefers.put("exo_buffer", buffer);
+        Prefers.put("buffer", buffer);
     }
 
     public static int getBackground() {
