@@ -80,7 +80,7 @@ public class Players implements Player.Listener, ParseCallback {
         return new Players(activity);
     }
 
-    public static boolean isHard(int decode) {
+    public boolean isHard() {
         return decode == HARD;
     }
 
