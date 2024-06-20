@@ -286,6 +286,7 @@ public class LiveActivity extends BaseActivity implements Clock.Callback, Custom
         items.add(Group.create(R.string.keep));
         for (Group group : live.getGroups()) (group.isHidden() ? mHides : items).add(group);
         mGroupAdapter.addAll(items);
+        LiveConfig.get().setKeep(items);
         setPosition(LiveConfig.get().find(items));
     }
 
@@ -315,8 +316,8 @@ public class LiveActivity extends BaseActivity implements Clock.Callback, Custom
 
     private void setPosition(int[] position) {
         if (position[0] == -1) return;
-        if (mGroupAdapter.getItemCount() == 1) return;
-        if (position[0] >= mGroupAdapter.getItemCount()) return;
+        int size = mGroupAdapter.getItemCount();
+        if (size == 1 || position[0] >= size) return;
         mGroup = mGroupAdapter.get(position[0]);
         mGroup.setPosition(position[1]);
         onItemClick(mGroup);
