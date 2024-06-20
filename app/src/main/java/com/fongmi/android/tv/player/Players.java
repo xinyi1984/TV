@@ -216,6 +216,10 @@ public class Players implements Player.Listener, ParseCallback {
         return getDuration() > 5 * 60 * 1000 && !exoPlayer.isCurrentMediaItemLive();
     }
 
+    public boolean isHard() {
+        return decode == HARD;
+    }
+
     public boolean isPortrait() {
         return getVideoHeight() > getVideoWidth();
     }
