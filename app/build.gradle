@@ -106,7 +106,6 @@ dependencies {
     implementation 'androidx.media3:media3-exoplayer-rtsp:' + media3Version
     implementation 'androidx.media3:media3-exoplayer-smoothstreaming:' + media3Version
     implementation 'androidx.media3:media3-ui:' + media3Version
-    implementation project(':media-lib-ui')
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'androidx.media:media:1.7.0'
     implementation 'androidx.room:room-runtime:2.6.1'
