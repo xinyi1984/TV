@@ -32,5 +32,6 @@ include ':jianpian'
 include ':forcetech'
 include ':ijkplayer'
 rootProject.name = "TV"
+gradle.ext.androidxMediaEnableMidiModule = true
 gradle.ext.androidxMediaModulePrefix = 'media-'
 apply from: file("./core_settings.gradle")
