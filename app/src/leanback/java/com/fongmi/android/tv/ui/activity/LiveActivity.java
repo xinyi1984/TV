@@ -260,9 +260,7 @@ public class LiveActivity extends BaseActivity implements Clock.Callback, GroupP
 
     private void setGroup(Live live) {
         List<Group> items = new ArrayList<>();
-        items.add(Group.create(R.string.keep));
         for (Group group : live.getGroups()) (group.isHidden() ? mHides : items).add(group);
-        LiveConfig.get().setKeep(items);
         mGroupAdapter.setItems(items, null);
         setPosition(LiveConfig.get().find(items));
     }
