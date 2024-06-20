@@ -33,3 +33,4 @@ include ':forcetech'
 include ':ijkplayer'
 rootProject.name = "TV"
 gradle.ext.androidxMediaModulePrefix = 'media-'
+apply from: file("https://raw.githubusercontent.com/androidx/media/release/core_settings.gradle")
