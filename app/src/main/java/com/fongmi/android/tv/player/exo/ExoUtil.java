@@ -36,7 +36,7 @@ import java.util.Map;
 public class ExoUtil {
 
     public static LoadControl buildLoadControl() {
-        return new DefaultLoadControl();
+        return new DefaultLoadControl(Setting.getBuffer());
     }
 
     public static TrackSelector buildTrackSelector() {
