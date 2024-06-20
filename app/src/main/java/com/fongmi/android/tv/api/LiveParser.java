@@ -4,8 +4,6 @@ import android.util.Base64;
 
 import androidx.media3.common.MimeTypes;
 
-import com.fongmi.android.tv.R;
-import com.fongmi.android.tv.api.config.LiveConfig;
 import com.fongmi.android.tv.bean.Catchup;
 import com.fongmi.android.tv.bean.Channel;
 import com.fongmi.android.tv.bean.ClearKey;
@@ -44,8 +42,6 @@ public class LiveParser {
         if (live.getType() == 0) text(live, getText(live));
         if (live.getType() == 1) json(live, getText(live));
         if (live.getType() == 2) proxy(live, getText(live));
-        live.getGroups().add(0, Group.create(R.string.keep));
-        LiveConfig.get().setKeep(live.getGroups());
     }
 
     public static void text(Live live, String text) {

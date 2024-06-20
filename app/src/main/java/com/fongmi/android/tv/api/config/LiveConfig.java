@@ -164,12 +164,13 @@ public class LiveConfig {
         parseConfig(object, null);
     }
 
-    public void setKeep(Channel channel) {
-        if (home == null || channel.getGroup().isHidden() || channel.getUrls().isEmpty()) return;
-        Setting.putKeep(home.getName() + AppDatabase.SYMBOL + channel.getGroup().getName() + AppDatabase.SYMBOL + channel.getName() + AppDatabase.SYMBOL + channel.getCurrent());
+    public void setKeep(Live live) {
+        if (live.getGroups().isEmpty() || live.getGroups().get(0).isKeep()) return;
+        live.getGroups().add(0, Group.create(R.string.keep));
+        setKeep(live.getGroups());
     }
 
-    public void setKeep(List<Group> items) {
+    private void setKeep(List<Group> items) {
         List<String> key = new ArrayList<>();
         for (Keep keep : Keep.getLive()) key.add(keep.getKey());
         for (Group group : items) {
@@ -180,6 +181,11 @@ public class LiveConfig {
                 }
             }
         }
+    }
+
+    public void setKeep(Channel channel) {
+        if (home == null || channel.getGroup().isHidden() || channel.getUrls().isEmpty()) return;
+        Setting.putKeep(home.getName() + AppDatabase.SYMBOL + channel.getGroup().getName() + AppDatabase.SYMBOL + channel.getName() + AppDatabase.SYMBOL + channel.getCurrent());
     }
 
     public int[] find(List<Group> items) {

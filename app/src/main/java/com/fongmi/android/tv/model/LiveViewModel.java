@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel;
 import com.fongmi.android.tv.Constant;
 import com.fongmi.android.tv.api.EpgParser;
 import com.fongmi.android.tv.api.LiveParser;
+import com.fongmi.android.tv.api.config.LiveConfig;
 import com.fongmi.android.tv.api.config.VodConfig;
 import com.fongmi.android.tv.bean.Channel;
 import com.fongmi.android.tv.bean.Epg;
@@ -97,6 +98,7 @@ public class LiveViewModel extends ViewModel {
     private void verify(Live item) {
         Iterator<Group> iterator = item.getGroups().iterator();
         while (iterator.hasNext()) if (iterator.next().isEmpty()) iterator.remove();
+        LiveConfig.get().setKeep(item);
     }
 
     private void execute(int type, Callable<?> callable) {
