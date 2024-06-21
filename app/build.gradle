@@ -5,14 +5,14 @@ plugins {
 android {
     namespace 'com.fongmi.android.tv'
 
-    compileSdk 34
+    compileSdk 23
     flavorDimensions = ["mode", "api", "abi"]
 
     defaultConfig {
         applicationId "com.fongmi.android.tv"
         minSdk 21
         //noinspection ExpiredTargetSdkVersion
-        targetSdk 28
+        targetSdk 23
         versionCode 239
         versionName "0621v2"
         javaCompileOptions {
