@@ -369,12 +369,15 @@ public class VideoActivity extends BaseActivity implements Clock.Callback, Custo
 
     private void setVideoView() {
         mPlayers.setup(mBinding.exo);
+        if (isPort() && ResUtil.isLand(this)) enterFullscreen();
         mBinding.control.action.decode.setText(mPlayers.getDecodeText());
         mBinding.control.action.speed.setEnabled(mPlayers.canAdjustSpeed());
         mBinding.control.action.reset.setText(ResUtil.getStringArray(R.array.select_reset)[Setting.getReset()]);
-        mBinding.video.addOnLayoutChangeListener((view, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) -> mPiP.update(getActivity(), view));
-        if (mControlDialog != null && mControlDialog.isVisible()) mControlDialog.setPlayer();
-        if (isPort() && ResUtil.isLand(this)) enterFullscreen();
+        mBinding.video.addOnLayoutChangeListener((view, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) -> {
+            if (left != oldLeft || right != oldRight || top != oldTop || bottom != oldBottom) {
+                mPiP.update(getActivity(), view);
+            }
+        });
     }
 
     private void setSubtitleView() {
@@ -1311,6 +1314,13 @@ public class VideoActivity extends BaseActivity implements Clock.Callback, Custo
         mPlayers.play();
     }
 
+    private void setVideoMargins(int margin) {
+        if (!ResUtil.isPad() || isFullscreen()) return;
+        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) mBinding.video.getLayoutParams();
+        params.setMargins(margin, margin, margin, margin);
+        mBinding.video.setLayoutParams(params);
+    }
+
     public boolean isForeground() {
         return foreground;
     }
@@ -1527,6 +1537,7 @@ public class VideoActivity extends BaseActivity implements Clock.Callback, Custo
         super.onPictureInPictureModeChanged(isInPictureInPictureMode);
         if (isInPictureInPictureMode) {
             PlaybackService.start(mPlayers);
+            setVideoMargins(0);
             setSubtitle(10);
             hideControl();
             hideSheet();
@@ -1534,6 +1545,7 @@ public class VideoActivity extends BaseActivity implements Clock.Callback, Custo
             setForeground(true);
             PlaybackService.stop();
             setSubtitle(Setting.getSubtitle());
+            setVideoMargins(ResUtil.dp2px(16));
             if (isStop()) finish();
         }
     }
