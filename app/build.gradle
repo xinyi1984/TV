@@ -25,11 +25,9 @@ android {
     productFlavors {
         leanback {
             dimension "mode"
-            applicationIdSuffix ".leanback"   //多版本共存
         }
         mobile {
             dimension "mode"
-            applicationIdSuffix ".mobile"   //多版本共存
         }
         java {
             dimension "api"
