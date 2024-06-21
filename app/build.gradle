@@ -12,7 +12,7 @@ android {
         applicationId "com.fongmi.android.tv"
         minSdk 21
         //noinspection ExpiredTargetSdkVersion
-        targetSdk 23
+        targetSdk 28
         versionCode 239
         versionName "0621v2"
         javaCompileOptions {
