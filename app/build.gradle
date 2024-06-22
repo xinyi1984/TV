@@ -59,9 +59,9 @@ android {
             minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            applicationIdSuffix ".release"    //没有添加构建的apk和添加（包名增加.release）构建的apk在Android设备上是可以共存的  同时要在main的 AndroidManifest.xml <provider android:authorities="${applicationId}.provider"添加.release解决与已安装应用内容提供者冲突
-        }
-    }
+            applicationIdSuffix ".release"    //没有添加构建的apk和添加（包名增加.release）构建的apk在Android设备上是可以共存的
+        }                                     // 同时要在main的 AndroidManifest.xml 两处<provider修改 解决与已安装应用内容提供者冲突 
+    }                                         //aandroid:authorities="${applicationId}.provider"改为android:authorities="${applicationId}.provider.release" 和 android:authorities="com.fongmi.quickjs.provider"改为android:authorities="${applicationId}.quickjs.provider"
 
     packagingOptions {
         exclude 'META-INF/beans.xml'
