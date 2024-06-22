@@ -31,7 +31,11 @@ public class Util {
     }
 
     public static String base64(byte[] bytes) {
-        return Base64.encodeToString(bytes, Base64.URL_SAFE | Base64.NO_PADDING | Base64.NO_WRAP);
+        return base64(bytes, Base64.DEFAULT);
+    }
+
+    public static String base64(byte[] bytes, int flags) {
+        return Base64.encodeToString(bytes, flags);
     }
 
     public static String basic(String userInfo) {
