@@ -59,6 +59,7 @@ android {
             minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            applicationIdSuffix ".release"    //没有添加构建的apk和添加构建的apk在Android设备上是可以共存的
         }
     }
 
