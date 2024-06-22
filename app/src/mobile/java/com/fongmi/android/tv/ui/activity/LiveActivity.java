@@ -211,11 +211,7 @@ public class LiveActivity extends BaseActivity implements Clock.Callback, Custom
         mBinding.control.action.decode.setText(mPlayers.getDecodeText());
         mBinding.control.action.speed.setEnabled(mPlayers.canAdjustSpeed());
         mBinding.control.action.home.setVisibility(LiveConfig.isOnly() ? View.GONE : View.VISIBLE);
-        mBinding.video.addOnLayoutChangeListener((view, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) -> {
-            if (left != oldLeft || right != oldRight || top != oldTop || bottom != oldBottom) {
-                mPiP.update(getActivity(), view);
-            }
-        });
+        mBinding.video.addOnLayoutChangeListener((view, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) -> mPiP.update(getActivity(), view));
     }
 
     private void setSubtitleView() {

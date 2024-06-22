@@ -373,11 +373,14 @@ public class VideoActivity extends BaseActivity implements Clock.Callback, Custo
         mBinding.control.action.decode.setText(mPlayers.getDecodeText());
         mBinding.control.action.speed.setEnabled(mPlayers.canAdjustSpeed());
         mBinding.control.action.reset.setText(ResUtil.getStringArray(R.array.select_reset)[Setting.getReset()]);
-        mBinding.video.addOnLayoutChangeListener((view, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) -> {
-            if (left != oldLeft || right != oldRight || top != oldTop || bottom != oldBottom) {
-                mPiP.update(getActivity(), view);
-            }
-        });
+        mBinding.video.addOnLayoutChangeListener((view, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) -> mPiP.update(getActivity(), view));
+    }
+
+    private void setVideoView(int margin) {
+        if (!ResUtil.isPad() || isFullscreen()) return;
+        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) mBinding.video.getLayoutParams();
+        params.setMargins(margin, margin, margin, margin);
+        mBinding.video.setLayoutParams(params);
     }
 
     private void setSubtitleView() {
@@ -1314,13 +1317,6 @@ public class VideoActivity extends BaseActivity implements Clock.Callback, Custo
         mPlayers.play();
     }
 
-    private void setVideoMargins(int margin) {
-        if (!ResUtil.isPad() || isFullscreen()) return;
-        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) mBinding.video.getLayoutParams();
-        params.setMargins(margin, margin, margin, margin);
-        mBinding.video.setLayoutParams(params);
-    }
-
     public boolean isForeground() {
         return foreground;
     }
@@ -1537,15 +1533,15 @@ public class VideoActivity extends BaseActivity implements Clock.Callback, Custo
         super.onPictureInPictureModeChanged(isInPictureInPictureMode);
         if (isInPictureInPictureMode) {
             PlaybackService.start(mPlayers);
-            setVideoMargins(0);
+            setVideoView(0);
             setSubtitle(10);
             hideControl();
             hideSheet();
         } else {
             setForeground(true);
             PlaybackService.stop();
+            setVideoView(ResUtil.dp2px(16));
             setSubtitle(Setting.getSubtitle());
-            setVideoMargins(ResUtil.dp2px(16));
             if (isStop()) finish();
         }
     }
