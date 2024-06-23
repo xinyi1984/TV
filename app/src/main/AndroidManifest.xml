@@ -47,7 +47,7 @@
 
         <provider
             android:name="androidx.core.content.FileProvider"
-            android:authorities="${applicationId}.provider.release"
+            android:authorities="${applicationId}.provider"
             android:exported="false"
             android:grantUriPermissions="true">
 
@@ -59,7 +59,7 @@
 
         <provider
             android:name="com.fongmi.quickjs.Provider"
-            android:authorities="${applicationId}.quickjs.provider"
+            android:authorities="com.fongmi.quickjs.provider"
             android:exported="false" />
 
         <activity
