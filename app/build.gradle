@@ -100,8 +100,6 @@ dependencies {
     pythonImplementation project(':chaquo')
     implementation 'androidx.media3:media3-datasource-okhttp:' + media3Version
     implementation 'androidx.media3:media3-datasource-rtmp:' + media3Version
-    implementation 'androidx.media3:media3-decoder-ffmpeg:' + media3Version
-    implementation 'androidx.media3:media3-decoder-av1:' + media3Version
     implementation 'androidx.media3:media3-exoplayer:' + media3Version
     implementation 'androidx.media3:media3-exoplayer-dash:' + media3Version
     implementation 'androidx.media3:media3-exoplayer-hls:' + media3Version
