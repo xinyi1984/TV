@@ -40,7 +40,7 @@ import java.util.Map;
 public class ExoUtil {
 
     public static LoadControl buildLoadControl() {
-        return new DefaultLoadControl();
+        return new DefaultLoadControl(Setting.getBuffer());
     }
 
     public static TrackSelector buildTrackSelector() {
@@ -59,10 +59,6 @@ public class ExoUtil {
 
     public static CaptionStyleCompat getCaptionStyle() {
         return Setting.isCaption() ? CaptionStyleCompat.createFromCaptionStyle(((CaptioningManager) App.get().getSystemService(Context.CAPTIONING_SERVICE)).getUserStyle()) : new CaptionStyleCompat(Color.WHITE, Color.TRANSPARENT, Color.TRANSPARENT, CaptionStyleCompat.EDGE_TYPE_OUTLINE, Color.BLACK, null);
-    }
-
-    public static int getRetry(int errorCode) {
-        return errorCode >= PlaybackException.ERROR_CODE_PARSING_CONTAINER_MALFORMED && errorCode <= PlaybackException.ERROR_CODE_PARSING_MANIFEST_UNSUPPORTED ? 2 : 1;
     }
 
     public static boolean haveTrack(Tracks tracks, int type) {
@@ -93,56 +89,14 @@ public class ExoUtil {
 
     public static String getMimeType(String format, int errorCode) {
         if (format != null) return format;
-        //if (errorCode == PlaybackException.ERROR_CODE_PARSING_MANIFEST_UNSUPPORTED || errorCode == PlaybackException.ERROR_CODE_PARSING_MANIFEST_MALFORMED) return MimeTypes.APPLICATION_OCTET;
-        if (errorCode == PlaybackException.ERROR_CODE_PARSING_CONTAINER_UNSUPPORTED || errorCode == PlaybackException.ERROR_CODE_PARSING_CONTAINER_MALFORMED) return MimeTypes.APPLICATION_M3U8;
+        if (errorCode == PlaybackException.ERROR_CODE_PARSING_MANIFEST_UNSUPPORTED || errorCode == PlaybackException.ERROR_CODE_PARSING_MANIFEST_MALFORMED) return MimeTypes.APPLICATION_OCTET;
+        if (errorCode == PlaybackException.ERROR_CODE_PARSING_CONTAINER_UNSUPPORTED || errorCode == PlaybackException.ERROR_CODE_PARSING_CONTAINER_MALFORMED || errorCode == PlaybackException.ERROR_CODE_IO_UNSPECIFIED) return MimeTypes.APPLICATION_M3U8;
         return null;
     }
 
+    public static int getRetry(int errorCode) {
+        return errorCode >= PlaybackException.ERROR_CODE_PARSING_CONTAINER_MALFORMED && errorCode <= PlaybackException.ERROR_CODE_PARSING_MANIFEST_UNSUPPORTED || errorCode == PlaybackException.ERROR_CODE_IO_UNSPECIFIED ? 2 : errorCode > 999 ? 1 : 0;
+    }
+
     public static MediaItem getMediaItem(Map<String, String> headers, Uri uri, String mimeType, Drm drm, List<Sub> subs, int decode) {
-        boolean m3u8Ad = uri.toString().contains(".m3u8") && (Setting.isRemoveAd() || Sniffer.getRegex(uri).size() > 0);
-        if (m3u8Ad) uri = Uri.parse(Server.get().getAddress(true).concat("/m3u8?url=").concat(URLEncoder.encode(uri.toString())));
-        MediaItem.Builder builder = new MediaItem.Builder().setUri(uri);
-        //builder.setAllowChunklessPreparation(decode == Players.HARD);
-        builder.setRequestMetadata(getRequestMetadata(headers, uri));
-        builder.setSubtitleConfigurations(getSubtitleConfigs(subs));
-        if (drm != null) builder.setDrmConfiguration(drm.get());
-        if (mimeType != null) builder.setMimeType(mimeType);
-        //builder.setForceUseRtpTcp(Setting.getRtsp() == 1);
-        //builder.setAds(Arrays.asList("9999"));
-        builder.setMediaId(uri.toString());
-        return builder.build();
-    }
-
-    private static MediaItem.RequestMetadata getRequestMetadata(Map<String, String> headers, Uri uri) {
-        Bundle extras = new Bundle();
-        for (Map.Entry<String, String> header : headers.entrySet()) extras.putString(header.getKey(), header.getValue());
-        return new MediaItem.RequestMetadata.Builder().setMediaUri(uri).setExtras(extras).build();
-    }
-
-    private static List<MediaItem.SubtitleConfiguration> getSubtitleConfigs(List<Sub> subs) {
-        List<MediaItem.SubtitleConfiguration> configs = new ArrayList<>();
-        for (Sub sub : subs) configs.add(sub.getConfig());
-        return configs;
-    }
-
-    private static void selectTrack(ExoPlayer player, int group, int track, List<Integer> trackIndices) {
-        if (group >= player.getCurrentTracks().getGroups().size()) return;
-        Tracks.Group trackGroup = player.getCurrentTracks().getGroups().get(group);
-        for (int i = 0; i < trackGroup.length; i++) {
-            if (i == track || trackGroup.isTrackSelected(i)) trackIndices.add(i);
-        }
-    }
-
-    private static void deselectTrack(ExoPlayer player, int group, int track, List<Integer> trackIndices) {
-        if (group >= player.getCurrentTracks().getGroups().size()) return;
-        Tracks.Group trackGroup = player.getCurrentTracks().getGroups().get(group);
-        for (int i = 0; i < trackGroup.length; i++) {
-            if (i != track && trackGroup.isTrackSelected(i)) trackIndices.add(i);
-        }
-    }
-
-    private static void setTrackParameters(ExoPlayer player, int group, List<Integer> trackIndices) {
-        if (group >= player.getCurrentTracks().getGroups().size()) return;
-        player.setTrackSelectionParameters(player.getTrackSelectionParameters().buildUpon().setOverrideForType(new TrackSelectionOverride(player.getCurrentTracks().getGroups().get(group).getMediaTrackGroup(), trackIndices)).build());
-    }
-}
+        boolean m3u8Ad = uri.toString().contains(".m3u8") && (Setting.isRemo
