@@ -59,9 +59,8 @@ android {
             minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            applicationIdSuffix ".release"    //没有添加构建的apk和添加（包名增加.release）构建的apk在Android设备上是可以共存的
-        }                                     // 同时要在main的 AndroidManifest.xml 两处<provider修改 解决与已安装应用内容提供者冲突 
-    }                                         //aandroid:authorities="${applicationId}.provider"改为android:authorities="${applicationId}.provider.release" 和 android:authorities="com.fongmi.quickjs.provider"改为android:authorities="${applicationId}.quickjs.provider"
+        }  
+    }
 
     packagingOptions {
         exclude 'META-INF/beans.xml'
@@ -99,16 +98,16 @@ dependencies {
     implementation project(':jianpian')
     implementation project(':forcetech')
     pythonImplementation project(':chaquo')
-    implementation project(':media-lib-datasource-okhttp')
-    implementation project(':media-lib-datasource-rtmp')
-    implementation project(':media-lib-decoder-ffmpeg')
-    implementation project(':media-lib-decoder-av1')
-    implementation project(':media-lib-exoplayer')
-    implementation project(':media-lib-exoplayer-dash')
-    implementation project(':media-lib-exoplayer-hls')
-    implementation project(':media-lib-exoplayer-rtsp')
-    implementation project(':media-lib-exoplayer-smoothstreaming')
-    implementation project(':media-lib-ui')
+    implementation 'androidx.media3:media3-datasource-okhttp:' + media3Version
+    implementation 'androidx.media3:media3-datasource-rtmp:' + media3Version
+    implementation 'androidx.media3:media3-decoder-ffmpeg:' + media3Version
+    implementation 'androidx.media3:media3-decoder-av1:' + media3Version
+    implementation 'androidx.media3:media3-exoplayer:' + media3Version
+    implementation 'androidx.media3:media3-exoplayer-dash:' + media3Version
+    implementation 'androidx.media3:media3-exoplayer-hls:' + media3Version
+    implementation 'androidx.media3:media3-exoplayer-rtsp:' + media3Version
+    implementation 'androidx.media3:media3-exoplayer-smoothstreaming:' + media3Version
+    implementation 'androidx.media3:media3-ui:' + media3Version
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'androidx.media:media:1.7.0'
     implementation 'androidx.room:room-runtime:2.6.1'
