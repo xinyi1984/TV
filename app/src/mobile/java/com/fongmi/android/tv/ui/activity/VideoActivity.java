@@ -479,6 +479,7 @@ public class VideoActivity extends BaseActivity implements Clock.Callback, Custo
             hideSheet();
         });
         mViewModel.ep.observe(this, episode -> {
+            Notify.progress(this);
             Download.get().title(mBinding.name.getText() + "-" + episode.getName());
             mViewModel.download(getKey(), getFlag().getFlag(), episode.getUrl());
         });

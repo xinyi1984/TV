@@ -100,7 +100,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         try {
             if (!customWall()) return;
             File file = FileUtil.getWall(Setting.getWall());
-            if (file.exists() && file.length() > 0) getWindow().setBackgroundDrawable(WallConfig.drawable(file));
+            if (file.exists() && file.length() > 0) getWindow().setBackgroundDrawable(Drawable.createFromPath(file.getAbsolutePath()));
             else getWindow().setBackgroundDrawableResource(ResUtil.getDrawable(file.getName()));
         } catch (Exception e) {
             getWindow().setBackgroundDrawableResource(R.drawable.wallpaper_1);
@@ -118,9 +118,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onRefreshEvent(RefreshEvent event) {
-        if (event.getType() != RefreshEvent.Type.WALL) return;
-        WallConfig.get().setDrawable(null);
-        refreshWall();
+        if (event.getType() == RefreshEvent.Type.WALL) refreshWall();
     }
 
     @Override
