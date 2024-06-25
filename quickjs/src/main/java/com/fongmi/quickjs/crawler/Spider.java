@@ -229,11 +229,13 @@ public class Spider extends com.github.catvod.crawler.Spider {
     private Object[] proxy1(Map<String, String> params) throws Exception {
         JSObject object = JSUtil.toObj(ctx, params);
         JSONArray array = new JSONArray(((JSArray) jsObject.getJSFunction("proxy").call(object)).stringify());
+        Map<String, String> headers = array.length() > 3 ? Json.toMap(array.optString(3)) : null;
         boolean base64 = array.length() > 4 && array.optInt(4) == 1;
-        Object[] result = new Object[3];
-        result[0] = array.opt(0);
-        result[1] = array.opt(1);
+        Object[] result = new Object[4];
+        result[0] = array.optInt(0);
+        result[1] = array.optString(1);
         result[2] = getStream(array.opt(2), base64);
+        result[3] = headers;
         return result;
     }
 
@@ -264,4 +266,3 @@ public class Spider extends com.github.catvod.crawler.Spider {
         }
     }
 }
-
