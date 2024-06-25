@@ -3,6 +3,7 @@ package com.fongmi.android.tv.ui.base;
 import android.app.Activity;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.View;
 
@@ -100,7 +101,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         try {
             if (!customWall()) return;
             File file = FileUtil.getWall(Setting.getWall());
-            if (file.exists() && file.length() > 0) getWindow().setBackgroundDrawable(WallConfig.drawable(file));
+            if (file.exists() && file.length() > 0) getWindow().setBackgroundDrawable(Drawable.createFromPath(file.getAbsolutePath()));
             else getWindow().setBackgroundDrawableResource(ResUtil.getDrawable(file.getName()));
         } catch (Exception e) {
             getWindow().setBackgroundDrawableResource(R.drawable.wallpaper_1);
