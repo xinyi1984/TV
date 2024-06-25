@@ -1,6 +1,7 @@
 package com.fongmi.quickjs.crawler;
 
 import android.content.Context;
+import android.util.Base64;
 
 import androidx.media3.common.util.UriUtil;
 
@@ -228,10 +229,11 @@ public class Spider extends com.github.catvod.crawler.Spider {
     private Object[] proxy1(Map<String, String> params) throws Exception {
         JSObject object = JSUtil.toObj(ctx, params);
         JSONArray array = new JSONArray(((JSArray) jsObject.getJSFunction("proxy").call(object)).stringify());
+        boolean base64 = array.length() > 4 && array.optInt(4) == 1;
         Object[] result = new Object[3];
         result[0] = array.opt(0);
         result[1] = array.opt(1);
-        result[2] = getStream(array.opt(2));
+        result[2] = getStream(array.opt(2), base64);
         return result;
     }
 
@@ -249,14 +251,16 @@ public class Spider extends com.github.catvod.crawler.Spider {
         return result;
     }
 
-    private ByteArrayInputStream getStream(Object o) {
+    private ByteArrayInputStream getStream(Object o, boolean base64) {
         if (o instanceof JSONArray) {
             JSONArray a = (JSONArray) o;
             byte[] bytes = new byte[a.length()];
             for (int i = 0; i < a.length(); i++) bytes[i] = (byte) a.optInt(i);
             return new ByteArrayInputStream(bytes);
         } else {
-            return new ByteArrayInputStream(o.toString().getBytes());
+            String content = o.toString();
+            if (base64 && content.contains("base64,")) content = content.split("base64,")[1];
+            return new ByteArrayInputStream(base64 ? Base64.decode(content, Base64.DEFAULT) : content.getBytes());
         }
     }
 }
