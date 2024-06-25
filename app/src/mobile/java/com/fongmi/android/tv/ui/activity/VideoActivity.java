@@ -376,11 +376,13 @@ public class VideoActivity extends BaseActivity implements Clock.Callback, Custo
         mBinding.video.addOnLayoutChangeListener((view, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) -> mPiP.update(getActivity(), view));
     }
 
-    private void setVideoView(int margin) {
-        if (!ResUtil.isPad() || isFullscreen()) return;
-        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) mBinding.video.getLayoutParams();
-        params.setMargins(margin, margin, margin, margin);
-        mBinding.video.setLayoutParams(params);
+
+    private void setVideoView(boolean isInPictureInPictureMode) {
+        if (isInPictureInPictureMode) {
+            mBinding.video.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT));
+        } else {
+            mBinding.video.setLayoutParams(mFrameParams);
+        }
     }
 
     private void setSubtitleView() {
@@ -1531,16 +1533,15 @@ public class VideoActivity extends BaseActivity implements Clock.Callback, Custo
     @Override
     public void onPictureInPictureModeChanged(boolean isInPictureInPictureMode) {
         super.onPictureInPictureModeChanged(isInPictureInPictureMode);
+        if (!isFullscreen()) setVideoView(isInPictureInPictureMode);
         if (isInPictureInPictureMode) {
             PlaybackService.start(mPlayers);
-            setVideoView(0);
             setSubtitle(10);
             hideControl();
             hideSheet();
         } else {
             setForeground(true);
             PlaybackService.stop();
-            setVideoView(ResUtil.dp2px(16));
             setSubtitle(Setting.getSubtitle());
             if (isStop()) finish();
         }
@@ -1549,8 +1550,8 @@ public class VideoActivity extends BaseActivity implements Clock.Callback, Custo
     @Override
     public void onConfigurationChanged(@NonNull Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        if (isAutoRotate() && isPort() && newConfig.orientation == 1 && !isRotate()) exitFullscreen();
-        if (isAutoRotate() && isPort() && newConfig.orientation == 2) enterFullscreen();
+        if (isAutoRotate() && isPort() && newConfig.orientation == Configuration.ORIENTATION_PORTRAIT && !isRotate()) exitFullscreen();
+        if (isAutoRotate() && isPort() && newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) enterFullscreen();
         if (isFullscreen()) Util.hideSystemUI(this);
     }
 
