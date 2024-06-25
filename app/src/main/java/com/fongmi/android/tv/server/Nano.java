@@ -1,7 +1,5 @@
 package com.fongmi.android.tv.server;
 
-import android.util.Base64;
-
 import com.fongmi.android.tv.api.config.LiveConfig;
 import com.fongmi.android.tv.api.config.VodConfig;
 import com.fongmi.android.tv.bean.Device;
@@ -11,7 +9,6 @@ import com.fongmi.android.tv.server.process.Local;
 import com.fongmi.android.tv.server.process.Process;
 import com.github.catvod.utils.Asset;
 import com.github.catvod.utils.Util;
-import com.google.common.net.HttpHeaders;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -53,13 +50,6 @@ public class Nano extends NanoHTTPD {
 
     public static Response error(Response.IStatus status, String text) {
         return newFixedLengthResponse(status, MIME_PLAINTEXT, text);
-    }
-
-    public static Response redirect(String url, Map<String, String> headers) {
-        Response response = newFixedLengthResponse(Response.Status.REDIRECT, MIME_HTML, "");
-        for (Map.Entry<String, String> entry : headers.entrySet()) response.addHeader(entry.getKey(), entry.getValue());
-        response.addHeader(HttpHeaders.LOCATION, url);
-        return response;
     }
 
     @Override
