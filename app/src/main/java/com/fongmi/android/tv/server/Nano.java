@@ -61,7 +61,7 @@ public class Nano extends NanoHTTPD {
         if (url.startsWith("/proxy")) return proxy(session);
         if (url.startsWith("/tvbus")) return success(LiveConfig.getResp());
         if (url.startsWith("/device")) return success(Device.get().toString());
-        if (url.startsWith("/license")) return success(Util.decode(url.substring(9)));
+        if (url.startsWith("/license")) return success(new String(Util.decode(url.substring(9), Util.URL_SAFE)));
         for (Process process : process) if (process.isRequest(session, url)) return process.doResponse(session, url, files);
         return getAssets(url.substring(1));
     }

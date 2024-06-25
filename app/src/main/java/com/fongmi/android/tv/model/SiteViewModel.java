@@ -102,7 +102,7 @@ public class SiteViewModel extends ViewModel {
             } else {
                 ArrayMap<String, String> params = new ArrayMap<>();
                 if (site.getType() == 1 && !extend.isEmpty()) params.put("f", App.gson().toJson(extend));
-                else if (site.getType() == 4) params.put("ext", Util.base64(App.gson().toJson(extend)));
+                if (site.getType() == 4) params.put("ext", Util.base64(App.gson().toJson(extend), Util.URL_SAFE));
                 params.put("ac", site.getType() == 0 ? "videolist" : "detail");
                 params.put("t", tid);
                 params.put("pg", page);
