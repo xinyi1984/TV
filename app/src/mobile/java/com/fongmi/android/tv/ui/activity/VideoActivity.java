@@ -422,6 +422,14 @@ public class VideoActivity extends BaseActivity implements Clock.Callback, Custo
         mBinding.video.addOnLayoutChangeListener((view, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) -> mPiP.update(getActivity(), view));
     }
 
+    private void setVideoView(boolean isInPictureInPictureMode) {
+        if (isInPictureInPictureMode) {
+            mBinding.video.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT));
+        } else {
+            mBinding.video.setLayoutParams(mFrameParams);
+        }
+    }
+
     private void setSubtitleView() {
         setSubtitle(Setting.getSubtitle());
         getExo().getSubtitleView().setStyle(ExoUtil.getCaptionStyle());
@@ -479,6 +487,7 @@ public class VideoActivity extends BaseActivity implements Clock.Callback, Custo
             hideSheet();
         });
         mViewModel.ep.observe(this, episode -> {
+            Notify.progress(this);
             Download.get().title(mBinding.name.getText() + "-" + episode.getName());
             mViewModel.download(getKey(), getFlag().getFlag(), episode.getUrl());
         });
@@ -656,7 +665,6 @@ public class VideoActivity extends BaseActivity implements Clock.Callback, Custo
     @Override
     public void onItemClick(Result result) {
         try {
-            result.setUrl(Source.get().fetch(result));
             mPlayers.start(result, isUseParse(), getSite().isChangeable() ? getSite().getTimeout() : -1);
             mBinding.danmaku.hide();
         } catch (Exception e) {
@@ -1715,17 +1723,16 @@ public class VideoActivity extends BaseActivity implements Clock.Callback, Custo
     @Override
     public void onPictureInPictureModeChanged(boolean isInPictureInPictureMode) {
         super.onPictureInPictureModeChanged(isInPictureInPictureMode);
+        if (!isFullscreen()) setVideoView(isInPictureInPictureMode);
         if (isInPictureInPictureMode) {
             PlaybackService.start(mPlayers);
             mBinding.danmaku.hide();
-            enterFullscreen();
             setSubtitle(10);
             hideControl();
             hideSheet();
         } else {
             showDanmu();
             setForeground(true);
-            exitFullscreen();
             PlaybackService.stop();
             setSubtitle(Setting.getSubtitle());
             if (isStop()) finish();
