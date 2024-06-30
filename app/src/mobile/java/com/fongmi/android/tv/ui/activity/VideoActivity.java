@@ -63,7 +63,7 @@ import com.fongmi.android.tv.event.PlayerEvent;
 import com.fongmi.android.tv.event.RefreshEvent;
 import com.fongmi.android.tv.impl.SubtitleCallback;
 import com.fongmi.android.tv.model.SiteViewModel;
-import com.fongmi.android.tv.player.Download;
+import com.fongmi.android.tv.utils.Downloader;
 import com.fongmi.android.tv.player.exo.ExoUtil;
 import com.fongmi.android.tv.player.Players;
 import com.fongmi.android.tv.player.Source;
@@ -488,7 +488,7 @@ public class VideoActivity extends BaseActivity implements Clock.Callback, Custo
         });
         mViewModel.ep.observe(this, episode -> {
             Notify.progress(this);
-            Download.get().title(mBinding.name.getText() + "-" + episode.getName());
+            Downloader.get().title(mBinding.name.getText() + "-" + episode.getName());
             mViewModel.download(getKey(), getFlag().getFlag(), episode.getUrl());
         });
     }
@@ -546,6 +546,7 @@ public class VideoActivity extends BaseActivity implements Clock.Callback, Custo
         mBinding.progressLayout.showContent();
         mBinding.video.setTag(item.getVodPic(getPic()));
         mBinding.name.setText(item.getVodName(getName()));
+        Downloader.get().image(item.getVodPic());
         setText(mBinding.remark, 0, item.getVodRemarks());
         setText(mBinding.site, R.string.detail_site, getSite().getName());
         setText(mBinding.content, 0, Html.fromHtml(item.getVodContent()).toString());
@@ -633,7 +634,7 @@ public class VideoActivity extends BaseActivity implements Clock.Callback, Custo
     }
 
     private void setDownload(Result result) {
-        Download.get().result(result).start(this);
+        Downloader.get().result(result).start(this);
     }
 
     private void checkDanmu(String danmu) {
