@@ -31,3 +31,5 @@ include ':youtube'
 include ':jianpian'
 include ':forcetech'
 rootProject.name = "TV"
+gradle.ext.androidxMediaModulePrefix = 'media-'
+apply from: file("/home/runner/work/TVBox-TV/TVBox-TV/TVBox-TV/core_settings.gradle")
