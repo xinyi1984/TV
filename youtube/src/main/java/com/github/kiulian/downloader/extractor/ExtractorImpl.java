@@ -23,6 +23,12 @@ public class ExtractorImpl implements Extractor {
             Pattern.compile("ytInitialPlayerResponse\\s*=\\s*(\\{.+?\\})\\s*\\;")
     );
 
+    private static final List<Pattern> YT_INITIAL_DATA_PATTERNS = Arrays.asList(
+            Pattern.compile("window\\[\"ytInitialData\"\\] = (\\{.*?\\});"),
+            Pattern.compile("ytInitialData = (\\{.*?\\});")
+    );
+
+    private static final Pattern TEXT_NUMBER_REGEX = Pattern.compile("[0-9]+[0-9, ']*");
     private static final Pattern ASSETS_JS_REGEX = Pattern.compile("\"assets\":.+?\"js\":\\s*\"([^\"]+)\"");
     private static final Pattern EMB_JS_REGEX = Pattern.compile("\"jsUrl\":\\s*\"([^\"]+)\"");
 
@@ -30,6 +36,25 @@ public class ExtractorImpl implements Extractor {
 
     public ExtractorImpl(Downloader downloader) {
         this.downloader = downloader;
+    }
+
+    @Override
+    public JsonObject extractInitialDataFromHtml(String html) throws YoutubeException {
+        String ytInitialData = null;
+        for (Pattern pattern : YT_INITIAL_DATA_PATTERNS) {
+            Matcher matcher = pattern.matcher(html);
+            if (matcher.find()) {
+                ytInitialData = matcher.group(1);
+            }
+        }
+        if (ytInitialData == null) {
+            throw new YoutubeException.BadPageException("Could not find initial data on web page");
+        }
+        try {
+            return JsonParser.parseString(ytInitialData).getAsJsonObject();
+        } catch (Exception e) {
+            throw new YoutubeException.BadPageException("Initial data contains invalid json");
+        }
     }
 
     @Override
@@ -101,5 +126,12 @@ public class ExtractorImpl implements Extractor {
             }
         }
         return DEFAULT_CLIENT_VERSION;
+    }
+
+    @Override
+    public int extractIntegerFromText(String text) {
+        Matcher matcher = TEXT_NUMBER_REGEX.matcher(text);
+        if (matcher.find()) return Integer.parseInt(matcher.group(0).replaceAll("[, ']", ""));
+        return 0;
     }
 }

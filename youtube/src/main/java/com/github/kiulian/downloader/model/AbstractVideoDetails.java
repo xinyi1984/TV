@@ -28,6 +28,10 @@ public abstract class AbstractVideoDetails {
         if (json.has("lengthSeconds")) lengthSeconds = json.get("lengthSeconds").getAsInt();
     }
 
+    public String videoId() {
+        return videoId;
+    }
+
     public String title() {
         return title;
     }
