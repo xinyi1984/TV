@@ -13,8 +13,8 @@ android {
         minSdk 21
         //noinspection ExpiredTargetSdkVersion
         targetSdk 28
-        versionCode 240
-        versionName "0627"
+        versionCode 241
+        versionName "2.4.1"
         javaCompileOptions {
             annotationProcessorOptions {
                 arguments = ["room.schemaLocation": "$projectDir/schemas".toString()]
@@ -59,9 +59,8 @@ android {
             minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            applicationIdSuffix ".release"    //没有添加构建的apk和添加（包名增加.release）构建的apk在Android设备上是可以共存的
-        }                                     // 同时要在main的 AndroidManifest.xml 两处<provider修改 解决与已安装应用内容提供者冲突 
-    }                                         //aandroid:authorities="${applicationId}.provider"改为android:authorities="${applicationId}.provider.release" 和android:authorities="com.fongmi.quickjs.provider"改为android:authorities="${applicationId}.quickjs.provider"
+        }
+    }
 
     packagingOptions {
         exclude 'META-INF/beans.xml'
@@ -108,15 +107,7 @@ dependencies {
     implementation project(':forcetech')
     implementation project(':ijkplayer')
     pythonImplementation project(':pyramid')
-    implementation 'androidx.media3:media3-datasource-okhttp:' + media3Version
-    implementation 'androidx.media3:media3-datasource-rtmp:' + media3Version
-    implementation 'androidx.media3:media3-exoplayer:' + media3Version
-    implementation 'androidx.media3:media3-exoplayer-dash:' + media3Version
-    implementation 'androidx.media3:media3-exoplayer-hls:' + media3Version
-    implementation 'androidx.media3:media3-exoplayer-rtsp:' + media3Version
-    implementation 'androidx.media3:media3-exoplayer-smoothstreaming:' + media3Version
-    implementation 'androidx.media3:media3-ui:' + media3Version
-    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'androidx.appcompat:appcompat:1.7.0'
     implementation 'androidx.biometric:biometric:1.1.0'
     implementation 'androidx.room:room-runtime:2.6.1'
     implementation 'androidx.media:media:1.7.0'
@@ -144,13 +135,30 @@ dependencies {
     implementation 'org.fourthline.cling:cling-core:2.1.1'
     implementation 'org.fourthline.cling:cling-support:2.1.1'
     implementation 'org.greenrobot:eventbus:3.3.1'
+    api 'org.nanohttpd:nanohttpd:2.3.1'
     implementation('org.simpleframework:simple-xml:2.7.1') { exclude group: 'stax', module: 'stax-api' exclude group: 'xpp3', module: 'xpp3' }
     implementation(ext: 'aar', name: 'dlna-core', group: 'fongmi', version: 'release')
-    leanbackImplementation(ext: 'aar', name: 'dlna-dmr', group: 'fongmi', version: 'release')
+    implementation(ext: 'aar', name: 'dlna-dmc', group: 'fongmi', version: 'release')
+    implementation(ext: 'aar', name: 'dlna-dmr', group: 'fongmi', version: 'release')
+    implementation(ext: 'aar', name: 'lib-common-release', group: 'fongmi', version: 'release')
+    implementation(ext: 'aar', name: 'lib-container-release', group: 'fongmi', version: 'release')
+    implementation(ext: 'aar', name: 'lib-database-release', group: 'fongmi', version: 'release')
+    implementation(ext: 'aar', name: 'lib-datasource-release', group: 'fongmi', version: 'release')
+    implementation(ext: 'aar', name: 'lib-datasource-okhttp-release', group: 'fongmi', version: 'release')
+    implementation(ext: 'aar', name: 'lib-datasource-rtmp-release', group: 'fongmi', version: 'release')
+    implementation(ext: 'aar', name: 'lib-decoder-release', group: 'fongmi', version: 'release')
+    implementation(ext: 'aar', name: 'lib-decoder-av1-release', group: 'fongmi', version: 'release')
+    implementation(ext: 'aar', name: 'lib-decoder-ffmpeg-release', group: 'fongmi', version: 'release')
+    implementation(ext: 'aar', name: 'lib-exoplayer-release', group: 'fongmi', version: 'release')
+    implementation(ext: 'aar', name: 'lib-exoplayer-dash-release', group: 'fongmi', version: 'release')
+    implementation(ext: 'aar', name: 'lib-exoplayer-hls-release', group: 'fongmi', version: 'release')
+    implementation(ext: 'aar', name: 'lib-exoplayer-rtsp-release', group: 'fongmi', version: 'release')
+    implementation(ext: 'aar', name: 'lib-exoplayer-smoothstreaming-release', group: 'fongmi', version: 'release')
+    implementation(ext: 'aar', name: 'lib-extractor-release', group: 'fongmi', version: 'release')
+    implementation(ext: 'aar', name: 'lib-ui-release', group: 'fongmi', version: 'release')
     leanbackImplementation 'androidx.leanback:leanback:1.2.0-alpha04'
     leanbackImplementation 'com.github.hedzr:android-file-chooser:v1.2.0-final'
     leanbackImplementation 'me.jessyan:autosize:1.2.1'
-    mobileImplementation(ext: 'aar', name: 'dlna-dmc', group: 'fongmi', version: 'release')
     mobileImplementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
     mobileImplementation 'com.google.android.flexbox:flexbox:3.0.0'
     mobileImplementation('com.journeyapps:zxing-android-embedded:4.3.0') { transitive = false }
