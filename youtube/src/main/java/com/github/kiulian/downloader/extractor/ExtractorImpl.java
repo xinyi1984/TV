@@ -1,7 +1,5 @@
 package com.github.kiulian.downloader.extractor;
 
-import android.util.Log;
-
 import com.github.kiulian.downloader.YoutubeException;
 import com.github.kiulian.downloader.downloader.Downloader;
 import com.github.kiulian.downloader.downloader.request.RequestWebpage;
@@ -52,11 +50,11 @@ public class ExtractorImpl implements Extractor {
             if (config.has("args")) {
                 return config;
             } else {
-                JsonObject object = new JsonObject();
+                JsonObject obj = new JsonObject();
                 JsonObject args = new JsonObject();
                 args.add("player_response", config);
-                object.add("args", args);
-                return object;
+                obj.add("args", args);
+                return obj;
             }
         } catch (Exception e) {
             throw new YoutubeException.BadPageException("Player config contains invalid json");

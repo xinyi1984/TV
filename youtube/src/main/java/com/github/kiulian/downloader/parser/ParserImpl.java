@@ -65,7 +65,7 @@ public class ParserImpl implements Parser {
     private VideoInfo parseVideo(String videoId, YoutubeCallback<VideoInfo> callback) throws YoutubeException {
         // try to spoof android
         // workaround for issue https://github.com/sealedtx/java-youtube-downloader/issues/97
-        VideoInfo videoInfo = parseVideoWeb(videoId, callback);
+        VideoInfo videoInfo = parseVideoAndroid(videoId, callback);
         if (videoInfo == null) {
             videoInfo = parseVideoWeb(videoId, callback);
         }
