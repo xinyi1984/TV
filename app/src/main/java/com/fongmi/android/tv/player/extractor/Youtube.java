@@ -27,7 +27,9 @@ public class Youtube implements Source.Extractor {
 
     private static final String MPD = "<MPD xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xmlns='urn:mpeg:dash:schema:mpd:2011' xsi:schemaLocation='urn:mpeg:dash:schema:mpd:2011 DASH-MPD.xsd' type='static' mediaPresentationDuration='PT%sS' minBufferTime='PT1.500S' profiles='urn:mpeg:dash:profile:isoff-on-demand:2011'>\n" + "<Period duration='PT%sS' start='PT0S'>\n" + "%s\n" + "%s\n" + "</Period>\n" + "</MPD>";
     private static final String ADAPT = "<AdaptationSet lang='chi'>\n" + "<ContentComponent contentType='%s'/>\n" + "<Representation id='%d' bandwidth='%d' codecs='%s' mimeType='%s' %s>\n" + "<BaseURL>%s</BaseURL>\n" + "<SegmentBase indexRange='%s'>\n" + "<Initialization range='%s'/>\n" + "</SegmentBase>\n" + "</Representation>\n" + "</AdaptationSet>";
-    private static final Pattern PATTERN = Pattern.compile("(?<=watch\\?v=|youtu.be/|/shorts/|/live/)([\\w-]{11})");
+    private static final Pattern PATTERN_VID = Pattern.compile("(?<=watch\\?v=|youtu.be/|/shorts/|/live/)([\\w-]{11})");
+    private static final Pattern PATTERN_LIST = Pattern.compile("(youtube\\.com|youtu\\.be).*list=");
+
     private static YoutubeDownloader downloader;
 
     private static YoutubeDownloader getDownloader() {
@@ -41,7 +43,7 @@ public class Youtube implements Source.Extractor {
 
     @Override
     public String fetch(String url) throws Exception {
-        Matcher matcher = PATTERN.matcher(url);
+        Matcher matcher = PATTERN_VID.matcher(url);
         if (!matcher.find()) return "";
         String videoId = matcher.group();
         RequestVideoInfo request = new RequestVideoInfo(videoId);
@@ -95,7 +97,7 @@ public class Youtube implements Source.Extractor {
         private final String url;
 
         public static boolean match(String url) {
-            return PATTERN.matcher(url).find() && url.contains("list=");
+            return PATTERN_LIST.matcher(url).find();
         }
 
         public static Parser get(String url) {
