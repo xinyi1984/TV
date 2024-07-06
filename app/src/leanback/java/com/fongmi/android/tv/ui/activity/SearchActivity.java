@@ -30,11 +30,11 @@ import com.fongmi.android.tv.ui.dialog.SiteDialog;
 import com.fongmi.android.tv.utils.KeyUtil;
 import com.fongmi.android.tv.utils.Util;
 import com.github.catvod.net.OkHttp;
+import com.github.catvod.utils.Trans;
 import com.google.common.net.HttpHeaders;
 
 import java.io.IOException;
 import java.net.URLEncoder;
-import java.util.HashMap;
 import java.util.List;
 
 import okhttp3.Call;
@@ -49,59 +49,6 @@ public class SearchActivity extends BaseActivity implements WordAdapter.OnClickL
 
     public static void start(Activity activity) {
         activity.startActivity(new Intent(activity, SearchActivity.class));
-    }
-
-    public static String convertBopomofoToPinyin(String bopomofoString) {
-        HashMap<String, String> bopomofoToPinyinMap = new HashMap<String, String>();
-        bopomofoToPinyinMap.put("ㄅ", "b");
-        bopomofoToPinyinMap.put("ㄆ", "p");
-        bopomofoToPinyinMap.put("ㄇ", "m");
-        bopomofoToPinyinMap.put("ㄈ", "f");
-        bopomofoToPinyinMap.put("ㄉ", "d");
-        bopomofoToPinyinMap.put("ㄊ", "t");
-        bopomofoToPinyinMap.put("ㄋ", "n");
-        bopomofoToPinyinMap.put("ㄌ", "l");
-        bopomofoToPinyinMap.put("ㄍ", "g");
-        bopomofoToPinyinMap.put("ㄎ", "k");
-        bopomofoToPinyinMap.put("ㄏ", "h");
-        bopomofoToPinyinMap.put("ㄐ", "j");
-        bopomofoToPinyinMap.put("ㄑ", "q");
-        bopomofoToPinyinMap.put("ㄒ", "x");
-        bopomofoToPinyinMap.put("ㄓ", "z");
-        bopomofoToPinyinMap.put("ㄔ", "c");
-        bopomofoToPinyinMap.put("ㄕ", "s");
-        bopomofoToPinyinMap.put("ㄖ", "r");
-        bopomofoToPinyinMap.put("ㄗ", "z");
-        bopomofoToPinyinMap.put("ㄘ", "c");
-        bopomofoToPinyinMap.put("ㄙ", "s");
-        bopomofoToPinyinMap.put("ㄚ", "a");
-        bopomofoToPinyinMap.put("ㄛ", "o");
-        bopomofoToPinyinMap.put("ㄜ", "e");
-        bopomofoToPinyinMap.put("ㄝ", "e"); // can also be ie
-        bopomofoToPinyinMap.put("ㄞ", "ai");
-        bopomofoToPinyinMap.put("ㄟ", "ei");
-        bopomofoToPinyinMap.put("ㄠ", "ao");
-        bopomofoToPinyinMap.put("ㄡ", "ou");
-        bopomofoToPinyinMap.put("ㄢ", "an");
-        bopomofoToPinyinMap.put("ㄣ", "en");
-        bopomofoToPinyinMap.put("ㄤ", "ang");
-        bopomofoToPinyinMap.put("ㄥ", "eng");
-        bopomofoToPinyinMap.put("ㄦ", "er");
-        bopomofoToPinyinMap.put("ㄧ", "y");
-        bopomofoToPinyinMap.put("ㄨ", "w");
-        bopomofoToPinyinMap.put("ㄩ", "yu");
-
-        StringBuilder pinyinStringBuilder = new StringBuilder();
-        for (char bopomofoChar : bopomofoString.toCharArray()) {
-            String pinyin = bopomofoToPinyinMap.get(String.valueOf(bopomofoChar));
-            if (pinyin != null) {
-                pinyinStringBuilder.append(pinyin);
-            } else {
-                // Handle characters not found in the map (e.g., tones)
-                pinyinStringBuilder.append(bopomofoChar); // Add the character as is
-            }
-        }
-        return pinyinStringBuilder.toString();
     }
 
     @Override
@@ -168,7 +115,7 @@ public class SearchActivity extends BaseActivity implements WordAdapter.OnClickL
 
     private void getSuggest(String text) {
         mBinding.hint.setText(R.string.search_suggest);
-        OkHttp.newCall("https://suggest.video.iqiyi.com/?if=mobile&key=" + URLEncoder.encode(text)).enqueue(new Callback() {
+        OkHttp.newCall("https://suggest.video.iqiyi.com/?if=mobile&key=" + URLEncoder.encode(Trans.z2p(text))).enqueue(new Callback() {
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if (mBinding.keyword.getText().toString().trim().isEmpty()) return;
@@ -195,7 +142,7 @@ public class SearchActivity extends BaseActivity implements WordAdapter.OnClickL
         mBinding.keyword.setSelection(mBinding.keyword.length());
         Util.hideKeyboard(mBinding.keyword);
         if (TextUtils.isEmpty(keyword)) return;
-        CollectActivity.start(this, convertBopomofoToPinyin(keyword));
+        CollectActivity.start(this, keyword);
         App.post(() -> mRecordAdapter.add(keyword), 250);
     }
 
