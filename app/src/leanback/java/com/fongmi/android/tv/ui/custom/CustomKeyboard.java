@@ -1,18 +1,16 @@
 package com.fongmi.android.tv.ui.custom;
 
 import android.annotation.SuppressLint;
+
 import com.fongmi.android.tv.R;
-import com.fongmi.android.tv.Setting;
 import com.fongmi.android.tv.databinding.ActivitySearchBinding;
 import com.fongmi.android.tv.ui.adapter.KeyboardAdapter;
-import java.util.List;
 
 public class CustomKeyboard implements KeyboardAdapter.OnClickListener {
 
     private final ActivitySearchBinding binding;
     private final Callback callback;
-    private boolean useZhuYin = false;
-    private KeyboardAdapter keyboardAdapter; 
+    private KeyboardAdapter adapter;
 
     public static void init(Callback callback, ActivitySearchBinding binding) {
         new CustomKeyboard(callback, binding).initView();
@@ -21,16 +19,12 @@ public class CustomKeyboard implements KeyboardAdapter.OnClickListener {
     public CustomKeyboard(Callback callback, ActivitySearchBinding binding) {
         this.callback = callback;
         this.binding = binding;
-        this.keyboardAdapter = new KeyboardAdapter(this); 
     }
 
     private void initView() {
         binding.keyboard.setHasFixedSize(true);
         binding.keyboard.addItemDecoration(new SpaceItemDecoration(6, 8));
-        if(Setting.getLanguage()==2){
-            useZhuYin=true;
-        }
-        binding.keyboard.setAdapter(keyboardAdapter);
+        binding.keyboard.setAdapter(adapter = new KeyboardAdapter(this));
     }
 
     @Override
@@ -49,13 +43,19 @@ public class CustomKeyboard implements KeyboardAdapter.OnClickListener {
         StringBuilder sb = new StringBuilder(binding.keyword.getText().toString());
         int cursor = binding.keyword.getSelectionStart();
         switch (resId) {
-            case R.drawable.ic_action_zhuyin:
-                useZhuYin = !useZhuYin;
-                List<Object> newKeys = useZhuYin ? keyboardAdapter.getZhuYinKeys() : keyboardAdapter.getEnglishKeys();
-                keyboardAdapter.updateKeyList(newKeys);
+            case R.drawable.ic_keyboard:
+                binding.fake.requestFocus();
+                adapter.toggle();
+                binding.keyboard.postDelayed(() -> binding.keyboard.findViewHolderForLayoutPosition(6).itemView.requestFocus(), 0);
                 break;
             case R.drawable.ic_setting_home:
                 callback.showDialog();
+                break;
+            case R.drawable.ic_keyboard_remote:
+                callback.onRemote();
+                break;
+            case R.drawable.ic_keyboard_search:
+                callback.onSearch();
                 break;
             case R.drawable.ic_keyboard_left:
                 binding.keyword.setSelection(--cursor < 0 ? 0 : cursor);
@@ -68,12 +68,6 @@ public class CustomKeyboard implements KeyboardAdapter.OnClickListener {
                 sb.deleteCharAt(cursor - 1);
                 binding.keyword.setText(sb.toString());
                 binding.keyword.setSelection(cursor - 1);
-                break;
-            case R.drawable.ic_keyboard_remote:
-                callback.onRemote();
-                break;
-            case R.drawable.ic_keyboard_search:
-                callback.onSearch();
                 break;
         }
     }
