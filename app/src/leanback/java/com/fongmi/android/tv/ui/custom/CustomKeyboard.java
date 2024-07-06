@@ -1,15 +1,18 @@
 package com.fongmi.android.tv.ui.custom;
 
 import android.annotation.SuppressLint;
-
 import com.fongmi.android.tv.R;
+import com.fongmi.android.tv.Setting;
 import com.fongmi.android.tv.databinding.ActivitySearchBinding;
 import com.fongmi.android.tv.ui.adapter.KeyboardAdapter;
+import java.util.List;
 
 public class CustomKeyboard implements KeyboardAdapter.OnClickListener {
 
     private final ActivitySearchBinding binding;
     private final Callback callback;
+    private boolean useZhuYin = false;
+    private KeyboardAdapter keyboardAdapter; 
 
     public static void init(Callback callback, ActivitySearchBinding binding) {
         new CustomKeyboard(callback, binding).initView();
@@ -18,12 +21,16 @@ public class CustomKeyboard implements KeyboardAdapter.OnClickListener {
     public CustomKeyboard(Callback callback, ActivitySearchBinding binding) {
         this.callback = callback;
         this.binding = binding;
+        this.keyboardAdapter = new KeyboardAdapter(this); 
     }
 
     private void initView() {
         binding.keyboard.setHasFixedSize(true);
         binding.keyboard.addItemDecoration(new SpaceItemDecoration(6, 8));
-        binding.keyboard.setAdapter(new KeyboardAdapter(this));
+        if(Setting.getLanguage()==2){
+            useZhuYin=true;
+        }
+        binding.keyboard.setAdapter(keyboardAdapter);
     }
 
     @Override
@@ -42,6 +49,11 @@ public class CustomKeyboard implements KeyboardAdapter.OnClickListener {
         StringBuilder sb = new StringBuilder(binding.keyword.getText().toString());
         int cursor = binding.keyword.getSelectionStart();
         switch (resId) {
+            case R.drawable.ic_action_zhuyin:
+                useZhuYin = !useZhuYin;
+                List<Object> newKeys = useZhuYin ? keyboardAdapter.getZhuYinKeys() : keyboardAdapter.getEnglishKeys();
+                keyboardAdapter.updateKeyList(newKeys);
+                break;
             case R.drawable.ic_setting_home:
                 callback.showDialog();
                 break;
