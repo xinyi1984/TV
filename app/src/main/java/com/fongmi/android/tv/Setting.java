@@ -6,7 +6,6 @@ import android.provider.Settings;
 
 import com.fongmi.android.tv.player.Players;
 import com.github.catvod.utils.Prefers;
-import com.github.catvod.utils.Util;
 
 public class Setting {
 
@@ -51,7 +50,7 @@ public class Setting {
     }
 
     public static String getUa() {
-        return Prefers.getString("ua", Util.CHROME);
+        return Prefers.getString("ua");
     }
 
     public static void putUa(String ua) {
