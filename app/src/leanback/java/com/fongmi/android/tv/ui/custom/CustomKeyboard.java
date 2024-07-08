@@ -65,9 +65,7 @@ public class CustomKeyboard implements KeyboardAdapter.OnClickListener {
                 binding.keyword.setSelection(cursor - 1);
                 break;
             case R.drawable.ic_keyboard:
-                binding.keyword.requestFocus();
                 adapter.toggle();
-                binding.keyboard.postDelayed(() -> binding.keyboard.findViewHolderForLayoutPosition(6).itemView.requestFocus(), 0);
                 break;
         }
     }
