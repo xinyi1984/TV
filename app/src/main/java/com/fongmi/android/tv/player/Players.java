@@ -35,6 +35,7 @@ import com.fongmi.android.tv.event.PlayerEvent;
 import com.fongmi.android.tv.impl.ParseCallback;
 import com.fongmi.android.tv.impl.SessionCallback;
 import com.fongmi.android.tv.player.exo.ExoUtil;
+import com.fongmi.android.tv.server.Server;
 import com.fongmi.android.tv.utils.FileUtil;
 import com.fongmi.android.tv.utils.Notify;
 import com.fongmi.android.tv.utils.ResUtil;
@@ -77,7 +78,9 @@ public class Players implements Player.Listener, ParseCallback {
     private int retry;
 
     public static Players create(Activity activity) {
-        return new Players(activity);
+        Players player = new Players(activity);
+        Server.get().setPlayer(player);
+        return player;
     }
 
     public static boolean isHard(int decode) {
@@ -316,6 +319,7 @@ public class Players implements Player.Listener, ParseCallback {
         releasePlayer();
         session.release();
         removeTimeoutCheck();
+        Server.get().setPlayer(null);
         App.execute(() -> Source.get().stop());
     }
 
