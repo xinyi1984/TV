@@ -93,6 +93,11 @@ public class Spider extends com.github.catvod.crawler.Spider {
         return result;
     }
 
+    @Override
+    public void destroy() {
+        app.callAttr("destroy", obj);
+    }
+
     private ByteArrayInputStream getStream(PyObject o, boolean base64) {
         if (o.type().toString().contains("bytes")) {
             return new ByteArrayInputStream(o.toJava(byte[].class));
