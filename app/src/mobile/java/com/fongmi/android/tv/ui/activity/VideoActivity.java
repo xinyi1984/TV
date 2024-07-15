@@ -1733,8 +1733,8 @@ public class VideoActivity extends BaseActivity implements Clock.Callback, Custo
             hideSheet();
         } else {
             showDanmu();
+            stopService();
             setForeground(true);
-            PlaybackService.stop();
             setSubtitle(Setting.getSubtitle());
             if (isStop()) finish();
         }
@@ -1806,6 +1806,7 @@ public class VideoActivity extends BaseActivity implements Clock.Callback, Custo
     protected void onDestroy() {
         super.onDestroy();
         stopSearch();
+        stopService();
         mClock.release();
         mPlayers.release();
         Timer.get().reset();

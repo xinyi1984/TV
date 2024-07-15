@@ -1158,8 +1158,8 @@ public class LiveActivity extends BaseActivity implements Clock.Callback, Custom
             hideUI();
         } else {
             hideInfo();
+            stopService();
             setForeground(true);
-            PlaybackService.stop();
             setSubtitle(Setting.getSubtitle());
             if (isStop()) finish();
         }
@@ -1231,6 +1231,7 @@ public class LiveActivity extends BaseActivity implements Clock.Callback, Custom
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        stopService();
         mClock.release();
         mPlayers.release();
         PlaybackService.stop();

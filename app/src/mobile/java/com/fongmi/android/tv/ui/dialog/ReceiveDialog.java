@@ -35,8 +35,12 @@ public class ReceiveDialog extends BaseDialog {
     }
 
     public void show(Fragment fragment) {
-        for (Fragment f : fragment.getChildFragmentManager().getFragments()) if (f instanceof BottomSheetDialogFragment) return;
-        show(fragment.getChildFragmentManager(), null);
+        try {
+            for (Fragment f : fragment.getChildFragmentManager().getFragments()) if (f instanceof BottomSheetDialogFragment) return;
+            show(fragment.getChildFragmentManager(), null);
+        } catch (Exception e) {
+            onReceiveCast();
+        }
     }
 
     @Override
