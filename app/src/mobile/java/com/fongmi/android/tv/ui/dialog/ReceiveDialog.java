@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.viewbinding.ViewBinding;
 
 import com.fongmi.android.tv.api.config.VodConfig;
@@ -34,13 +35,14 @@ public class ReceiveDialog extends BaseDialog {
         return this;
     }
 
+    public void show(FragmentActivity activity) {
+        for (Fragment f : activity.getSupportFragmentManager().getFragments()) if (f instanceof BottomSheetDialogFragment) return;
+        show(activity.getSupportFragmentManager(), null);
+    }
+
     public void show(Fragment fragment) {
-        try {
-            for (Fragment f : fragment.getChildFragmentManager().getFragments()) if (f instanceof BottomSheetDialogFragment) return;
-            show(fragment.getChildFragmentManager(), null);
-        } catch (Exception e) {
-            onReceiveCast();
-        }
+        for (Fragment f : fragment.getChildFragmentManager().getFragments()) if (f instanceof BottomSheetDialogFragment) return;
+        show(fragment.getChildFragmentManager(), null);
     }
 
     @Override
