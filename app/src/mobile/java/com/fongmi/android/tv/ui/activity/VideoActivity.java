@@ -1361,7 +1361,7 @@ public class VideoActivity extends BaseActivity implements Clock.Callback, Custo
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onErrorEvent(ErrorEvent event) {
         if (isRedirect()) return;
-        if (event.getCode() / 1000 == 4 && mPlayers.isExo() && mPlayers.isHard()) onDecode(false);
+        if (event.getCode() / 1000 == 4 && mPlayers.isExo() && mPlayers.addCount() <= 1) onDecode(false);
         else if (mPlayers.addRetry() > event.getRetry()) checkError(event);
         else onRefresh();
     }

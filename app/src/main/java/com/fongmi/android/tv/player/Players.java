@@ -87,6 +87,7 @@ public class Players implements Player.Listener, IMediaPlayer.Listener, ParseCal
 
     private long position;
     private int decode;
+    private int count;
     private int player;
     private int error;
     private int retry;
@@ -221,10 +222,15 @@ public class Players implements Player.Listener, IMediaPlayer.Listener, ParseCal
         this.position = position;
     }
 
+    public int addCount() {
+        return ++count;
+    }
+
     public void reset() {
         position = C.TIME_UNSET;
         removeTimeoutCheck();
         stopParse();
+        count = 0;
         error = 0;
         retry = 0;
     }
