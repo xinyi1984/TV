@@ -74,6 +74,7 @@ public class Players implements Player.Listener, ParseCallback {
 
     private long position;
     private int decode;
+    private int count;
     private int error;
     private int retry;
 
@@ -145,10 +146,15 @@ public class Players implements Player.Listener, ParseCallback {
         this.position = position;
     }
 
+    public int addCount() {
+        return ++count;
+    }
+
     public void reset() {
         position = C.TIME_UNSET;
         removeTimeoutCheck();
         stopParse();
+        count = 0;
         error = 0;
         retry = 0;
     }

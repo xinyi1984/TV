@@ -1162,7 +1162,7 @@ public class VideoActivity extends BaseActivity implements CustomKeyDownVod.List
     }
 
     private void checkError(ErrorEvent event) {
-        if (mPlayers.isHard() && event.getCode() / 1000 == 4) {
+        if (event.getCode() / 1000 == 4 && mPlayers.addCount() <= 2) {
             onDecode();
         } else {
             onError(event);

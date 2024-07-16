@@ -763,7 +763,7 @@ public class LiveActivity extends BaseActivity implements Clock.Callback, GroupP
     }
 
     private void checkError(ErrorEvent event) {
-        if (mPlayers.isHard() && event.getCode() / 1000 == 4) {
+        if (event.getCode() / 1000 == 4 && mPlayers.addCount() <= 2) {
             onDecode();
         } else {
             onError(event);
