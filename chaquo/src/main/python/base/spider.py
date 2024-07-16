@@ -63,6 +63,10 @@ class Spider(metaclass=ABCMeta):
     def getName(self):
         pass
 
+    @abstractmethod
+    def destroy(self):
+        pass
+
     def getDependence(self):
         return []
 
