@@ -434,6 +434,7 @@ public class Players implements Player.Listener, IMediaPlayer.Listener, ParseCal
         if (isIjk()) releaseIjk();
         if (haveDanmu()) danmuView.release();
         removeTimeoutCheck();
+        Server.get().setPlayer(null);
         App.execute(() -> Source.get().stop());
     }
 
