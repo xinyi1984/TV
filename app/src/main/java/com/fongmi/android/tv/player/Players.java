@@ -539,13 +539,14 @@ public class Players implements Player.Listener, ParseCallback {
     @Override
     public void onPlaybackStateChanged(int state) {
         switch (state) {
-            case Player.STATE_READY:
-                PlayerEvent.ready();
-                break;
             case Player.STATE_IDLE:
+            case Player.STATE_READY:
             case Player.STATE_ENDED:
+                PlayerEvent.state(state);
+                break;
             case Player.STATE_BUFFERING:
                 PlayerEvent.state(state);
+                setPlaybackState(PlaybackStateCompat.STATE_BUFFERING);
                 break;
         }
     }
