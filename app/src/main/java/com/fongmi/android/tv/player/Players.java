@@ -710,13 +710,14 @@ public class Players implements Player.Listener, IMediaPlayer.Listener, ParseCal
     @Override
     public void onPlaybackStateChanged(int state) {
         switch (state) {
+            case Player.STATE_IDLE:
             case Player.STATE_READY:
-                PlayerEvent.ready();
+            case Player.STATE_ENDED:
+                PlayerEvent.state(state);
                 break;
             case Player.STATE_BUFFERING:
-            case Player.STATE_ENDED:
-            case Player.STATE_IDLE:
                 PlayerEvent.state(state);
+                setPlaybackState(PlaybackStateCompat.STATE_BUFFERING);
                 break;
         }
     }
@@ -730,7 +731,7 @@ public class Players implements Player.Listener, IMediaPlayer.Listener, ParseCal
             case IMediaPlayer.MEDIA_INFO_BUFFERING_END:
             case IMediaPlayer.MEDIA_INFO_VIDEO_SEEK_RENDERING_START:
             case IMediaPlayer.MEDIA_INFO_AUDIO_SEEK_RENDERING_START:
-                PlayerEvent.ready();
+                PlayerEvent.state(Player.STATE_READY);
                 break;
         }
     }
@@ -744,7 +745,7 @@ public class Players implements Player.Listener, IMediaPlayer.Listener, ParseCal
 
     @Override
     public void onPrepared(IMediaPlayer mp) {
-        PlayerEvent.ready();
+        PlayerEvent.state(Player.STATE_READY);
     }
 
     @Override

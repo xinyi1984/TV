@@ -158,6 +158,7 @@ public class VideoActivity extends BaseActivity implements Clock.Callback, Custo
     private boolean stop;
     private boolean lock;
     private int toggleCount;
+    private int errorCount;
     private Runnable mR0;
     private Runnable mR1;
     private Runnable mR2;
@@ -1304,6 +1305,7 @@ public class VideoActivity extends BaseActivity implements Clock.Callback, Custo
                 checkRotate();
                 setMetadata();
                 resetToggle();
+                resetError();
                 hideProgress();
                 mPlayers.reset();
                 setDefaultTrack();
@@ -1361,7 +1363,8 @@ public class VideoActivity extends BaseActivity implements Clock.Callback, Custo
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onErrorEvent(ErrorEvent event) {
         if (isRedirect()) return;
-        if (event.getCode() / 1000 == 4 && mPlayers.isExo() && mPlayers.addCount() <= 1) onDecode(false);
+        if (addErrorCount() > 20) onErrorEnd(event);
+        else if (event.getCode() / 1000 == 4 && mPlayers.isExo() && mPlayers.addCount() <= 1) onDecode(false);
         else if (mPlayers.addRetry() > event.getRetry()) checkError(event);
         else onRefresh();
     }
@@ -1383,13 +1386,22 @@ public class VideoActivity extends BaseActivity implements Clock.Callback, Custo
         onRefresh();
     }
 
-    private void onError(ErrorEvent event) {
+    private void onErrorEnd(ErrorEvent event) {
+        onErrorPlayer(event);
+        resetError();
+    }
+
+    private void onErrorPlayer(ErrorEvent event) {
         mBinding.swipeLayout.setEnabled(true);
         Track.delete(getHistoryKey());
         showError(event.getMsg());
         mClock.setCallback(null);
         mPlayers.reset();
         mPlayers.stop();
+    }
+
+    private void onError(ErrorEvent event) {
+        onErrorPlayer(event);
         startFlow();
     }
 
@@ -1605,6 +1617,14 @@ public class VideoActivity extends BaseActivity implements Clock.Callback, Custo
 
     public void resetToggle() {
         this.toggleCount = 0;
+    }
+
+    public int addErrorCount() {
+        return ++errorCount;
+    }
+
+    public void resetError() {
+        this.errorCount = 0;
     }
 
     private void notifyItemChanged(RecyclerView.Adapter<?> adapter) {
