@@ -377,7 +377,6 @@ public class VideoActivity extends BaseActivity implements Clock.Callback, Custo
         mBinding.video.addOnLayoutChangeListener((view, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) -> mPiP.update(getActivity(), view));
     }
 
-
     private void setVideoView(boolean isInPictureInPictureMode) {
         if (isInPictureInPictureMode) {
             mBinding.video.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT));
