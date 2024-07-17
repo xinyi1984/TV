@@ -1,7 +1,9 @@
 import re
+import os
 import json
 import requests
 from lxml import etree
+from com.chaquo.python import Python
 from abc import abstractmethod, ABCMeta
 from importlib.machinery import SourceFileLoader
 
@@ -69,7 +71,12 @@ class Spider(metaclass=ABCMeta):
     def getDependence(self):
         return []
 
-    def loadModule(self, name, path):
+    def loadSpider(self, name):
+        return self.loadModule(name).Spider()
+
+    def loadModule(self, name):
+        cache_dir = Python.getPlatform().getApplication().getCacheDir().getAbsolutePath()
+        path = os.path.join(os.path.join(cache_dir, 'py'),  f'{name}.py')
         return SourceFileLoader(name, path).load_module()
 
     def removeHtmlTags(self, src):
