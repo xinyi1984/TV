@@ -7,12 +7,12 @@ import json
 def spider(cache, api):
     name = os.path.basename(api)
     path = cache + '/' + name
-    downloadFile(path, api)
+    download(path, api)
     name = name.split('.')[0]
     return SourceFileLoader(name, path).load_module().Spider()
 
 
-def downloadFile(path, api):
+def download(path, api):
     if api.startswith('http'):
         writeFile(path, redirect(api).content)
     else:

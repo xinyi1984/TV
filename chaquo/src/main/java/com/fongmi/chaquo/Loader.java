@@ -23,6 +23,6 @@ public class Loader {
     public Spider spider(Context context, String api) {
         if (app == null) init(context);
         PyObject obj = app.callAttr("spider", Path.py().getAbsolutePath(), api);
-        return new Spider(app, obj);
+        return new Spider(app, obj, api);
     }
 }

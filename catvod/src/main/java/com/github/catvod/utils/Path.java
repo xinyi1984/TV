@@ -108,6 +108,10 @@ public class Path {
         return new File(js(), name);
     }
 
+    public static File py(String name) {
+        return new File(py(), name);
+    }
+
     public static File jar(String name) {
         File file = new File(jar(), Util.md5(name).concat(".jar"));
         file.setReadOnly();
