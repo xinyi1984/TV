@@ -364,7 +364,7 @@ public class CastActivity extends BaseActivity implements CustomKeyDownCast.List
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onErrorEvent(ErrorEvent event) {
-        if (event.getCode() / 1000 == 4 && mPlayers.isExo() && mPlayers.addCount() <= 1) onDecode(false);
+        if (event.isDecode() && mPlayers.canToggleDecode()) onDecode(false);
         else if (mPlayers.addRetry() > event.getRetry()) onError(event);
         else onReset();
     }

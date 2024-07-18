@@ -798,7 +798,7 @@ public class LiveActivity extends BaseActivity implements Clock.Callback, GroupP
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onErrorEvent(ErrorEvent event) {
         if (addErrorCount() > 20) onErrorEnd(event);
-        else if (event.getCode() / 1000 == 4 && mPlayers.isExo() && mPlayers.addCount() <= 1) onDecode(false);
+        else if (event.isDecode() && mPlayers.canToggleDecode()) onDecode(false);
         else if (mPlayers.addRetry() > event.getRetry()) checkError(event);
         else fetch();
     }

@@ -14,6 +14,7 @@ import android.text.style.ClickableSpan;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -549,6 +550,7 @@ public class VideoActivity extends BaseActivity implements CustomKeyDownVod.List
         mBinding.widget.title.setText(getString(R.string.detail_title, mBinding.name.getText(), episode.getName()));
         mBinding.display.title.setText(mBinding.widget.title.getText());
         mViewModel.playerContent(getKey(), flag.getFlag(), episode.getUrl());
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         updateHistory(episode, replay);
         mPlayers.clear();
         mPlayers.stop();
@@ -1396,6 +1398,7 @@ public class VideoActivity extends BaseActivity implements CustomKeyDownVod.List
         if (mBinding.control.loop.isActivated()) {
             onReset(true);
         } else {
+            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
             checkNext();
         }
     }
@@ -1425,7 +1428,7 @@ public class VideoActivity extends BaseActivity implements CustomKeyDownVod.List
     public void onErrorEvent(ErrorEvent event) {
         if (isBackground()) return;
         if (addErrorCount() > 20) onErrorEnd(event);
-        else if (event.getCode() / 1000 == 4 && mPlayers.isExo() && mPlayers.addCount() <= 1) onDecode(false);
+        else if (event.isDecode() && mPlayers.canToggleDecode()) onDecode(false);
         else if (mPlayers.addRetry() > event.getRetry()) checkError(event);
         else onRefresh();
     }
@@ -1578,6 +1581,7 @@ public class VideoActivity extends BaseActivity implements CustomKeyDownVod.List
     }
 
     private void onPaused(boolean visible) {
+        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         mBinding.widget.exoDuration.setText(mPlayers.getDurationTime());
         mBinding.widget.exoPosition.setText(mPlayers.getPositionTime(0));
         if (visible) showInfoAndCenter();
@@ -1586,6 +1590,7 @@ public class VideoActivity extends BaseActivity implements CustomKeyDownVod.List
     }
 
     private void onPlay() {
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         mPlayers.play();
         hideCenter();
     }
