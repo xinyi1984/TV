@@ -338,8 +338,8 @@ public class CastActivity extends BaseActivity implements CustomKeyDownCast.List
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onErrorEvent(ErrorEvent event) {
-        if (event.isDecode() && mPlayers.canToggle()) onDecode();
-        else if (mPlayers.retried()) onError(event);
+        if (mPlayers.retried()) onError(event);
+        else if (event.isDecode()) onDecode();
         else onReset();
     }
 

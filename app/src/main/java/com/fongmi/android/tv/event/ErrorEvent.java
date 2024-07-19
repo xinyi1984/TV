@@ -49,10 +49,6 @@ public class ErrorEvent {
         return type;
     }
 
-    public int getCode() {
-        return code;
-    }
-
     public boolean isDecode() {
         return code / 1000 == 4;
     }
