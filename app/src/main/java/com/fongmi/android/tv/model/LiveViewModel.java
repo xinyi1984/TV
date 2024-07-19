@@ -102,8 +102,8 @@ public class LiveViewModel extends ViewModel {
         try {
             if (!url.contains("serverTimeZone=")) return;
             TimeZone timeZone = TimeZone.getTimeZone(Uri.parse(url).getQueryParameter("serverTimeZone"));
-            formatTime.setTimeZone(timeZone);
             formatDate.setTimeZone(timeZone);
+            formatTime.setTimeZone(timeZone);
         } catch (Exception ignored) {
         }
     }
