@@ -3,6 +3,8 @@ package com.fongmi.android.tv.player;
 import android.app.Activity;
 import android.app.PendingIntent;
 import android.content.Intent;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.media.MediaMetadataCompat;
@@ -296,7 +298,6 @@ public class Players implements Player.Listener, ParseCallback {
     }
 
     public void play() {
-        session.setActive(true);
         if (exoPlayer != null) exoPlayer.play();
         setPlaybackState(PlaybackStateCompat.STATE_PLAYING);
     }
@@ -307,7 +308,6 @@ public class Players implements Player.Listener, ParseCallback {
     }
 
     public void stop() {
-        session.setActive(false);
         if (exoPlayer != null) exoPlayer.stop();
         if (exoPlayer != null) exoPlayer.clearMediaItems();
         setPlaybackState(PlaybackStateCompat.STATE_STOPPED);
@@ -400,6 +400,7 @@ public class Players implements Player.Listener, ParseCallback {
         if (exoPlayer != null) exoPlayer.prepare();
         Logger.t(TAG).d(error + "," + url);
         App.post(runnable, timeout);
+        session.setActive(true);
         PlayerEvent.prepare();
     }
 
@@ -432,23 +433,15 @@ public class Players implements Player.Listener, ParseCallback {
         return scheme.isEmpty() || "file".equals(scheme) ? !Path.exists(url) : host.isEmpty();
     }
 
-    public Uri getUri() {
-        return getUrl().startsWith("file://") || getUrl().startsWith("/") ? FileUtil.getShareUri(getUrl()) : Uri.parse(getUrl());
+    private MediaMetadataCompat.Builder putBitmap(MediaMetadataCompat.Builder builder, Drawable drawable) {
+        try {
+            return builder.putBitmap(MediaMetadataCompat.METADATA_KEY_ART, ((BitmapDrawable) drawable).getBitmap());
+        } catch (Exception ignored) {
+            return builder;
+        }
     }
 
-    public String[] getHeaderArray() {
-        List<String> list = new ArrayList<>();
-        for (Map.Entry<String, String> entry : getHeaders().entrySet()) list.addAll(Arrays.asList(entry.getKey(), entry.getValue()));
-        return list.toArray(new String[0]);
-    }
-
-    public Bundle getHeaderBundle() {
-        Bundle bundle = new Bundle();
-        for (Map.Entry<String, String> entry : getHeaders().entrySet()) bundle.putString(entry.getKey(), entry.getValue());
-        return bundle;
-    }
-
-    public void setMetadata(String title, String artist, String artUri) {
+    public void setMetadata(String title, String artist, String artUri, Drawable drawable) {
         MediaMetadataCompat.Builder builder = new MediaMetadataCompat.Builder();
         builder.putString(MediaMetadataCompat.METADATA_KEY_TITLE, title);
         builder.putString(MediaMetadataCompat.METADATA_KEY_ARTIST, artist);
@@ -456,17 +449,19 @@ public class Players implements Player.Listener, ParseCallback {
         builder.putString(MediaMetadataCompat.METADATA_KEY_ALBUM_ART_URI, artUri);
         builder.putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_ICON_URI, artUri);
         builder.putLong(MediaMetadataCompat.METADATA_KEY_DURATION, getDuration());
-        session.setMetadata(builder.build());
+        session.setMetadata(putBitmap(builder, drawable).build());
         ActionEvent.update();
     }
 
     public void share(Activity activity, CharSequence title) {
         try {
             if (isEmpty()) return;
+            Bundle bundle = new Bundle();
+            for (Map.Entry<String, String> entry : getHeaders().entrySet()) bundle.putString(entry.getKey(), entry.getValue());
             Intent intent = new Intent(Intent.ACTION_SEND);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             intent.putExtra(Intent.EXTRA_TEXT, getUrl());
-            intent.putExtra("extra_headers", getHeaderBundle());
+            intent.putExtra("extra_headers", bundle);
             intent.putExtra("title", title);
             intent.putExtra("name", title);
             intent.setType("text/plain");
@@ -479,13 +474,16 @@ public class Players implements Player.Listener, ParseCallback {
     public void choose(Activity activity, CharSequence title) {
         try {
             if (isEmpty()) return;
+            List<String> list = new ArrayList<>();
+            for (Map.Entry<String, String> entry : getHeaders().entrySet()) list.addAll(Arrays.asList(entry.getKey(), entry.getValue()));
+            Uri data = getUrl().startsWith("file://") || getUrl().startsWith("/") ? FileUtil.getShareUri(getUrl()) : Uri.parse(getUrl());
             Intent intent = new Intent(Intent.ACTION_VIEW);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-            intent.setDataAndType(getUri(), "video/*");
+            intent.setDataAndType(data, "video/*");
             intent.putExtra("title", title);
             intent.putExtra("return_result", isVod());
-            intent.putExtra("headers", getHeaderArray());
+            intent.putExtra("headers", list.toArray(new String[0]));
             if (isVod()) intent.putExtra("position", (int) getPosition());
             activity.startActivityForResult(Util.getChooser(intent), 1001);
         } catch (Exception e) {

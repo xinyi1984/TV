@@ -1154,7 +1154,7 @@ public class VideoActivity extends BaseActivity implements CustomKeyDownVod.List
         String title = mHistory.getVodName();
         String episode = getEpisode().getName();
         String artist = title.equals(episode) ? "" : getString(R.string.play_now, episode);
-        mPlayers.setMetadata(title, artist, mHistory.getVodPic());
+        mPlayers.setMetadata(title, artist, mHistory.getVodPic(), mBinding.exo.getDefaultArtwork());
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
