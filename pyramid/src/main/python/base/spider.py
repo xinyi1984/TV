@@ -6,6 +6,7 @@ from lxml import etree
 from com.chaquo.python import Python
 from abc import abstractmethod, ABCMeta
 from importlib.machinery import SourceFileLoader
+from com.github.catvod import Proxy
 
 
 class Spider(metaclass=ABCMeta):
@@ -99,3 +100,34 @@ class Spider(metaclass=ABCMeta):
 
     def html(self, content):
         return etree.HTML(content)
+
+    def getProxyUrl(self, local=True):
+        return f'{Proxy.getUrl(local)}?do=py'
+
+    def getCache(self, key):
+        value = self.fetch(f'http://127.0.0.1:{Proxy.getPort()}/cache?do=get&key={key}', timeout=5).text
+        if len(value) > 0:
+            if value.startswith('{') and value.endswith('}') or value.startswith('[') and value.endswith(']'):
+                value = json.loads(value)
+                if type(value) == dict:
+                    if not 'expiresAt' in value or value['expiresAt'] >= int(time.time()):
+                        return value
+                    else:
+                        self.delCache(key)
+                        return None
+            return value
+        else:
+            return None
+
+    def setCache(self, key, value):
+        if type(value) in [int, float]:
+            value = str(value)
+        if len(value) > 0:
+            if type(value) == dict or type(value) == list:
+                value = json.dumps(value, ensure_ascii=False)
+        r = self.post(f'http://127.0.0.1:{Proxy.getPort()}/cache?do=set&key={key}', data={"value": value}, timeout=5)
+        return 'succeed' if r.status_code == 200 else 'failed'
+
+    def delCache(self, key):
+        r = self.fetch(f'http://127.0.0.1:{Proxy.getPort()}/cache?do=del&key={key}', timeout=5)
+        return 'succeed' if r.status_code == 200 else 'failed'
