@@ -43,6 +43,7 @@ class Spider(metaclass=ABCMeta):
     def searchContent(self, key, quick):
         pass
 
+    @abstractmethod
     def searchContentPage(self, key, quick, pg):
         pass
 
@@ -66,6 +67,7 @@ class Spider(metaclass=ABCMeta):
     def getName(self):
         pass
 
+    @abstractmethod
     def destroy(self):
         pass
 
@@ -80,7 +82,7 @@ class Spider(metaclass=ABCMeta):
         path = os.path.join(os.path.join(cache_dir, 'py'),  f'{name}.py')
         return SourceFileLoader(name, path).load_module()
 
-    def regStr(self, src, reg, group=1):
+    def regStr(self, reg, src, group=1):
         m = re.search(reg, src)
         src = ''
         if m:
