@@ -13,8 +13,8 @@ android {
         minSdk 21
         //noinspection ExpiredTargetSdkVersion
         targetSdk 28
-        versionCode 244
-        versionName "0723v2"
+        versionCode 246
+        versionName "0804v2"
         javaCompileOptions {
             annotationProcessorOptions {
                 arguments = ["room.schemaLocation": "$projectDir/schemas".toString()]
@@ -91,20 +91,13 @@ android {
 }
 
 dependencies {
-    implementation project(':hook')
-    implementation project(':tvbus')
     implementation project(':catvod')
     implementation project(':quickjs')
-    implementation project(':thunder')
-    implementation project(':youtube')
-    implementation project(':jianpian')
-    implementation project(':forcetech')
     pythonImplementation project(':chaquo')
     implementation 'androidx.appcompat:appcompat:1.7.0'
     implementation 'androidx.media:media:1.7.0'
     implementation 'androidx.room:room-runtime:2.6.1'
     implementation 'cat.ereza:customactivityoncrash:2.4.0'
-    implementation('com.github.anilbeesetti.nextlib:nextlib-media3ext:0.7.1') { exclude group: 'androidx.media3', module: 'media3-exoplayer' }
     implementation 'com.github.bassaer:materialdesigncolors:1.0.0'
     implementation 'com.github.bumptech.glide:glide:4.16.0'
     implementation 'com.github.bumptech.glide:annotations:4.16.0'
@@ -119,33 +112,39 @@ dependencies {
     implementation 'io.antmedia:rtmp-client:3.2.0'
     implementation 'javax.servlet:javax.servlet-api:3.1.0'
     implementation 'org.chromium.net:cronet-embedded:76.3809.111'
-    implementation 'org.eclipse.jetty:jetty-client:8.1.21.v20160908'
-    implementation 'org.eclipse.jetty:jetty-server:8.1.21.v20160908'
-    implementation 'org.eclipse.jetty:jetty-servlet:8.1.21.v20160908'
-    implementation 'org.fourthline.cling:cling-core:2.1.1'
-    implementation 'org.fourthline.cling:cling-support:2.1.1'
+    implementation 'org.eclipse.jetty:jetty-client:8.1.22.v20160922'
+    implementation('org.eclipse.jetty:jetty-server:8.1.22.v20160922') { exclude group: 'org.eclipse.jetty.orbit', module: 'javax.servlet' }
+    implementation('org.eclipse.jetty:jetty-servlet:8.1.22.v20160922') { exclude group: 'org.eclipse.jetty.orbit', module: 'javax.servlet' }
+    implementation 'org.fourthline.cling:cling-core:2.1.2-SNAPSHOT'
+    implementation 'org.fourthline.cling:cling-support:2.1.2-SNAPSHOT'
     implementation 'org.greenrobot:eventbus:3.3.1'
-    implementation 'org.nanohttpd:nanohttpd:2.3.1'
     implementation('org.simpleframework:simple-xml:2.7.1') { exclude group: 'stax', module: 'stax-api' exclude group: 'xpp3', module: 'xpp3' }
-    implementation(ext: 'aar', name: 'dlna-core', group: 'fongmi', version: 'release')
-    implementation(ext: 'aar', name: 'dlna-dmc', group: 'fongmi', version: 'release')
-    implementation(ext: 'aar', name: 'dlna-dmr', group: 'fongmi', version: 'release')
-    implementation project(':media-lib-common')
-    implementation project(':media-lib-container')
-    implementation project(':media-lib-database')
-    implementation project(':media-lib-datasource')
-    implementation project(':media-lib-datasource-okhttp')
-    implementation project(':media-lib-datasource-rtmp')
-    implementation project(':media-lib-decoder')
-    implementation project(':media-lib-decoder-av1')
-    implementation project(':media-lib-decoder-ffmpeg')
-    implementation project(':media-lib-exoplayer')
-    implementation project(':media-lib-exoplayer-dash')
-    implementation project(':media-lib-exoplayer-hls')
-    implementation project(':media-lib-exoplayer-rtsp')
-    implementation project(':media-lib-exoplayer-smoothstreaming')
-    implementation project(':media-lib-extractor')
-    implementation project(':media-lib-ui')
+    implementation(ext: 'aar', name: 'dlna-core-release', group: 'fongmi', version: 'release')
+    implementation(ext: 'aar', name: 'dlna-dmc-release', group: 'fongmi', version: 'release')
+    implementation(ext: 'aar', name: 'dlna-dmr-release', group: 'fongmi', version: 'release')
+    implementation(ext: 'aar', name: 'forcetech-release', group: 'fongmi', version: 'release')
+    implementation(ext: 'aar', name: 'hook-release', group: 'fongmi', version: 'release')
+    implementation(ext: 'aar', name: 'jianpian-release', group: 'fongmi', version: 'release')
+    implementation(ext: 'aar', name: 'media3ext-release', group: 'fongmi', version: 'release')
+    implementation(ext: 'aar', name: 'nanohttpd-release', group: 'fongmi', version: 'release')
+    implementation(ext: 'aar', name: 'thunder-release', group: 'fongmi', version: 'release')
+    implementation(ext: 'aar', name: 'tvbus-release', group: 'fongmi', version: 'release')
+    implementation(ext: 'aar', name: 'youtube-release', group: 'fongmi', version: 'release')
+    implementation(ext: 'aar', name: 'lib-common-release', group: 'fongmi', version: 'release')
+    implementation(ext: 'aar', name: 'lib-container-release', group: 'fongmi', version: 'release')
+    implementation(ext: 'aar', name: 'lib-database-release', group: 'fongmi', version: 'release')
+    implementation(ext: 'aar', name: 'lib-datasource-release', group: 'fongmi', version: 'release')
+    implementation(ext: 'aar', name: 'lib-datasource-okhttp-release', group: 'fongmi', version: 'release')
+    implementation(ext: 'aar', name: 'lib-datasource-rtmp-release', group: 'fongmi', version: 'release')
+    implementation(ext: 'aar', name: 'lib-decoder-release', group: 'fongmi', version: 'release')
+    implementation(ext: 'aar', name: 'lib-decoder-av1-release', group: 'fongmi', version: 'release')
+    implementation(ext: 'aar', name: 'lib-exoplayer-release', group: 'fongmi', version: 'release')
+    implementation(ext: 'aar', name: 'lib-exoplayer-dash-release', group: 'fongmi', version: 'release')
+    implementation(ext: 'aar', name: 'lib-exoplayer-hls-release', group: 'fongmi', version: 'release')
+    implementation(ext: 'aar', name: 'lib-exoplayer-rtsp-release', group: 'fongmi', version: 'release')
+    implementation(ext: 'aar', name: 'lib-exoplayer-smoothstreaming-release', group: 'fongmi', version: 'release')
+    implementation(ext: 'aar', name: 'lib-extractor-release', group: 'fongmi', version: 'release')
+    implementation(ext: 'aar', name: 'lib-ui-release', group: 'fongmi', version: 'release')
     leanbackImplementation 'androidx.leanback:leanback:1.2.0-alpha04'
     leanbackImplementation 'me.jessyan:autosize:1.2.1'
     mobileImplementation 'androidx.biometric:biometric:1.1.0'
