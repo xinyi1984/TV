@@ -80,7 +80,7 @@ public class JarLoader {
         }
     }
 
-    public void parseJar(String key, String jar) {
+    public synchronized void parseJar(String key, String jar) {
         if (loaders.containsKey(key)) return;
         String[] texts = jar.split(";md5;");
         String md5 = texts.length > 1 ? texts[1].trim() : "";
@@ -98,11 +98,6 @@ public class JarLoader {
         } else if (!jar.isEmpty()) {
             parseJar(key, UrlUtil.convert(jar));
         }
-    }
-
-    public DexClassLoader getLoader(String key, String jar) {
-        if (!loaders.containsKey(key)) parseJar(key, jar);
-        return loaders.get(key);
     }
 
     public Spider getSpider(String key, String api, String ext, String jar) {

@@ -1,6 +1,7 @@
 import re
 import os
 import json
+import time
 import requests
 from lxml import etree
 from com.chaquo.python import Python
@@ -27,7 +28,6 @@ class Spider(metaclass=ABCMeta):
     def homeContent(self, filter):
         pass
 
-    @abstractmethod
     def homeVideoContent(self):
         pass
 
@@ -40,33 +40,29 @@ class Spider(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def searchContent(self, key, quick):
-        pass
-
-    def searchContentPage(self, key, quick, pg):
+    def searchContent(self, key, quick, pg="1"):
         pass
 
     @abstractmethod
     def playerContent(self, flag, id, vipFlags):
         pass
 
-    @abstractmethod
+    def liveContent(self):
+        pass
+
     def localProxy(self, param):
         pass
 
-    @abstractmethod
     def isVideoFormat(self, url):
         pass
 
-    @abstractmethod
     def manualVideoCheck(self):
         pass
 
-    @abstractmethod
-    def getName(self):
+    def destroy(self):
         pass
 
-    def destroy(self):
+    def getName(self):
         pass
 
     def getDependence(self):
@@ -79,6 +75,13 @@ class Spider(metaclass=ABCMeta):
         cache_dir = Python.getPlatform().getApplication().getCacheDir().getAbsolutePath()
         path = os.path.join(os.path.join(cache_dir, 'py'),  f'{name}.py')
         return SourceFileLoader(name, path).load_module()
+
+    def regStr(self, reg, src, group=1):
+        m = re.search(reg, src)
+        src = ''
+        if m:
+            src = m.group(group)
+        return src
 
     def removeHtmlTags(self, src):
         clean = re.compile('<.*?>')

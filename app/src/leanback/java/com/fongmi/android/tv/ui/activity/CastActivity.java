@@ -144,7 +144,7 @@ public class CastActivity extends BaseActivity implements CustomKeyDownCast.List
     }
 
     private void setVideoView() {
-        mPlayers.set(getExo(), getIjk());
+        mPlayers.init(getExo(), getIjk());
         mPlayers.setPlayer(Setting.getPlayer());
         findViewById(R.id.timeBar).setNextFocusUpId(R.id.reset);
         mBinding.control.reset.setText(ResUtil.getStringArray(R.array.select_reset)[0]);
@@ -220,9 +220,9 @@ public class CastActivity extends BaseActivity implements CustomKeyDownCast.List
 
     private void onDecode(boolean save) {
         mPlayers.toggleDecode(save);
-        mPlayers.set(getExo(), getIjk());
+        mPlayers.init(getExo(), getIjk());
+        mPlayers.setMediaSource();
         setDecodeView();
-        onReset();
     }
 
     private void onTrack(View view) {
@@ -364,9 +364,15 @@ public class CastActivity extends BaseActivity implements CustomKeyDownCast.List
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onErrorEvent(ErrorEvent event) {
-        if (event.isDecode() && mPlayers.canToggleDecode()) onDecode(false);
-        else if (mPlayers.addRetry() > event.getRetry()) onError(event);
+        if (mPlayers.addRetry() > event.getRetry()) onError(event);
+        else if (event.isDecode() && mPlayers.canToggleDecode()) onDecode(false);
+        else if (event.isFormat() && mPlayers.isExo()) onErrorFormat(event);
         else onReset();
+    }
+
+    private void onErrorFormat(ErrorEvent event) {
+        mPlayers.setFormat(ExoUtil.getMimeType(event.getCode()));
+        mPlayers.setMediaSource();
     }
 
     private void onError(ErrorEvent event) {
