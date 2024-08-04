@@ -1,6 +1,7 @@
 import re
 import os
 import json
+import time
 import requests
 from lxml import etree
 from com.chaquo.python import Python
@@ -23,52 +24,40 @@ class Spider(metaclass=ABCMeta):
     def init(self, extend=""):
         pass
 
-    @abstractmethod
     def homeContent(self, filter):
         pass
 
-    @abstractmethod
     def homeVideoContent(self):
         pass
 
-    @abstractmethod
     def categoryContent(self, tid, pg, filter, extend):
         pass
 
-    @abstractmethod
     def detailContent(self, ids):
         pass
 
-    @abstractmethod
-    def searchContent(self, key, quick):
+    def searchContent(self, key, quick, pg="1"):
         pass
 
-    @abstractmethod
-    def searchContentPage(self, key, quick, pg):
-        pass
-
-    @abstractmethod
     def playerContent(self, flag, id, vipFlags):
         pass
 
-    @abstractmethod
+    def liveContent(self):
+        pass
+
     def localProxy(self, param):
         pass
 
-    @abstractmethod
     def isVideoFormat(self, url):
         pass
 
-    @abstractmethod
     def manualVideoCheck(self):
         pass
 
-    @abstractmethod
-    def getName(self):
+    def destroy(self):
         pass
 
-    @abstractmethod
-    def destroy(self):
+    def getName(self):
         pass
 
     def getDependence(self):

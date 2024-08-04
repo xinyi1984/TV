@@ -49,8 +49,12 @@ public class ErrorEvent {
         return type;
     }
 
-    public boolean isDecode() {
-        return code / 1000 == 4;
+    public int getCode() {
+        return code;
+    }
+
+    public boolean isExo() {
+        return code / 1000 == 3 || code / 1000 == 4;
     }
 
     public String getMsg() {

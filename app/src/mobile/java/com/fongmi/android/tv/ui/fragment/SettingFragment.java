@@ -170,6 +170,11 @@ public class SettingFragment extends BaseFragment implements ConfigCallback, Sit
     private Callback getCallback() {
         return new Callback() {
             @Override
+            public void success(String result) {
+                Notify.show(result);
+            }
+
+            @Override
             public void success() {
                 setConfig();
             }
