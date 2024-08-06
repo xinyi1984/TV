@@ -163,7 +163,9 @@ public class VodConfig {
             initParse(object);
             initOther(object);
             if (loadLive && object.has("lives")) initLive(object);
+            String notice = Json.safeString(object, "notice");
             config.logo(Json.safeString(object, "logo"));
+            App.post(() -> callback.success(notice));
             config.json(object.toString()).update();
             App.post(callback::success);
         } catch (Throwable e) {

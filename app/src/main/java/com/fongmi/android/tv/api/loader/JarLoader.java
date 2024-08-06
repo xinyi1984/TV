@@ -117,13 +117,13 @@ public class JarLoader {
     }
 
     public JSONObject jsonExt(String key, LinkedHashMap<String, String> jxs, String url) throws Throwable {
-        Class<?> clz = loaders.get("").loadClass("com.github.catvod.parser.Json" + key);
+        Class<?> clz = loaders.get(recent).loadClass("com.github.catvod.parser.Json" + key);
         Method method = clz.getMethod("parse", LinkedHashMap.class, String.class);
         return (JSONObject) method.invoke(null, jxs, url);
     }
 
     public JSONObject jsonExtMix(String flag, String key, String name, LinkedHashMap<String, HashMap<String, String>> jxs, String url) throws Throwable {
-        Class<?> clz = loaders.get("").loadClass("com.github.catvod.parser.Mix" + key);
+        Class<?> clz = loaders.get(recent).loadClass("com.github.catvod.parser.Mix" + key);
         Method method = clz.getMethod("parse", LinkedHashMap.class, String.class, String.class, String.class);
         return (JSONObject) method.invoke(null, jxs, name, flag, url);
     }

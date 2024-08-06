@@ -91,7 +91,6 @@ public class Players implements Player.Listener, IMediaPlayer.Listener, ParseCal
     private int decode;
     private int count;
     private int player;
-    private int error;
     private int retry;
 
     public static Players create(Activity activity) {
@@ -237,7 +236,6 @@ public class Players implements Player.Listener, IMediaPlayer.Listener, ParseCal
         removeTimeoutCheck();
         stopParse();
         count = 0;
-        error = 0;
         retry = 0;
     }
 
@@ -553,9 +551,9 @@ public class Players implements Player.Listener, IMediaPlayer.Listener, ParseCal
         if (isIjk() && ijkPlayer != null) ijkPlayer.setMediaSource(IjkUtil.getSource(this.headers = checkUa(headers), this.url = url), position);
         if (isExo() && exoPlayer != null) exoPlayer.setMediaItem(ExoUtil.getMediaItem(this.headers = checkUa(headers), UrlUtil.uri(this.url = url), this.format = format, this.drm = drm, checkSub(this.subs = subs), decode), position);
         if (isExo() && exoPlayer != null) exoPlayer.prepare();
-        Logger.t(TAG).d(error + "," + url);
         App.post(runnable, timeout);
         PlayerEvent.prepare();
+        Logger.t(TAG).d(url);
     }
 
     private void removeTimeoutCheck() {
@@ -608,7 +606,7 @@ public class Players implements Player.Listener, IMediaPlayer.Listener, ParseCal
     }
 
     private List<Sub> checkSub(List<Sub> subs) {
-        if (sub == null) return new ArrayList<>();
+        if (sub == null) return subs;
         subs.add(0, sub);
         return subs;
     }
@@ -711,7 +709,8 @@ public class Players implements Player.Listener, IMediaPlayer.Listener, ParseCal
     @Override
     public void onPlayerError(@NonNull PlaybackException error) {
         setPlaybackState(PlaybackStateCompat.STATE_ERROR);
-        ErrorEvent.url(ExoUtil.getRetry(this.error = error.errorCode), error.errorCode);
+        Logger.t(TAG).e(error.errorCode + "," + url);
+        ErrorEvent.url(ExoUtil.getRetry(error.errorCode), error.errorCode);
     }
 
     @Override
