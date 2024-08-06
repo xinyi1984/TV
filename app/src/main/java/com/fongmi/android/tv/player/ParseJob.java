@@ -9,8 +9,10 @@ import com.fongmi.android.tv.api.loader.BaseLoader;
 import com.fongmi.android.tv.bean.Parse;
 import com.fongmi.android.tv.bean.Result;
 import com.fongmi.android.tv.impl.ParseCallback;
+import com.fongmi.android.tv.server.Server;
 import com.fongmi.android.tv.ui.custom.CustomWebView;
 import com.fongmi.android.tv.utils.UrlUtil;
+import com.fongmi.android.tv.utils.Util;
 import com.github.catvod.net.OkHttp;
 import com.github.catvod.utils.Json;
 import com.google.common.net.HttpHeaders;
@@ -133,11 +135,12 @@ public class ParseJob implements ParseCallback {
     private void godParse(String webUrl, String flag) throws Exception {
         List<Parse> json = VodConfig.get().getParses(1, flag);
         List<Parse> webs = VodConfig.get().getParses(0, flag);
-        CountDownLatch latch = new CountDownLatch(json.size());
+        int count = json.size() + (webs.isEmpty() ? 0 : 1);
+        CountDownLatch latch = new CountDownLatch(count);
         for (Parse item : json) infinite.execute(() -> jsonParse(latch, item, webUrl));
+        if (!webs.isEmpty()) startWeb(webs, webUrl);
         latch.await();
-        if (webs.isEmpty()) onParseError();
-        for (Parse item : webs) startWeb(item, webUrl);
+        onParseError();
     }
 
     private void jsonParse(CountDownLatch latch, Parse item, String webUrl) {
@@ -174,8 +177,10 @@ public class ParseJob implements ParseCallback {
         }
     }
 
-    private void startWeb(Parse item, String webUrl) {
-        startWeb("", item, webUrl);
+    private void startWeb(List<Parse> items, String webUrl) {
+        StringBuilder sb = new StringBuilder();
+        for (Parse item : items) sb.append(item.getUrl()).append(";");
+        startWeb(new HashMap<>(), Server.get().getAddress("/parse?jxs=" + Util.substring(sb.toString()) + "&url=" + webUrl));
     }
 
     private void startWeb(String key, Parse item, String webUrl) {
