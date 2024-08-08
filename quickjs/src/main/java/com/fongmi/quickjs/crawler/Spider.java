@@ -133,6 +133,7 @@ public class Spider extends com.github.catvod.crawler.Spider {
         }
         submit(() -> {
             executor.shutdownNow();
+            jsObject.release();
             ctx.destroy();
         });
     }
