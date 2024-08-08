@@ -978,7 +978,7 @@ public class LiveActivity extends BaseActivity implements Clock.Callback, Custom
     @Override
     public void onSpeedUp() {
         if (mPlayers.isLive() || !mPlayers.isPlaying() || !mPlayers.canAdjustSpeed()) return;
-        mBinding.control.action.speed.setText(mPlayers.setSpeed(mPlayers.getSpeed() < 3 ? 3 : 5));
+        mBinding.control.action.speed.setText(mPlayers.setSpeed(Setting.getSpeed()));
         mBinding.widget.speed.startAnimation(ResUtil.getAnim(R.anim.forward));
         mBinding.widget.speed.setVisibility(View.VISIBLE);
     }

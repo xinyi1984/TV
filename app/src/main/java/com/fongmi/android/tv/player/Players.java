@@ -273,7 +273,7 @@ public class Players implements Player.Listener, ParseCallback {
 
     public String toggleSpeed() {
         float speed = getSpeed();
-        speed = speed == 1 ? 3f : 1f;
+        speed = speed == 1 ? Setting.getSpeed() : 1;
         return setSpeed(speed);
     }
 
