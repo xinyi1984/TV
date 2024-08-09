@@ -48,6 +48,7 @@
 -dontwarn org.slf4j.impl.StaticLoggerBinder
 -keep class org.xmlpull.** { *; }
 -keepclassmembers class org.xmlpull.** { *; }
+-keep class io.github.anilbeesetti.nextlib.media3ext.ffdecoder.FfmpegAudioDecoder { *; }
 
 # IJK
 -keep class tv.danmaku.ijk.media.player.** { *; }

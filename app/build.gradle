@@ -13,8 +13,8 @@ android {
         minSdk 21
         //noinspection ExpiredTargetSdkVersion
         targetSdk 28
-        versionCode 246
-        versionName "0808"
+        versionCode 247
+        versionName "2.4.7"
         javaCompileOptions {
             annotationProcessorOptions {
                 arguments = ["room.schemaLocation": "$projectDir/schemas".toString()]
@@ -98,6 +98,7 @@ dependencies {
     implementation 'androidx.media:media:1.7.0'
     implementation 'androidx.room:room-runtime:2.6.1'
     implementation 'cat.ereza:customactivityoncrash:2.4.0'
+    implementation('com.github.anilbeesetti.nextlib:nextlib-media3ext:0.8.1') { exclude group: 'androidx.media3', module: 'media3-exoplayer' }
     implementation 'com.github.bassaer:materialdesigncolors:1.0.0'
     implementation 'com.github.bumptech.glide:glide:4.16.0'
     implementation 'com.github.bumptech.glide:annotations:4.16.0'
@@ -125,7 +126,6 @@ dependencies {
     implementation(ext: 'aar', name: 'forcetech-release', group: 'fongmi', version: 'release')
     implementation(ext: 'aar', name: 'hook-release', group: 'fongmi', version: 'release')
     implementation(ext: 'aar', name: 'jianpian-release', group: 'fongmi', version: 'release')
-    implementation(ext: 'aar', name: 'media3ext-release', group: 'fongmi', version: 'release')
     implementation(ext: 'aar', name: 'nanohttpd-release', group: 'fongmi', version: 'release')
     implementation(ext: 'aar', name: 'thunder-release', group: 'fongmi', version: 'release')
     implementation(ext: 'aar', name: 'tvbus-release', group: 'fongmi', version: 'release')
