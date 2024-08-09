@@ -6,6 +6,7 @@ import com.fongmi.android.tv.bean.Live;
 import com.fongmi.android.tv.bean.Site;
 import com.github.catvod.crawler.Spider;
 import com.github.catvod.crawler.SpiderNull;
+import com.github.catvod.utils.Util;
 
 import org.json.JSONObject;
 
@@ -75,6 +76,10 @@ public class BaseLoader {
         } else {
             return jarLoader.proxyInvoke(params);
         }
+    }
+
+    public void parseJar(String jar) {
+        jarLoader.parseJar(Util.md5(jar), jar);
     }
 
     public JSONObject jsonExt(String key, LinkedHashMap<String, String> jxs, String url) throws Throwable {
