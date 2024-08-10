@@ -305,18 +305,15 @@ public class Players implements Player.Listener, ParseCallback {
 
     public void play() {
         if (exoPlayer != null) exoPlayer.play();
-        setPlaybackState(PlaybackStateCompat.STATE_PLAYING);
     }
 
     public void pause() {
         if (exoPlayer != null) exoPlayer.pause();
-        setPlaybackState(PlaybackStateCompat.STATE_PAUSED);
     }
 
     public void stop() {
         if (exoPlayer != null) exoPlayer.stop();
         if (exoPlayer != null) exoPlayer.clearMediaItems();
-        setPlaybackState(PlaybackStateCompat.STATE_STOPPED);
     }
 
     public void release() {
@@ -522,30 +519,31 @@ public class Players implements Player.Listener, ParseCallback {
 
     @Override
     public void onEvents(@NonNull Player player, @NonNull Player.Events events) {
-        if (events.containsAny(Player.EVENT_TIMELINE_CHANGED, Player.EVENT_IS_PLAYING_CHANGED, Player.EVENT_POSITION_DISCONTINUITY, Player.EVENT_MEDIA_METADATA_CHANGED, Player.EVENT_PLAYBACK_STATE_CHANGED, Player.EVENT_PLAY_WHEN_READY_CHANGED, Player.EVENT_PLAYBACK_PARAMETERS_CHANGED)) {
-            setPlaybackState(isPlaying() ? PlaybackStateCompat.STATE_PLAYING : PlaybackStateCompat.STATE_PAUSED);
+        if (!events.containsAny(Player.EVENT_TIMELINE_CHANGED, Player.EVENT_IS_PLAYING_CHANGED, Player.EVENT_POSITION_DISCONTINUITY, Player.EVENT_MEDIA_METADATA_CHANGED, Player.EVENT_PLAYBACK_STATE_CHANGED, Player.EVENT_PLAY_WHEN_READY_CHANGED, Player.EVENT_PLAYBACK_PARAMETERS_CHANGED, Player.EVENT_PLAYER_ERROR)) return;
+        switch (player.getPlaybackState()) {
+            case Player.STATE_IDLE:
+                setPlaybackState(events.contains(Player.EVENT_PLAYER_ERROR) ? PlaybackStateCompat.STATE_ERROR : PlaybackStateCompat.STATE_NONE);
+                break;
+            case Player.STATE_READY:
+                setPlaybackState(player.isPlaying() ? PlaybackStateCompat.STATE_PLAYING : PlaybackStateCompat.STATE_PAUSED);
+                break;
+            case Player.STATE_BUFFERING:
+                setPlaybackState(PlaybackStateCompat.STATE_BUFFERING);
+                break;
+            case Player.STATE_ENDED:
+                setPlaybackState(PlaybackStateCompat.STATE_STOPPED);
+                break;
         }
-    }
-
-    @Override
-    public void onPlayerError(@NonNull PlaybackException error) {
-        setPlaybackState(PlaybackStateCompat.STATE_ERROR);
-        Logger.t(TAG).e(error.errorCode + "," + url);
-        ErrorEvent.url(error.errorCode);
     }
 
     @Override
     public void onPlaybackStateChanged(int state) {
-        switch (state) {
-            case Player.STATE_IDLE:
-            case Player.STATE_READY:
-            case Player.STATE_ENDED:
-                PlayerEvent.state(state);
-                break;
-            case Player.STATE_BUFFERING:
-                PlayerEvent.state(state);
-                setPlaybackState(PlaybackStateCompat.STATE_BUFFERING);
-                break;
-        }
+        PlayerEvent.state(state);
+    }
+
+    @Override
+    public void onPlayerError(@NonNull PlaybackException error) {
+        Logger.t(TAG).e(error.errorCode + "," + url);
+        ErrorEvent.url(error.errorCode);
     }
 }
