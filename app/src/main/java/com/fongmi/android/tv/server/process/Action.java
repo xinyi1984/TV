@@ -79,7 +79,8 @@ public class Action implements Process {
     private void onRefresh(Map<String, String> params) {
         String type = params.get("type");
         String path = params.get("path");
-        if ("detail".equals(type)) RefreshEvent.detail();
+        if ("live".equals(type)) RefreshEvent.live();
+        else if ("detail".equals(type)) RefreshEvent.detail();
         else if ("player".equals(type)) RefreshEvent.player();
         else if ("subtitle".equals(type)) RefreshEvent.subtitle(path);
     }

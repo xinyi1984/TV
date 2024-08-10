@@ -101,13 +101,19 @@ https://github.com/CatVodTVOfficial/CatVodTVJarLoader
 
 ```
 http://127.0.0.1:9978/action?do=refresh&type=detail
-```  
+```
 
 刷新播放
 
 ```
 http://127.0.0.1:9978/action?do=refresh&type=player
-```  
+```
+
+刷新直播
+
+```
+http://127.0.0.1:9978/action?do=refresh&type=live
+```
 
 推送字幕
 
@@ -119,13 +125,13 @@ http://127.0.0.1:9978/action?do=refresh&type=subtitle&path=http://xxx
 
 ```
 http://127.0.0.1:9978/cache?do=set&key=xxx&value=xxx
-``` 
+```
 
 取得緩存字串
 
 ```
 http://127.0.0.1:9978/cache?do=get&key=xxx
-```   
+```
 
 刪除緩存字串
 
