@@ -160,19 +160,21 @@ public class Spider extends com.github.catvod.crawler.Spider {
 
             @Override
             public byte[] getModuleBytecode(String moduleName) {
-                String spider = "__JS_SPIDER__";
-                String jsEval = "__jsEvalReturn";
-                String global = "globalThis." + spider;
                 String content = Module.get().fetch(moduleName);
-                cat = content.startsWith("//bb") || content.contains(jsEval);
-                return content.startsWith("//bb") ? Module.get().bb(content) : ctx.compileModule(content.replace(spider, global), moduleName);
+                return content.startsWith("//bb") ? Module.get().bb(content) : ctx.compileModule(content, moduleName);
             }
         });
     }
 
     private void createObj() {
+        String spider = "__JS_SPIDER__";
+        String global = "globalThis." + spider;
+        String content = Module.get().fetch(api);
+        boolean bb = content.startsWith("//bb");
+        cat = bb || content.contains("__jsEvalReturn");
+        if (!bb) ctx.evaluateModule(content.replace(spider, global), api);
         ctx.evaluateModule(String.format(Asset.read("js/lib/spider.js"), api));
-        jsObject = (JSObject) ctx.getProperty(ctx.getGlobalObject(), "__JS_SPIDER__");
+        jsObject = (JSObject) ctx.getProperty(ctx.getGlobalObject(), spider);
     }
 
     private JSObject cfg(String ext) {
