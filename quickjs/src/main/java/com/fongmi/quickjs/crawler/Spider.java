@@ -140,7 +140,7 @@ public class Spider extends com.github.catvod.crawler.Spider {
 
     private void initializeJS() throws Exception {
         submit(() -> {
-            if (ctx == null) createCtx();
+            createCtx();
             createObj();
             return null;
         }).get();
@@ -160,22 +160,19 @@ public class Spider extends com.github.catvod.crawler.Spider {
 
             @Override
             public byte[] getModuleBytecode(String moduleName) {
+                String spider = "__JS_SPIDER__";
+                String jsEval = "__jsEvalReturn";
+                String global = "globalThis." + spider;
                 String content = Module.get().fetch(moduleName);
-                return content.startsWith("//bb") ? Module.get().bb(content) : ctx.compileModule(content, moduleName);
+                cat = content.startsWith("//bb") || content.contains(jsEval);
+                return content.startsWith("//bb") ? Module.get().bb(content) : ctx.compileModule(content.replace(spider, global), moduleName);
             }
         });
     }
 
     private void createObj() {
-        String jsEval = "__jsEvalReturn";
-        String spider = "__JS_SPIDER__";
-        String global = "globalThis." + spider;
-        String content = Module.get().fetch(api);
-        if (content.startsWith("//bb")) ctx.execute(Module.get().bb(content));
-        else ctx.evaluateModule(content.replace(spider, global), api);
         ctx.evaluateModule(String.format(Asset.read("js/lib/spider.js"), api));
-        if (content.startsWith("//bb") || content.contains(jsEval)) cat = true;
-        jsObject = (JSObject) ctx.getProperty(ctx.getGlobalObject(), spider);
+        jsObject = (JSObject) ctx.getProperty(ctx.getGlobalObject(), "__JS_SPIDER__");
     }
 
     private JSObject cfg(String ext) {
