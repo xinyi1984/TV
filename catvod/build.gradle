@@ -21,7 +21,7 @@ dependencies {
     api 'com.orhanobut:logger:2.2.0'
     api 'com.squareup.okhttp3:okhttp:' + okhttpVersion
     api 'com.squareup.okhttp3:okhttp-dnsoverhttps:' + okhttpVersion
-    api('com.google.guava:guava:33.2.1-android') {
+    api('com.google.guava:guava:33.0.0-android') {
         exclude group: 'com.google.code.findbugs', module: 'jsr305'
         exclude group: 'org.checkerframework', module: 'checker-compat-qual'
         exclude group: 'org.checkerframework', module: 'checker-qual'

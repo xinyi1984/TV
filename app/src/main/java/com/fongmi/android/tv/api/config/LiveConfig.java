@@ -7,6 +7,7 @@ import com.fongmi.android.tv.R;
 import com.fongmi.android.tv.Setting;
 import com.fongmi.android.tv.api.Decoder;
 import com.fongmi.android.tv.api.LiveParser;
+import com.fongmi.android.tv.api.loader.BaseLoader;
 import com.fongmi.android.tv.bean.Channel;
 import com.fongmi.android.tv.bean.Config;
 import com.fongmi.android.tv.bean.Depot;
@@ -157,6 +158,7 @@ public class LiveConfig {
         try {
             initLive(object);
             initOther(object);
+            BaseLoader.get().parseJar(Json.safeString(object, "spider"));
         } catch (Throwable e) {
             e.printStackTrace();
         } finally {
