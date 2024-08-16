@@ -154,7 +154,7 @@ public class ParseJob implements ParseCallback {
     }
 
     private void checkResult(Map<String, String> headers, String url, String from, boolean error) {
-        if (isPass(headers, url)) {
+        if (url.length() > 40) {
             onParseSuccess(headers, url, from);
         } else if (error) {
             onParseError();
@@ -166,15 +166,6 @@ public class ParseJob implements ParseCallback {
         if (result.getUrl().isEmpty()) onParseError();
         else if (result.getParse() == 1) startWeb(result.getHeaders(), UrlUtil.convert(result.getUrl().v()));
         else onParseSuccess(result.getHeaders(), result.getUrl().v(), result.getJxFrom());
-    }
-
-    private boolean isPass(Map<String, String> headers, String url) {
-        try {
-            if (url.length() < 40) return false;
-            return OkHttp.newCall(url, Headers.of(headers)).execute().code() == 200;
-        } catch (Exception e) {
-            return false;
-        }
     }
 
     private void startWeb(List<Parse> items, String webUrl) {
@@ -197,7 +188,7 @@ public class ParseJob implements ParseCallback {
 
     private Map<String, String> getHeader(JsonObject object) {
         Map<String, String> headers = new HashMap<>();
-        for (Map.Entry<String, JsonElement> entry : object.entrySet()) if (entry.getKey().equalsIgnoreCase(HttpHeaders.USER_AGENT) || entry.getKey().equalsIgnoreCase(HttpHeaders.REFERER) || entry.getKey().equalsIgnoreCase("ua")) headers.put(UrlUtil.fixHeader(entry.getKey()), object.get(entry.getKey()).getAsString());
+        for (Map.Entry<String, JsonElement> entry : object.entrySet()) if (!entry.getValue().isJsonNull() && (entry.getKey().equalsIgnoreCase(HttpHeaders.USER_AGENT) || entry.getKey().equalsIgnoreCase(HttpHeaders.REFERER) || entry.getKey().equalsIgnoreCase("ua"))) headers.put(UrlUtil.fixHeader(entry.getKey()), entry.getValue().getAsString());
         if (headers.isEmpty()) return parse.getHeaders();
         return headers;
     }
