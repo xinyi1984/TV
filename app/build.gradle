@@ -138,6 +138,7 @@ dependencies {
     implementation project(':media-lib-datasource-rtmp')
     implementation project(':media-lib-decoder')
     implementation project(':media-lib-decoder-av1')
+    implementation project(':media-lib-decoder-ffmpeg')
     implementation project(':media-lib-exoplayer')
     implementation project(':media-lib-exoplayer-dash')
     implementation project(':media-lib-exoplayer-hls')
