@@ -1,5 +1,5 @@
 plugins {
-    id 'com.android.library'
+    id("java-library")
     id 'com.chaquo.python'
 }
 
