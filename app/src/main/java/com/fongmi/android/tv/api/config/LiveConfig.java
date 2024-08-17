@@ -1,5 +1,6 @@
 package com.fongmi.android.tv.api.config;
 
+import android.net.Uri;
 import android.text.TextUtils;
 
 import com.fongmi.android.tv.App;
@@ -25,6 +26,7 @@ import com.github.catvod.utils.Json;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -128,11 +130,20 @@ public class LiveConfig {
     }
 
     private void parseText(String text, Callback callback) {
-        Live live = new Live(config.getUrl()).sync();
+        Live live = new Live(parseName(config.getUrl()), config.getUrl()).sync();
         LiveParser.text(live, text);
         lives.add(live);
         setHome(live, true);
         App.post(callback::success);
+    }
+
+    private String parseName(String url) {
+        Uri uri = Uri.parse(url);
+        if ("file".equals(uri.getScheme())) return new File(url).getName();
+        if (uri.getLastPathSegment() != null) return uri.getLastPathSegment();
+        if (uri.getQuery() != null) return uri.getQuery();
+        if (uri.getHost() != null) return uri.getHost();
+        return url;
     }
 
     private void checkJson(JsonObject object, Callback callback) {
