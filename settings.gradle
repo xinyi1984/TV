@@ -17,9 +17,10 @@ dependencyResolutionManagement {
         }
         maven {
             url "https://jitpack.io"
-        }maven {
-      url = uri("https://plugins.gradle.org/m2/")
-    }
+        }
+        maven {
+            url "https://plugins.gradle.org/m2"
+        }
         maven {
             url "http://4thline.org/m2"
             allowInsecureProtocol = true
