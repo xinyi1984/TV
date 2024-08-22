@@ -64,7 +64,8 @@ public abstract class Spider {
         return null;
     }
 
-    public void action(String action) {
+    public String action(String action) throws Exception {
+        return null;
     }
 
     public void destroy() {

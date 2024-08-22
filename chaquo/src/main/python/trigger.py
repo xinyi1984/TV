@@ -45,4 +45,4 @@ class Trigger():
 
     @staticmethod
     def destroy(sp_obj):
-        return sp_obj.destroy()
+        sp_obj.destroy()

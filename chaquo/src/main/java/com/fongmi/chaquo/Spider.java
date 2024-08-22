@@ -104,8 +104,8 @@ public class Spider extends com.github.catvod.crawler.Spider {
     }
 
     @Override
-    public void action(String action) {
-        app.callAttr("action", obj, action);
+    public String action(String action) {
+        return app.callAttr("action", obj, action).toString();
     }
 
     @Override

@@ -45,4 +45,4 @@ class Runner():
         return self.spider.action(action)
 
     def destroy(self):
-        return self.spider.destroy()
+        self.spider.destroy()
