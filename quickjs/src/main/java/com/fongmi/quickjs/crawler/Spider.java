@@ -125,6 +125,15 @@ public class Spider extends com.github.catvod.crawler.Spider {
     }
 
     @Override
+    public void action(String action) {
+        try {
+            call("action", action);
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
     public void destroy() {
         try {
             call("destroy");

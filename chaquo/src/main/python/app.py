@@ -96,6 +96,10 @@ def localProxy(ru, param):
     return result
 
 
+def action(ru, action):
+    ru.action(action)
+
+
 def destroy(ru):
     ru.destroy()
 
