@@ -194,8 +194,9 @@ public class SiteViewModel extends ViewModel {
     public void action(String key, String action) {
         execute(this.action, () -> {
             Site site = VodConfig.get().getSite(key);
-            if (site.getType() != 3) return Result.empty();
-            return Result.fromJson(site.recent().spider().action(action));
+            if (site.getType() == 3) return Result.fromJson(site.recent().spider().action(action));
+            if (site.getType() == 4) return Result.fromJson(OkHttp.string(action));
+            return Result.empty();
         });
     }
 
