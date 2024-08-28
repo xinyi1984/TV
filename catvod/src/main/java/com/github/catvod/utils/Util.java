@@ -8,8 +8,6 @@ import android.util.Base64;
 
 import com.github.catvod.Init;
 
-import org.mozilla.universalchardet.UniversalDetector;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.math.BigInteger;
@@ -17,10 +15,8 @@ import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
-import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Arrays;
 import java.util.Enumeration;
 
 import okhttp3.OkHttp;
@@ -67,25 +63,6 @@ public class Util {
 
     public static boolean equals(String name, String md5) {
         return md5(Path.jar(name)).equalsIgnoreCase(md5);
-    }
-
-    public static byte[] utf8(byte[] bytes) {
-        try {
-            UniversalDetector detector = new UniversalDetector(null);
-            detector.handleData(bytes, 0, bytes.length);
-            detector.dataEnd();
-            return removeBOM(new String(bytes, detector.getDetectedCharset()).getBytes(StandardCharsets.UTF_8));
-        } catch (Exception e) {
-            return bytes;
-        }
-    }
-
-    public static byte[] removeBOM(byte[] bytes) {
-        byte[] bom = {(byte) 0xEF, (byte) 0xBB, (byte) 0xBF};
-        if (bytes.length < 3 || !Arrays.equals(Arrays.copyOf(bytes, 3), bom)) return bytes;
-        byte[] newBytes = new byte[bytes.length - 3];
-        System.arraycopy(bytes, 3, newBytes, 0, newBytes.length);
-        return newBytes;
     }
 
     public static String md5(String src) {
