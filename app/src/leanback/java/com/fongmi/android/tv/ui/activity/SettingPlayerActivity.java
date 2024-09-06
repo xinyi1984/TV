@@ -12,19 +12,17 @@ import com.fongmi.android.tv.Setting;
 import com.fongmi.android.tv.databinding.ActivitySettingPlayerBinding;
 import com.fongmi.android.tv.impl.BufferCallback;
 import com.fongmi.android.tv.impl.SpeedCallback;
-import com.fongmi.android.tv.impl.SubtitleCallback;
 import com.fongmi.android.tv.impl.UaCallback;
 import com.fongmi.android.tv.ui.base.BaseActivity;
 import com.fongmi.android.tv.ui.dialog.BufferDialog;
 import com.fongmi.android.tv.ui.dialog.SpeedDialog;
-import com.fongmi.android.tv.ui.dialog.SubtitleDialog;
 import com.fongmi.android.tv.ui.dialog.UaDialog;
 import com.fongmi.android.tv.utils.ResUtil;
 import com.fongmi.android.tv.ui.dialog.DisplayDialog;
 
 import java.text.DecimalFormat;
 
-public class SettingPlayerActivity extends BaseActivity implements UaCallback, BufferCallback, SpeedCallback, SubtitleCallback {
+public class SettingPlayerActivity extends BaseActivity implements UaCallback, BufferCallback, SpeedCallback {
 
     private ActivitySettingPlayerBinding mBinding;
     private DecimalFormat format;
@@ -55,7 +53,6 @@ public class SettingPlayerActivity extends BaseActivity implements UaCallback, B
         mBinding.tunnelText.setText(getSwitch(Setting.isTunnel()));
         mBinding.speedText.setText(format.format(Setting.getSpeed()));
         mBinding.bufferText.setText(String.valueOf(Setting.getBuffer()));
-        mBinding.subtitleText.setText(String.valueOf(Setting.getSubtitle()));
         mBinding.rtspText.setText((rtsp = ResUtil.getStringArray(R.array.select_rtsp))[Setting.getRtsp()]);
         mBinding.scaleText.setText((scale = ResUtil.getStringArray(R.array.select_scale))[Setting.getScale()]);
         mBinding.renderText.setText((render = ResUtil.getStringArray(R.array.select_render))[Setting.getRender()]);
@@ -72,7 +69,6 @@ public class SettingPlayerActivity extends BaseActivity implements UaCallback, B
         mBinding.render.setOnClickListener(this::setRender);
         mBinding.tunnel.setOnClickListener(this::setTunnel);
         mBinding.caption.setOnClickListener(this::setCaption);
-        mBinding.subtitle.setOnClickListener(this::onSubtitle);
         mBinding.caption.setOnLongClickListener(this::onCaption);
         mBinding.display.setOnClickListener(this::onDisplay);
     }
@@ -148,14 +144,5 @@ public class SettingPlayerActivity extends BaseActivity implements UaCallback, B
     private boolean onCaption(View view) {
         if (Setting.isCaption()) startActivity(new Intent(Settings.ACTION_CAPTIONING_SETTINGS));
         return Setting.isCaption();
-    }
-
-    private void onSubtitle(View view) {
-        SubtitleDialog.create(this).show();
-    }
-
-    @Override
-    public void setSubtitle(int size) {
-        mBinding.subtitleText.setText(String.valueOf(size));
     }
 }
