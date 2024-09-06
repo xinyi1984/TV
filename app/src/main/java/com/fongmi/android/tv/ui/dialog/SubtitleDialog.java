@@ -68,7 +68,7 @@ public final class SubtitleDialog extends BaseDialog {
         binding.reset.setOnClickListener(this::onReset);
     }
 
-    private void onUp(View view) {
+    /*private void onUp(View view) {
         subtitleView.addBottomPadding(0.005f);
         Setting.putSubtitleBottomPadding(subtitleView.getBottomPadding());
     }
@@ -86,7 +86,7 @@ public final class SubtitleDialog extends BaseDialog {
     private void onSmall(View view) {
         subtitleView.subTextSize(0.002f);
         Setting.putSubtitleTextSize(subtitleView.getTextSize());
-    }
+    }*/
 
     private void onReset(View view) {
         Setting.putSubtitleTextSize(0);
