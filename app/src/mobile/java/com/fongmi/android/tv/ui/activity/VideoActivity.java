@@ -24,7 +24,6 @@ import android.view.WindowManager;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import androidx.annotation.Dimension;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -62,7 +61,6 @@ import com.fongmi.android.tv.event.CastEvent;
 import com.fongmi.android.tv.event.ErrorEvent;
 import com.fongmi.android.tv.event.PlayerEvent;
 import com.fongmi.android.tv.event.RefreshEvent;
-import com.fongmi.android.tv.impl.SubtitleCallback;
 import com.fongmi.android.tv.model.SiteViewModel;
 import com.fongmi.android.tv.player.Players;
 import com.fongmi.android.tv.player.exo.ExoUtil;
@@ -83,6 +81,7 @@ import com.fongmi.android.tv.ui.dialog.EpisodeGridDialog;
 import com.fongmi.android.tv.ui.dialog.EpisodeListDialog;
 import com.fongmi.android.tv.ui.dialog.InfoDialog;
 import com.fongmi.android.tv.ui.dialog.ReceiveDialog;
+import com.fongmi.android.tv.ui.dialog.SubtitleDialog;
 import com.fongmi.android.tv.ui.dialog.TrackDialog;
 import com.fongmi.android.tv.utils.Clock;
 import com.fongmi.android.tv.utils.FileChooser;
@@ -104,7 +103,6 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -114,7 +112,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.regex.Matcher;
 
-public class VideoActivity extends BaseActivity implements Clock.Callback, CustomKeyDownVod.Listener, TrackDialog.Listener, ControlDialog.Listener, FlagAdapter.OnClickListener, EpisodeAdapter.OnClickListener, QualityAdapter.OnClickListener, QuickAdapter.OnClickListener, ParseAdapter.OnClickListener, SubtitleCallback, CastDialog.Listener, InfoDialog.Listener {
+public class VideoActivity extends BaseActivity implements Clock.Callback, CustomKeyDownVod.Listener, TrackDialog.Listener, ControlDialog.Listener, FlagAdapter.OnClickListener, EpisodeAdapter.OnClickListener, QualityAdapter.OnClickListener, QuickAdapter.OnClickListener, ParseAdapter.OnClickListener, CastDialog.Listener, InfoDialog.Listener {
 
     private ActivityVideoBinding mBinding;
     private ViewGroup.LayoutParams mFrameParams;
@@ -288,7 +286,7 @@ public class VideoActivity extends BaseActivity implements Clock.Callback, Custo
         mPlayers = Players.create(this);
         mDialogs = new ArrayList<>();
         mBroken = new ArrayList<>();
-        mClock = Clock.create(mBinding.display.clock);
+        mClock = Clock.create();
         mR0 = this::stopService;
         mR1 = this::hideControl;
         mR2 = this::setTraffic;
@@ -297,9 +295,7 @@ public class VideoActivity extends BaseActivity implements Clock.Callback, Custo
         mPiP = new PiP();
         setForeground(true);
         setRecyclerView();
-        setSubtitleView();
         setVideoView();
-        setDisplayView();
         setViewModel();
         showProgress();
         checkId();
@@ -339,6 +335,7 @@ public class VideoActivity extends BaseActivity implements Clock.Callback, Custo
         mBinding.control.action.ending.setOnClickListener(view -> onEnding());
         mBinding.control.action.opening.setOnClickListener(view -> onOpening());
         mBinding.control.action.episodes.setOnClickListener(view -> onEpisodes());
+        mBinding.control.action.text.setOnLongClickListener(view -> onTextLong());
         mBinding.control.action.speed.setOnLongClickListener(view -> onSpeedLong());
         mBinding.control.action.reset.setOnLongClickListener(view -> onResetToggle());
         mBinding.control.action.ending.setOnLongClickListener(view -> onEndingReset());
@@ -371,6 +368,7 @@ public class VideoActivity extends BaseActivity implements Clock.Callback, Custo
 
     private void setVideoView() {
         mPlayers.init(mBinding.exo);
+        ExoUtil.setSubtitleView(mBinding.exo);
         if (isPort() && ResUtil.isLand(this)) enterFullscreen();
         mBinding.control.action.decode.setText(mPlayers.getDecodeText());
         mBinding.control.action.speed.setEnabled(mPlayers.canAdjustSpeed());
@@ -384,22 +382,6 @@ public class VideoActivity extends BaseActivity implements Clock.Callback, Custo
         } else {
             mBinding.video.setLayoutParams(mFrameParams);
         }
-    }
-
-    private void setSubtitleView() {
-        setSubtitle(Setting.getSubtitle());
-        mBinding.exo.getSubtitleView().setStyle(ExoUtil.getCaptionStyle());
-        mBinding.exo.getSubtitleView().setApplyEmbeddedStyles(!Setting.isCaption());
-    }
-
-    private void setDisplayView() {
-        mBinding.display.getRoot().setVisibility(View.VISIBLE);
-        showDisplayInfo();
-    }
-
-    @Override
-    public void setSubtitle(int size) {
-        mBinding.exo.getSubtitleView().setFixedTextSize(Dimension.SP, size);
     }
 
     private void setDecode() {
@@ -538,7 +520,6 @@ public class VideoActivity extends BaseActivity implements Clock.Callback, Custo
 
     private void getPlayer(Flag flag, Episode episode, boolean replay) {
         mBinding.control.title.setText(getString(R.string.detail_title, mBinding.name.getText(), episode.getName()));
-        mBinding.display.title.setText(mBinding.control.title.getText());
         mViewModel.playerContent(getKey(), flag.getFlag(), episode.getUrl());
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         updateHistory(episode, replay);
@@ -828,6 +809,11 @@ public class VideoActivity extends BaseActivity implements Clock.Callback, Custo
         setRedirect(true);
     }
 
+    private boolean onTextLong() {
+        onSubtitleClick();
+        return true;
+    }
+
     private boolean onActionTouch(View v, MotionEvent e) {
         setR1Callback();
         return false;
@@ -836,28 +822,6 @@ public class VideoActivity extends BaseActivity implements Clock.Callback, Custo
     private void onSwipeRefresh() {
         if (mBinding.progressLayout.isEmpty()) getDetail();
         else onRefresh();
-    }
-
-    private void showDisplayInfo() {
-        boolean pictureMode = false;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && isInPictureInPictureMode()) pictureMode = true;
-        boolean controlVisible = isVisible(mBinding.control.getRoot());
-        boolean visible = (!controlVisible || isLock()) && !pictureMode;
-        mBinding.display.clock.setVisibility(Setting.isDisplayTime() && visible && isFullscreen() && !isInPictureInPictureMode() ? View.VISIBLE : View.GONE);
-        mBinding.display.netspeed.setVisibility(Setting.isDisplaySpeed() && visible && isFullscreen() && !isInPictureInPictureMode() ? View.VISIBLE : View.GONE); 
-        mBinding.display.duration.setVisibility(Setting.isDisplayDuration() && visible && isFullscreen() && !isInPictureInPictureMode() ? View.VISIBLE : View.GONE);
-        mBinding.display.progress.setVisibility(Setting.isDisplayMiniProgress() && visible && (mPlayers.isVod()) && isFullscreen() && !isInPictureInPictureMode() ? View.VISIBLE : View.GONE);
-        mBinding.display.titleLayout.setVisibility(Setting.isDisplayVideoTitle() && visible && isFullscreen() && !isInPictureInPictureMode() ? View.VISIBLE : View.GONE); 
-    }
-
-    private void onTimeChangeDisplaySpeed() {
-        boolean controlVisible = isVisible(mBinding.control.getRoot());
-        boolean visible = (!controlVisible || isLock());
-        long position = mPlayers.getPosition();
-        if (Setting.isDisplaySpeed() && visible) Traffic.setSpeed(mBinding.display.netspeed);
-        if (Setting.isDisplayDuration() && visible && position > 0) mBinding.display.duration.setText(mPlayers.getPositionTime(0) + "/" + mPlayers.getDurationTime());
-        if (Setting.isDisplayMiniProgress() && visible && position > 0 && (mPlayers.isVod())) mBinding.display.progress.setProgress((int)(position * 100 / mPlayers.getDuration()));
-        showDisplayInfo();
     }
 
     private void toggleFullscreen() {
@@ -1065,8 +1029,13 @@ public class VideoActivity extends BaseActivity implements Clock.Callback, Custo
     }
 
     @Override
+    public void onSubtitleClick() {
+        App.post(this::hideControl, 200);
+        App.post(() -> SubtitleDialog.create().view(mBinding.exo.getSubtitleView()).full(isFullscreen()).show(this), 200);
+    }
+
+    @Override
     public void onTimeChanged() {
-        onTimeChangeDisplaySpeed();
         long position, duration;
         mHistory.setPosition(position = mPlayers.getPosition());
         mHistory.setDuration(duration = mPlayers.getDuration());
@@ -1137,7 +1106,6 @@ public class VideoActivity extends BaseActivity implements Clock.Callback, Custo
                 setTrackVisible(true);
                 checkPlayImg(mPlayers.isPlaying());
                 mBinding.control.size.setText(mPlayers.getSizeText());
-                mBinding.display.size.setText(mPlayers.getSizeText());
                 if (isVisible(mBinding.control.getRoot())) showControl();
                 break;
             case Player.STATE_ENDED:
@@ -1545,13 +1513,11 @@ public class VideoActivity extends BaseActivity implements Clock.Callback, Custo
         if (!isFullscreen()) setVideoView(isInPictureInPictureMode);
         if (isInPictureInPictureMode) {
             PlaybackService.start(mPlayers);
-            setSubtitle(10);
             hideControl();
             hideSheet();
         } else {
-            stopService();
+            App.post(mR0, 1000);
             setForeground(true);
-            setSubtitle(Setting.getSubtitle());
             if (isStop()) finish();
         }
     }
@@ -1583,7 +1549,6 @@ public class VideoActivity extends BaseActivity implements Clock.Callback, Custo
         super.onResume();
         if (isForeground()) return;
         if (isRedirect()) onPlay();
-        App.removeCallbacks(mR0);
         App.post(mR0, 1000);
         setForeground(true);
         setRedirect(false);
@@ -1622,12 +1587,12 @@ public class VideoActivity extends BaseActivity implements Clock.Callback, Custo
     protected void onDestroy() {
         super.onDestroy();
         stopSearch();
-        stopService();
         mClock.release();
         mPlayers.release();
         Timer.get().reset();
+        App.post(mR0, 1000);
         RefreshEvent.history();
-        App.removeCallbacks(mR0, mR1, mR2, mR3, mR4);
+        App.removeCallbacks(mR1, mR2, mR3, mR4);
         mViewModel.result.removeObserver(mObserveDetail);
         mViewModel.player.removeObserver(mObservePlayer);
         mViewModel.search.removeObserver(mObserveSearch);
