@@ -121,7 +121,7 @@ public class LiveActivity extends BaseActivity implements GroupPresenter.OnClick
 
     @Override
     protected void initView() {
-        mClock = Clock.create(mBinding.widget.clock);
+        mClock = Clock.create(Arrays.asList(mBinding.widget.clock, mBinding.display.clock));
         mKeyDown = CustomKeyDownLive.create(this);
         mPlayers = Players.create(this);
         mHides = new ArrayList<>();
@@ -133,6 +133,7 @@ public class LiveActivity extends BaseActivity implements GroupPresenter.OnClick
         Server.get().start();
         setRecyclerView();
         setVideoView();
+        setDisplayView();
         setViewModel();
         checkLive();
     }
@@ -190,6 +191,12 @@ public class LiveActivity extends BaseActivity implements GroupPresenter.OnClick
         mBinding.control.decode.setText(mPlayers.getDecodeText());
         mBinding.control.speed.setEnabled(mPlayers.canAdjustSpeed());
         mBinding.control.home.setVisibility(LiveConfig.isOnly() ? View.GONE : View.VISIBLE);
+    }
+    
+     private void setDisplayView() {
+        mBinding.display.getRoot().setVisibility(View.VISIBLE);
+        mBinding.display.progress.setVisibility(View.GONE);
+        showDisplayInfo();
     }
 
     private void setDecode() {
@@ -444,6 +451,22 @@ public class LiveActivity extends BaseActivity implements GroupPresenter.OnClick
         hideEpg();
     }
 
+    private void showDisplayInfo() {
+        boolean controlVisible = isVisible(mBinding.control.getRoot());
+        boolean visible = !controlVisible;
+        mBinding.display.clock.setVisibility(Setting.isDisplayTime() && visible || isVisible(mBinding.control.getRoot()) ? View.VISIBLE : View.GONE); 
+        mBinding.display.netspeed.setVisibility(Setting.isDisplaySpeed() && visible && !isVisible(mBinding.widget.bottom) && !isVisible(mBinding.control.getRoot()) ? View.VISIBLE : View.GONE); 
+        mBinding.display.duration.setVisibility(View.GONE);
+        mBinding.display.titleLayout.setVisibility(Setting.isDisplayVideoTitle() && visible && !isVisible(mBinding.control.getRoot()) ? View.VISIBLE : View.GONE);
+    }
+
+    private void onTimeChangeDisplaySpeed() {
+        boolean controlVisible = isVisible(mBinding.control.getRoot());
+        boolean visible = !controlVisible;
+        if (Setting.isDisplaySpeed() && visible) Traffic.setSpeed(mBinding.display.netspeed);
+        showDisplayInfo();
+    }
+
     private void hideControl() {
         mBinding.control.getRoot().setVisibility(View.GONE);
         mBinding.widget.top.setVisibility(View.GONE);
@@ -579,6 +602,7 @@ public class LiveActivity extends BaseActivity implements GroupPresenter.OnClick
         mChannel.loadLogo(mBinding.widget.logo);
         mBinding.widget.name.setText(mChannel.getName());
         mBinding.widget.title.setText(mChannel.getName());
+        mBinding.display.title.setText(mChannel.getName());
         mBinding.widget.line.setText(mChannel.getLineText());
         mBinding.widget.number.setText(mChannel.getNumber());
         mBinding.control.line.setText(mChannel.getLineText());
@@ -645,6 +669,11 @@ public class LiveActivity extends BaseActivity implements GroupPresenter.OnClick
     }
 
     @Override
+    public void onTimeChanged() {
+        onTimeChangeDisplaySpeed();
+    }
+
+    @Override
     public void setLive(Live item) {
         if (item.isActivated()) item.getGroups().clear();
         LiveConfig.get().setHome(item);
@@ -705,6 +734,7 @@ public class LiveActivity extends BaseActivity implements GroupPresenter.OnClick
         switch (event.getState()) {
             case 0:
                 setTrackVisible(false);
+                mClock.setCallback(this);
                 break;
             case Player.STATE_IDLE:
                 break;
@@ -717,6 +747,7 @@ public class LiveActivity extends BaseActivity implements GroupPresenter.OnClick
                 mPlayers.reset();
                 setTrackVisible(true);
                 mBinding.widget.size.setText(mPlayers.getSizeText());
+                mBinding.display.size.setText(mPlayers.getSizeText());
                 break;
             case Player.STATE_ENDED:
                 checkNext();
