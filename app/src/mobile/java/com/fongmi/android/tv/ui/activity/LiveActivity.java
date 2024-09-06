@@ -716,11 +716,6 @@ public class LiveActivity extends BaseActivity implements CustomKeyDownLive.List
         App.post(() -> SubtitleDialog.create().view(mBinding.exo.getSubtitleView()).full(true).show(this), 200);
     }
 
-     @Override
-    public void onTimeChanged() {
-        onTimeChangeDisplaySpeed();
-    }
-
     @Override
     public void setLive(Live item) {
         if (item.isActivated()) item.getGroups().clear();
@@ -785,7 +780,6 @@ public class LiveActivity extends BaseActivity implements CustomKeyDownLive.List
         switch (event.getState()) {
             case 0:
                 setTrackVisible(false);
-                mClock.setCallback(this);
                 break;
             case Player.STATE_IDLE:
                 break;
