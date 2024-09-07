@@ -76,7 +76,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-public class LiveActivity extends BaseActivity implements CustomKeyDownLive.Listener, TrackDialog.Listener, Biometric.Callback, PassCallback, LiveCallback, GroupAdapter.OnClickListener, ChannelAdapter.OnClickListener, EpgDataAdapter.OnClickListener, CastDialog.Listener, InfoDialog.Listener {
+public class LiveActivity extends BaseActivity implements CustomKeyDownLive.Listener, TrackDialog.Listener, Biometric.Callback, PassCallback, LiveCallback, GroupAdapter.OnClickListener, ChannelAdapter.OnClickListener, EpgDataAdapter.OnClickListener, CastDialog.Listener, InfoDialog.Listener, Clock.Callback {
 
     private ActivityLiveBinding mBinding;
     private ChannelAdapter mChannelAdapter;
@@ -708,6 +708,11 @@ public class LiveActivity extends BaseActivity implements CustomKeyDownLive.List
 
     @Override
     public void onTrackClick(Track item) {
+    }
+
+    @Override
+    public void onTimeChanged() {
+        onTimeChangeDisplaySpeed();
     }
 
     @Override
