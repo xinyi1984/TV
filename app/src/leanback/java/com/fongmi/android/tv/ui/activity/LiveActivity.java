@@ -458,7 +458,7 @@ public class LiveActivity extends BaseActivity implements GroupPresenter.OnClick
         mBinding.display.clock.setVisibility(Setting.isDisplayTime() && visible || isVisible(mBinding.control.getRoot()) ? View.VISIBLE : View.GONE); 
         mBinding.display.netspeed.setVisibility(Setting.isDisplaySpeed() && visible && !isVisible(mBinding.widget.bottom) && !isVisible(mBinding.control.getRoot()) ? View.VISIBLE : View.GONE); 
         mBinding.display.duration.setVisibility(View.GONE);
-        mBinding.display.titleLayout.setVisibility(Setting.isDisplayVideoTitle() && visible && !isVisible(mBinding.control.getRoot()) ? View.VISIBLE : View.GONE);
+        mBinding.display.titleLayout.setVisibility(Setting.isDisplayVideoTitle() && visible && !isVisible(mBinding.recycler) && !isVisible(mBinding.control.getRoot()) ? View.VISIBLE : View.GONE);
     }
 
     private void onTimeChangeDisplaySpeed() {
@@ -603,7 +603,7 @@ public class LiveActivity extends BaseActivity implements GroupPresenter.OnClick
         mChannel.loadLogo(mBinding.widget.logo);
         mBinding.widget.name.setText(mChannel.getName());
         mBinding.widget.title.setText(mChannel.getName());
-        mBinding.display.title.setText(mChannel.getName());
+        mBinding.display.title.setText(mBinding.widget.title.getText());
         mBinding.widget.line.setText(mChannel.getLineText());
         mBinding.widget.number.setText(mChannel.getNumber());
         mBinding.control.line.setText(mChannel.getLineText());
