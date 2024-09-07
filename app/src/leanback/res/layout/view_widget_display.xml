@@ -25,7 +25,9 @@
             android:shadowDx="2"
             android:shadowDy="2"
             android:shadowRadius="1"
-            android:singleLine="true"
+            android:singleLine="false"
+            android:layout_toLeftOf="@+id/clock"
+            android:layout_marginRight="10dp"
             android:textColor="@color/white"
             android:textSize="20sp"
             tools:text="慶餘年第一季：第一集" />
