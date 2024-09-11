@@ -30,6 +30,7 @@ dependencyResolutionManagement {
 include ':app'
 include ':hook'
 include ':tvbus'
+include ':zlive'
 include ':catvod'
 include ':quickjs'
 include ':thunder'
