@@ -65,7 +65,7 @@ public final class SubtitleDialog extends BaseDialog {
         //binding.down.setOnClickListener(this::onDown);
         //binding.large.setOnClickListener(this::onLarge);
         //binding.small.setOnClickListener(this::onSmall);
-        //binding.reset.setOnClickListener(this::onReset);
+        binding.reset.setOnClickListener(this::onReset);
     }
 
     /*private void onUp(View view) {
