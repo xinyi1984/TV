@@ -331,13 +331,12 @@ public class CastActivity extends BaseActivity implements CustomKeyDownCast.List
         onStopped();
     }
 
-    private void onPaused(boolean visible) {
+    private void onPaused() {
         mBinding.widget.exoDuration.setText(mPlayers.getDurationTime());
         mBinding.widget.exoPosition.setText(mPlayers.getPositionTime(0));
         setState(RenderState.PAUSED);
-        if (visible) showInfo();
-        else hideInfo();
         mPlayers.pause();
+        showInfo();
     }
 
     private void onPlay() {
@@ -404,7 +403,7 @@ public class CastActivity extends BaseActivity implements CustomKeyDownCast.List
 
     @Override
     public void pause() {
-        App.post(() -> onPaused(true));
+        App.post(this::onPaused);
     }
 
     @Override
@@ -469,7 +468,7 @@ public class CastActivity extends BaseActivity implements CustomKeyDownCast.List
 
     @Override
     public void onKeyCenter() {
-        if (mPlayers.isPlaying()) onPaused(true);
+        if (mPlayers.isPlaying()) onPaused();
         else onPlay();
         hideControl();
     }
@@ -494,7 +493,7 @@ public class CastActivity extends BaseActivity implements CustomKeyDownCast.List
     @Override
     protected void onPause() {
         super.onPause();
-        onPaused(false);
+        mPlayers.pause();
         mClock.stop();
     }
 
