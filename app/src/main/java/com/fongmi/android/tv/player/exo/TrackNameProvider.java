@@ -171,6 +171,8 @@ public class TrackNameProvider {
                 return "AMR-NB";
             case MimeTypes.AUDIO_AMR_WB:
                 return "AMR-WB";
+            case MimeTypes.AUDIO_AV3A:
+                return "AV3A";
             case MimeTypes.VIDEO_MP4:
                 return "MP4";
             case MimeTypes.VIDEO_FLV:
@@ -195,14 +197,16 @@ public class TrackNameProvider {
                 return "VP9";
             case MimeTypes.VIDEO_DOLBY_VISION:
                 return "DOLBY";
-            case MimeTypes.APPLICATION_PGS:
-                return "PGS";
-            case MimeTypes.APPLICATION_SUBRIP:
-                return "SRT";
+            case MimeTypes.VIDEO_ProRes:
+                return "ProRes";
             case MimeTypes.TEXT_SSA:
                 return "SSA";
             case MimeTypes.TEXT_VTT:
                 return "VTT";
+            case MimeTypes.APPLICATION_PGS:
+                return "PGS";
+            case MimeTypes.APPLICATION_SUBRIP:
+                return "SRT";
             case MimeTypes.APPLICATION_TTML:
                 return "TTML";
             case MimeTypes.APPLICATION_TX3G:
