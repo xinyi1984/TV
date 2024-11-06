@@ -86,11 +86,13 @@ public class ParserImpl implements Parser {
                       "  \"videoId\": \"" + videoId + "\"," +
                       "  \"context\": {" +
                       "    \"client\": {" +
-                      "      \"hl\": \"en\"," +
-                      "      \"gl\": \"US\"," +
-                      "      \"clientName\": \"ANDROID_TESTSUITE\"," +
-                      "      \"clientVersion\": \"1.9\"," +
-                      "      \"androidSdkVersion\": 31" +
+                      "      \"clientName\": \"ANDROID_VR\"," +
+                      "      \"clientVersion\": \"1.57.29\"," +
+                      "      \"deviceMake\": \"Oculus\"," +
+                      "      \"deviceModel\": \"Quest 3\"," +
+                      "      \"osName\": \"Android\"," +
+                      "      \"osVersion\": \"12L\"," +
+                      "      \"androidSdkVersion\": 32" +
                       "    }" +
                       "  }" +
                       "}";
