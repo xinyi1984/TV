@@ -34,8 +34,8 @@ public class Spider extends com.github.catvod.crawler.Spider {
 
     @Override
     public void init(Context context, String extend) {
-        List<PyObject> items = app.callAttr("getDependence", obj).asList();
-        for (PyObject item : items) download(item + ".py");
+        PyObject dependence = app.callAttr("getDependence", obj);
+        if (dependence != null) for (PyObject item : dependence.asList()) download(item + ".py");
         app.callAttr("init", obj, extend);
     }
 
