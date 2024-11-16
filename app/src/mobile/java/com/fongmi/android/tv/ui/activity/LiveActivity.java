@@ -837,6 +837,7 @@ public class LiveActivity extends BaseActivity implements CustomKeyDownLive.List
 
     private void onError(ErrorEvent event) {
         showError(event.getMsg());
+        mPlayers.resetTrack();
         mPlayers.reset();
         mPlayers.stop();
         startFlow();

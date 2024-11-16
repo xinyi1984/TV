@@ -416,6 +416,10 @@ public class Players implements Player.Listener, ParseCallback {
         App.removeCallbacks(runnable);
     }
 
+    public void resetTrack() {
+        if (exoPlayer != null) ExoUtil.resetTrack(exoPlayer);
+    }
+
     public void setTrack(List<Track> tracks) {
         for (Track track : tracks) setTrack(track);
     }

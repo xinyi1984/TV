@@ -1194,6 +1194,7 @@ public class VideoActivity extends BaseActivity implements Clock.Callback, Custo
         Track.delete(getHistoryKey());
         showError(event.getMsg());
         mClock.setCallback(null);
+        mPlayers.resetTrack();
         mPlayers.reset();
         mPlayers.stop();
         startFlow();

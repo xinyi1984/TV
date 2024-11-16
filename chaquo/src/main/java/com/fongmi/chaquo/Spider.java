@@ -110,7 +110,10 @@ public class Spider extends com.github.catvod.crawler.Spider {
 
     @Override
     public void destroy() {
-        app.callAttr("destroy", obj);
+        try {
+            app.callAttr("destroy", obj);
+        } catch (Exception ignored) {
+        }
     }
 
     private ByteArrayInputStream getStream(PyObject o, boolean base64) {

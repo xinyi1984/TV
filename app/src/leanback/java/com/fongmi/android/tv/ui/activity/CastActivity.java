@@ -327,6 +327,7 @@ public class CastActivity extends BaseActivity implements CustomKeyDownCast.List
 
     private void onError(ErrorEvent event) {
         showError(event.getMsg());
+        mPlayers.resetTrack();
         onStopped();
     }
 

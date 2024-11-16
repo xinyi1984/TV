@@ -86,6 +86,10 @@ public class ExoUtil {
         setTrackParameters(player, group, trackIndices);
     }
 
+    public static void resetTrack(ExoPlayer player) {
+        player.setTrackSelectionParameters(player.getTrackSelectionParameters().buildUpon().clearOverrides().build());
+    }
+
     public static void setSubtitleView(PlayerView exo) {
         exo.getSubtitleView().setStyle(getCaptionStyle());
         exo.getSubtitleView().setApplyEmbeddedFontSizes(false);
