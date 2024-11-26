@@ -32,7 +32,7 @@ public class TrackNameProvider {
         } else {
             trackName = joinWithSeparator(buildLanguageString(format), buildLabelString(format));
         }
-        return TextUtils.isEmpty(trackName) ? resources.getString(R.string.exo_track_unknown) : joinWithSeparator(trackName, buildMimeString(format));
+        return TextUtils.isEmpty(trackName) ? resources.getString(R.string.exo_track_unknown) : joinWithSeparator(trackName, buildMimeString(trackType, format));
     }
 
     private String buildResolutionString(Format format) {
@@ -105,7 +105,7 @@ public class TrackNameProvider {
     private String joinWithSeparator(String... items) {
         String itemList = "";
         for (String item : items) {
-            if (item.length() > 0) {
+            if (!item.isEmpty()) {
                 if (TextUtils.isEmpty(itemList)) {
                     itemList = item;
                 } else {
@@ -126,9 +126,10 @@ public class TrackNameProvider {
         return C.TRACK_TYPE_UNKNOWN;
     }
 
-    private String buildMimeString(Format format) {
-        if (format.sampleMimeType == null) return "";
-        return buildMimeString(format.sampleMimeType);
+    private String buildMimeString(int trackType, Format format) {
+        if (trackType == C.TRACK_TYPE_TEXT && format.codecs != null) return buildMimeString(format.codecs);
+        if (format.sampleMimeType != null) return buildMimeString(format.sampleMimeType);
+        return "";
     }
 
     private String buildMimeString(String mimeType) {
