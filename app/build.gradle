@@ -132,6 +132,7 @@ dependencies {
     implementation(ext: 'aar', name: 'youtube-release', group: 'fongmi', version: 'release')
     implementation(ext: 'aar', name: 'zlive-release', group: 'fongmi', version: 'release')
     implementation project(':media-lib-common')
+    implementation project(':media-lib-common_ktx')
     implementation project(':media-lib-container')
     implementation project(':media-lib-database')
     implementation project(':media-lib-datasource')
