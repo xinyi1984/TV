@@ -11,22 +11,7 @@
       "logo": "https://epg.112114.xyz/logo/{name}.png"
     },
     {
-      "name": "IJK",
-      "url": "file://Download/live.txt",
-      "epg": "https://epg.112114.xyz/?ch={name}&date={date}",
-      "logo": "https://epg.112114.xyz/logo/{name}.png",
-      "playerType": 1
-    },
-    {
-      "name": "EXO",
-      "url": "file://Download/live.txt",
-      "epg": "https://epg.112114.xyz/?ch={name}&date={date}",
-      "logo": "https://epg.112114.xyz/logo/{name}.png",
-      "playerType": 2
-    },
-    {
-      "name": "PRO",
-      "boot": false,
+      "name": "UA",
       "url": "file://Download/live.txt",
       "epg": "https://epg.112114.xyz/?ch={name}&date={date}",
       "logo": "https://epg.112114.xyz/logo/{name}.png",
@@ -63,23 +48,9 @@
       "ext": ""
     },
     {
-      "name": "Spider-JSWithList",
-      "type": 3,
-      "api": "./live.js",
-      "url": "./live.txt",
-      "ext": ""
-    },
-    {
       "name": "Spider-Python",
       "type": 3,
       "api": "./live.py",
-      "ext": ""
-    },
-    {
-      "name": "Spider-PythonWithList",
-      "type": 3,
-      "api": "./live.py",
-      "url": "./live.txt",
       "ext": ""
     }
   ]
