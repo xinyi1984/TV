@@ -606,7 +606,6 @@ public class LiveActivity extends BaseActivity implements GroupPresenter.OnClick
         mBinding.widget.line.setText(mChannel.getLineText());
         mBinding.widget.number.setText(mChannel.getNumber());
         mBinding.control.line.setText(mChannel.getLineText());
-        mBinding.widget.name.setMaxEms(mChannel.getName().length());
         mBinding.widget.line.setVisibility(mChannel.getLineVisible());
         mBinding.control.line.setVisibility(mChannel.getLineVisible());
     }
@@ -910,14 +909,12 @@ public class LiveActivity extends BaseActivity implements GroupPresenter.OnClick
 
     @Override
     public void onKeyUp() {
-        if (mPlayers.isLive()) prevChannel();
-        else showControl(mBinding.control.player);
+        prevChannel();
     }
 
     @Override
     public void onKeyDown() {
-        if (mPlayers.isLive()) nextChannel();
-        else showControl(mBinding.control.player);
+        nextChannel();
     }
 
     @Override

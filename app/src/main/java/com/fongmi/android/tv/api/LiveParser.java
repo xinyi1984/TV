@@ -292,6 +292,7 @@ public class LiveParser {
         private void headers(String[] params) {
             if (header == null) header = new HashMap<>();
             for (String param : params) {
+                if (!param.contains("=")) continue;
                 String[] a = param.split("=");
                 header.put(a[0].trim(), a[1].trim().replace("\"", ""));
             }

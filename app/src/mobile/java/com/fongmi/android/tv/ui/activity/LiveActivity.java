@@ -638,7 +638,6 @@ public class LiveActivity extends BaseActivity implements CustomKeyDownLive.List
         mBinding.widget.line.setText(mChannel.getLineText());
         mBinding.widget.number.setText(mChannel.getNumber());
         mBinding.widget.numberPip.setText(mChannel.getNumber());
-        mBinding.widget.name.setMaxEms(mChannel.getName().length());
         mBinding.widget.line.setVisibility(mChannel.getLineVisible());
         mBinding.control.action.line.setText(mBinding.widget.line.getText());
         mBinding.control.action.line.setVisibility(mBinding.widget.line.getVisibility());
@@ -1025,12 +1024,12 @@ public class LiveActivity extends BaseActivity implements CustomKeyDownLive.List
 
     @Override
     public void onFlingUp() {
-        if (mPlayers.isLive()) prevChannel();
+        prevChannel();
     }
 
     @Override
     public void onFlingDown() {
-        if (mPlayers.isLive()) nextChannel();
+        nextChannel();
     }
 
     @Override
