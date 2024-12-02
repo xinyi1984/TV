@@ -42,7 +42,7 @@ public class LiveParser {
     }
 
     public static void start(Live live) throws Exception {
-        if (live.getGroups().size() > 0) return;
+        if (!live.getGroups().isEmpty()) return;
         if (live.getType() == 0) text(live, getText(live));
         if (live.getType() == 1) json(live, getText(live));
         if (live.getType() == 3) spider(live, getText(live));
@@ -50,7 +50,7 @@ public class LiveParser {
 
     public static void text(Live live, String text) {
         int number = 0;
-        if (live.getGroups().size() > 0) return;
+        if (!live.getGroups().isEmpty()) return;
         if (M3U.matcher(text).find()) m3u(live, text);
         else if (live.isXtream()) xtream(live);
         else txt(live, text);
@@ -150,7 +150,7 @@ public class LiveParser {
         if (url.startsWith("file")) return Path.read(url);
         if (url.startsWith("http")) return OkHttp.string(url, header);
         if (url.startsWith("assets") || url.startsWith("proxy")) return getText(UrlUtil.convert(url), header);
-        if (url.length() > 0 && url.length() % 4 == 0) return getText(new String(Base64.decode(url, Base64.DEFAULT)), header);
+        if (!url.isEmpty() && url.length() % 4 == 0) return getText(new String(Base64.decode(url, Base64.DEFAULT)), header);
         return "";
     }
 
