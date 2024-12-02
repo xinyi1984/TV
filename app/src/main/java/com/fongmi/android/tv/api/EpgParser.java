@@ -27,10 +27,10 @@ import java.util.Set;
 
 public class EpgParser {
 
-    public static boolean start(Live live) throws Exception {
-        if (!live.getEpg().contains("xml") && !live.getEpg().contains("gz")) return false;
-        File file = Path.epg(Uri.parse(live.getEpg()).getLastPathSegment());
-        if (shouldDownload(file)) Download.create(live.getEpg(), file).start();
+    public static boolean start(Live live, String url) throws Exception {
+        if (!url.contains("xml") && !url.contains("gz")) return false;
+        File file = Path.epg(Uri.parse(url).getLastPathSegment());
+        if (shouldDownload(file)) Download.create(url, file).start();
         if (file.getName().endsWith(".gz")) readGzip(live, file);
         else readXml(live, file);
         return true;
@@ -86,7 +86,9 @@ public class EpgParser {
         }
         for (Group group : live.getGroups()) {
             for (Channel channel : group.getChannel()) {
-                channel.setData(epgMap.get(channel.getTvgName()));
+                if (epgMap.containsKey(channel.getTvgName())) {
+                    channel.setData(epgMap.get(channel.getTvgName()));
+                }
             }
         }
     }

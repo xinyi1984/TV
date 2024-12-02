@@ -68,7 +68,11 @@ public class LiveViewModel extends ViewModel {
     }
 
     public void getXml(Live item) {
-        execute(XML, () -> EpgParser.start(item));
+        execute(XML, () -> {
+            boolean result = false;
+            for (String url : item.getEpg().split(",")) if (EpgParser.start(item, url)) result = true;
+            return result;
+        });
     }
 
     public void getEpg(Channel item) {
