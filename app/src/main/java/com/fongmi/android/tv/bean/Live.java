@@ -1,5 +1,6 @@
 package com.fongmi.android.tv.bean;
 
+import android.net.Uri;
 import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
@@ -10,9 +11,11 @@ import androidx.room.PrimaryKey;
 import com.fongmi.android.tv.App;
 import com.fongmi.android.tv.Constant;
 import com.fongmi.android.tv.R;
+import com.fongmi.android.tv.api.XtreamParser;
 import com.fongmi.android.tv.api.loader.BaseLoader;
 import com.fongmi.android.tv.db.AppDatabase;
 import com.fongmi.android.tv.gson.ExtAdapter;
+import com.fongmi.android.tv.utils.UrlUtil;
 import com.github.catvod.crawler.Spider;
 import com.github.catvod.utils.Json;
 import com.google.common.net.HttpHeaders;
@@ -75,6 +78,14 @@ public class Live {
     @Ignore
     @SerializedName("referer")
     private String referer;
+
+    @Ignore
+    @SerializedName("username")
+    private String username;
+
+    @Ignore
+    @SerializedName("password")
+    private String password;
 
     @Ignore
     @SerializedName("type")
@@ -148,6 +159,10 @@ public class Live {
         return TextUtils.isEmpty(url) ? "" : url;
     }
 
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
     public String getApi() {
         return TextUtils.isEmpty(api) ? "" : api;
     }
@@ -198,6 +213,22 @@ public class Live {
 
     public String getReferer() {
         return TextUtils.isEmpty(referer) ? "" : referer;
+    }
+
+    public String getUsername() {
+        return TextUtils.isEmpty(username) ? "" : username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return TextUtils.isEmpty(password) ? "" : password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public Integer getType() {
@@ -260,6 +291,10 @@ public class Live {
         this.width = width;
     }
 
+    public boolean isXtream() {
+        return !getUsername().isEmpty() && !getPassword().isEmpty();
+    }
+
     public boolean isEmpty() {
         return getName().isEmpty();
     }
@@ -294,6 +329,17 @@ public class Live {
         if (item == null) return this;
         setBoot(item.isBoot());
         setPass(item.isPass());
+        return this;
+    }
+
+    public Live check() {
+        Uri uri = Uri.parse(getUrl());
+        boolean php = UrlUtil.path(uri).contains("get.php");
+        String username = uri.getQueryParameter("username");
+        String password = uri.getQueryParameter("password");
+        if (php && username != null) setUsername(username);
+        if (php && password != null) setPassword(password);
+        if (isXtream() && getEpg().isEmpty()) setEpg(XtreamParser.getEpgUrl(this));
         return this;
     }
 

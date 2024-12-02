@@ -10,6 +10,8 @@ import com.fongmi.android.tv.bean.ClearKey;
 import com.fongmi.android.tv.bean.Drm;
 import com.fongmi.android.tv.bean.Group;
 import com.fongmi.android.tv.bean.Live;
+import com.fongmi.android.tv.bean.XCategory;
+import com.fongmi.android.tv.bean.XStream;
 import com.fongmi.android.tv.utils.UrlUtil;
 import com.github.catvod.net.OkHttp;
 import com.github.catvod.utils.Json;
@@ -17,6 +19,7 @@ import com.github.catvod.utils.Path;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -30,6 +33,7 @@ public class LiveParser {
     private static final Pattern TVG_URL = Pattern.compile(".*x-tvg-url=\"(.?|.+?)\".*");
     private static final Pattern GROUP = Pattern.compile(".*group-title=\"(.?|.+?)\".*");
     private static final Pattern NAME = Pattern.compile(".*,(.+?)$");
+    private static final Pattern M3U = Pattern.compile("#EXTM3U|#EXTINF");
 
     private static String extract(String line, Pattern pattern) {
         Matcher matcher = pattern.matcher(line.trim());
@@ -47,7 +51,8 @@ public class LiveParser {
     public static void text(Live live, String text) {
         int number = 0;
         if (live.getGroups().size() > 0) return;
-        if (text.contains("#EXTM3U")) m3u(live, text);
+        if (M3U.matcher(text).find()) m3u(live, text);
+        else if (live.isXtream()) xtream(live);
         else txt(live, text);
         for (Group group : live.getGroups()) {
             for (Channel channel : group.getChannel()) {
@@ -99,6 +104,22 @@ public class LiveParser {
                 channel.getUrls().add(split[0]);
                 setting.copy(channel).clear();
             }
+        }
+    }
+
+    private static void xtream(Live live) {
+        List<XCategory> categoryList = XtreamParser.getCategoryList(live);
+        List<XStream> streamList = XtreamParser.getStreamList(live);
+        Map<String, String> categoryMap = new HashMap<>();
+        for (XCategory category : categoryList) {
+            categoryMap.put(category.getCategoryId(), category.getCategoryName());
+        }
+        for (XStream stream : streamList) {
+            Group group = live.find(Group.create(categoryMap.get(stream.getCategoryId()), live.isPass()));
+            Channel channel = group.find(Channel.create(stream.getName()));
+            channel.getUrls().add(XtreamParser.getTsUrl(live, stream.getStreamId()));
+            if (!stream.getStreamIcon().isEmpty()) channel.setLogo(stream.getStreamIcon());
+            if (!stream.getEpgChannelId().isEmpty()) channel.setTvgName(stream.getEpgChannelId());
         }
     }
 

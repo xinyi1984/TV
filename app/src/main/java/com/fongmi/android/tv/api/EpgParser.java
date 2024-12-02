@@ -28,7 +28,7 @@ import java.util.Set;
 public class EpgParser {
 
     public static boolean start(Live live) throws Exception {
-        if (!live.getEpg().endsWith(".xml") && !live.getEpg().endsWith(".gz")) return false;
+        if (!live.getEpg().contains("xml") && !live.getEpg().contains("gz")) return false;
         File file = Path.epg(Uri.parse(live.getEpg()).getLastPathSegment());
         if (shouldDownload(file)) Download.create(live.getEpg(), file).start();
         if (file.getName().endsWith(".gz")) readGzip(live, file);
