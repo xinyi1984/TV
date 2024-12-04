@@ -211,7 +211,7 @@ public class ParseJob implements ParseCallback {
 
     private void stopWeb() {
         for (CustomWebView webView : webViews) webView.stop(false);
-        webViews.clear();
+        if (!webViews.isEmpty()) webViews.clear();
     }
 
     public void stop() {

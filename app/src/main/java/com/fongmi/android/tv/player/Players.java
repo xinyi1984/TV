@@ -159,7 +159,6 @@ public class Players implements Player.Listener, ParseCallback {
     public void reset() {
         position = C.TIME_UNSET;
         removeTimeoutCheck();
-        stopParse();
         retry = 0;
     }
 
@@ -316,6 +315,7 @@ public class Players implements Player.Listener, ParseCallback {
     }
 
     public void stop() {
+        if (parseJob != null) parseJob.stop();
         if (exoPlayer != null) exoPlayer.stop();
         if (exoPlayer != null) exoPlayer.clearMediaItems();
     }
