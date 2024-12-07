@@ -15,7 +15,6 @@ import com.fongmi.android.tv.api.XtreamParser;
 import com.fongmi.android.tv.api.loader.BaseLoader;
 import com.fongmi.android.tv.db.AppDatabase;
 import com.fongmi.android.tv.gson.ExtAdapter;
-import com.fongmi.android.tv.utils.UrlUtil;
 import com.github.catvod.crawler.Spider;
 import com.github.catvod.utils.Json;
 import com.google.common.net.HttpHeaders;
@@ -334,11 +333,9 @@ public class Live {
 
     public Live check() {
         Uri uri = Uri.parse(getUrl());
-        boolean php = UrlUtil.path(uri).contains("get.php");
-        String username = uri.getQueryParameter("username");
-        String password = uri.getQueryParameter("password");
-        if (php && username != null) setUsername(username);
-        if (php && password != null) setPassword(password);
+        boolean xtream = XtreamParser.isApiUrl(uri);
+        if (xtream) setUsername(uri.getQueryParameter("username"));
+        if (xtream) setPassword(uri.getQueryParameter("password"));
         if (isXtream() && getEpg().isEmpty()) setEpg(XtreamParser.getEpgUrl(this));
         return this;
     }

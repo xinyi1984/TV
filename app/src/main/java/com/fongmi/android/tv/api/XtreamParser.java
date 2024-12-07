@@ -1,5 +1,7 @@
 package com.fongmi.android.tv.api;
 
+import android.net.Uri;
+
 import com.fongmi.android.tv.bean.Live;
 import com.fongmi.android.tv.bean.XCategory;
 import com.fongmi.android.tv.bean.XStream;
@@ -14,6 +16,10 @@ public class XtreamParser {
     public static HttpUrl.Builder getBuilder(Live live) {
         HttpUrl url = HttpUrl.parse(live.getUrl());
         return new HttpUrl.Builder().scheme(url.scheme()).host(url.host()).port(url.port());
+    }
+
+    public static boolean isApiUrl(Uri uri) {
+        return uri.getPath() != null && (uri.getPath().contains("get.php") || uri.getPath().contains("player_api.php"));
     }
 
     public static String getEpgUrl(Live live) {

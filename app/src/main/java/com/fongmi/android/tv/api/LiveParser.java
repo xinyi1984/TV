@@ -117,6 +117,7 @@ public class LiveParser {
             categoryMap.put(category.getCategoryId(), category.getCategoryName());
         }
         for (XStream stream : streamList) {
+            if (!categoryMap.containsKey(stream.getCategoryId())) continue;
             Group group = live.find(Group.create(categoryMap.get(stream.getCategoryId()), live.isPass()));
             Channel channel = group.find(Channel.create(stream.getName()));
             channel.getUrls().add(XtreamParser.getTsUrl(live, stream.getStreamId()));
