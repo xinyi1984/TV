@@ -114,7 +114,7 @@ public class LiveConfig {
 
     private void loadConfig(Callback callback) {
         try {
-            boolean xtream = XtreamParser.isApiUrl(Uri.parse(config.getUrl()));
+            boolean xtream = XtreamParser.isVerify(config.getUrl());
             parseConfig(xtream ? "" : Decoder.getJson(config.getUrl()), callback);
         } catch (Throwable e) {
             if (TextUtils.isEmpty(config.getUrl())) App.post(() -> callback.error(""));

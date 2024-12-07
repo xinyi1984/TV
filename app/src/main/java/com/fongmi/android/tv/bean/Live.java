@@ -333,7 +333,7 @@ public class Live {
 
     public Live check() {
         Uri uri = Uri.parse(getUrl());
-        boolean xtream = XtreamParser.isApiUrl(uri);
+        boolean xtream = XtreamParser.isVerify(uri);
         if (xtream) setUsername(uri.getQueryParameter("username"));
         if (xtream) setPassword(uri.getQueryParameter("password"));
         if (isXtream() && getEpg().isEmpty()) setEpg(XtreamParser.getEpgUrl(this));

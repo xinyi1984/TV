@@ -146,7 +146,7 @@ public class LiveParser {
     }
 
     private static String getText(Live live) {
-        return getText(live.getUrl(), live.getHeaders()).replace("\r\n", "\n");
+        return live.isXtream() ? "" : getText(live.getUrl(), live.getHeaders()).replace("\r\n", "\n");
     }
 
     private static String getText(String url, Map<String, String> header) {
