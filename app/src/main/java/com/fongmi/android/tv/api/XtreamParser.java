@@ -31,6 +31,14 @@ public class XtreamParser {
         return uri.getPath() != null && uri.getQueryParameter("username") != null && uri.getQueryParameter("password") != null && uri.getPath().contains("player_api.php");
     }
 
+    public static boolean isGetUrl(String url) {
+        return isGetUrl(Uri.parse(url));
+    }
+
+    public static boolean isGetUrl(Uri uri) {
+        return uri.getPath() != null && uri.getQueryParameter("username") != null && uri.getQueryParameter("password") != null && uri.getPath().contains("get.php");
+    }
+
     public static String getEpgUrl(Live live) {
         return getBuilder(live).addPathSegment("xmltv.php").addQueryParameter("username", live.getUsername()).addQueryParameter("password", live.getPassword()).build().toString();
     }
@@ -43,19 +51,35 @@ public class XtreamParser {
         return getBuilder(live).addPathSegment("player_api.php").addQueryParameter("username", live.getUsername()).addQueryParameter("password", live.getPassword()).addQueryParameter("action", action).build().toString();
     }
 
-    public static String getPlayUrl(Live live, String id, String format) {
-        return getBuilder(live).addPathSegment("live").addPathSegment(live.getUsername()).addPathSegment(live.getPassword()).addPathSegment(id + "." + format + "$" + format.toUpperCase()).build().toString();
-    }
-
     public static XInfo getInfo(Live live) {
         return XInfo.objectFrom(OkHttp.string(getApiUrl(live)));
     }
 
-    public static List<XCategory> getCategoryList(Live live) {
+    public static List<XCategory> getLiveCategoryList(Live live) {
         return XCategory.arrayFrom(OkHttp.string(getApiUrl(live, "get_live_categories")));
     }
 
-    public static List<XStream> getStreamList(Live live) {
+    public static List<XStream> getLiveStreamList(Live live) {
         return XStream.arrayFrom(OkHttp.string(getApiUrl(live, "get_live_streams")));
+    }
+
+    public static List<XCategory> getVodCategoryList(Live live) {
+        return XCategory.arrayFrom(OkHttp.string(getApiUrl(live, "get_vod_categories")));
+    }
+
+    public static List<XStream> getVodStreamList(Live live) {
+        return XStream.arrayFrom(OkHttp.string(getApiUrl(live, "get_vod_streams")));
+    }
+
+    public static List<XCategory> getCategoryList(Live live) {
+        List<XCategory> categoryList = XtreamParser.getLiveCategoryList(live);
+        categoryList.addAll(XtreamParser.getVodCategoryList(live));
+        return categoryList;
+    }
+
+    public static List<XStream> getStreamList(Live live) {
+        List<XStream> streamList = XtreamParser.getLiveStreamList(live);
+        streamList.addAll(XtreamParser.getVodStreamList(live));
+        return streamList;
     }
 }

@@ -5,7 +5,7 @@ import android.text.TextUtils;
 import com.fongmi.android.tv.App;
 import com.google.gson.annotations.SerializedName;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 
 public class XInfo {
@@ -34,8 +34,10 @@ public class XInfo {
         private List<String> allowedOutputFormats;
 
         public List<String> getAllowedOutputFormats() {
-            if (allowedOutputFormats != null) allowedOutputFormats.remove("rtmp");
-            return allowedOutputFormats == null ? Collections.emptyList() : allowedOutputFormats;
+            if (allowedOutputFormats == null) allowedOutputFormats = new ArrayList<>();
+            if (allowedOutputFormats.isEmpty()) allowedOutputFormats.add("ts");
+            allowedOutputFormats.remove("rtmp");
+            return allowedOutputFormats;
         }
     }
 
