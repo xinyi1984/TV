@@ -87,6 +87,10 @@ public class Live {
     private String password;
 
     @Ignore
+    @SerializedName("timeZone")
+    private String timeZone;
+
+    @Ignore
     @SerializedName("type")
     private Integer type;
 
@@ -228,6 +232,14 @@ public class Live {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getTimeZone() {
+        return TextUtils.isEmpty(timeZone) ? "" : timeZone;
+    }
+
+    public void setTimeZone(String timeZone) {
+        this.timeZone = timeZone;
     }
 
     public Integer getType() {

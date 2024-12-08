@@ -16,19 +16,20 @@ https://github.com/CatVodTVOfficial/CatVodTVJarLoader
 
 ### 直播欄位
 
-| 欄位名稱    | 預設值   | 說明    | 其他              |
-|---------|-------|-------|-----------------|
-| ua      | none  | 用戶代理  |                 |
-| origin  | none  | 來源    |                 |
-| referer | none  | 參照地址  |                 |
-| epg     | none  | 節目地址  | &serverTimeZone |
-| logo    | none  | 台標地址  |                 |
-| pass    | false | 是否免密碼 |                 |
-| boot    | false | 是否自啟動 |                 |
-| timeout | 15    | 播放超時  | 單位：秒            |
-| header  | none  | 請求標頭  | 格式：json         |
-| click   | none  | 點擊js  | javascript      |
-| catchup | none  | 回看參數  |                 |
+| 欄位名稱     | 預設值   | 說明    | 其他         |
+|----------|-------|-------|------------|
+| ua       | none  | 用戶代理  |            |
+| origin   | none  | 來源    |            |
+| referer  | none  | 參照地址  |            |
+| epg      | none  | 節目地址  |            |
+| logo     | none  | 台標地址  |            |
+| pass     | false | 是否免密碼 |            |
+| boot     | false | 是否自啟動 |            |
+| timeout  | 15    | 播放超時  | 單位：秒       |
+| header   | none  | 請求標頭  | 格式：json    |
+| click    | none  | 點擊js  | javascript |
+| catchup  | none  | 回看參數  |            |
+| timeZone | none  | 時區    |            |
 
 ### 樣式
 

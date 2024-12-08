@@ -11,6 +11,7 @@ import com.fongmi.android.tv.bean.Drm;
 import com.fongmi.android.tv.bean.Group;
 import com.fongmi.android.tv.bean.Live;
 import com.fongmi.android.tv.bean.XCategory;
+import com.fongmi.android.tv.bean.XInfo;
 import com.fongmi.android.tv.bean.XStream;
 import com.fongmi.android.tv.utils.UrlUtil;
 import com.github.catvod.net.OkHttp;
@@ -110,8 +111,11 @@ public class LiveParser {
     }
 
     private static void xtream(Live live) {
-        List<XCategory> categoryList = XtreamParser.getCategoryList(live);
+        XInfo info = XtreamParser.getInfo(live);
+        live.setTimeZone(info.getServerInfo().getTimezone());
         List<XStream> streamList = XtreamParser.getStreamList(live);
+        List<XCategory> categoryList = XtreamParser.getCategoryList(live);
+        List<String> formats = info.getUserInfo().getAllowedOutputFormats();
         Map<String, String> categoryMap = new HashMap<>();
         for (XCategory category : categoryList) {
             categoryMap.put(category.getCategoryId(), category.getCategoryName());
@@ -120,9 +124,10 @@ public class LiveParser {
             if (!categoryMap.containsKey(stream.getCategoryId())) continue;
             Group group = live.find(Group.create(categoryMap.get(stream.getCategoryId()), live.isPass()));
             Channel channel = group.find(Channel.create(stream.getName()));
-            channel.getUrls().add(XtreamParser.getTsUrl(live, stream.getStreamId()));
             if (!stream.getStreamIcon().isEmpty()) channel.setLogo(stream.getStreamIcon());
             if (!stream.getEpgChannelId().isEmpty()) channel.setTvgName(stream.getEpgChannelId());
+            if (formats.isEmpty()) channel.getUrls().add(XtreamParser.getPlayUrl(live, stream.getStreamId(), "ts"));
+            for (String format : formats) channel.getUrls().add(XtreamParser.getPlayUrl(live, stream.getStreamId(), format));
         }
     }
 
@@ -146,7 +151,7 @@ public class LiveParser {
     }
 
     private static String getText(Live live) {
-        return live.isXtream() ? "" : getText(live.getUrl(), live.getHeaders()).replace("\r\n", "\n");
+        return XtreamParser.isApiUrl(live.getUrl()) ? "" : getText(live.getUrl(), live.getHeaders()).replace("\r\n", "\n");
     }
 
     private static String getText(String url, Map<String, String> header) {
