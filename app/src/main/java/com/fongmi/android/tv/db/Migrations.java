@@ -24,4 +24,11 @@ public class Migrations {
             database.execSQL("ALTER TABLE History_Backup RENAME to History");
         }
     };
+
+    public static final Migration MIGRATION_32_33 = new Migration(32, 33) {
+        @Override
+        public void migrate(@NonNull SupportSQLiteDatabase database) {
+            database.execSQL("ALTER TABLE Live ADD COLUMN keep TEXT DEFAULT NULL");
+        }
+    };
 }

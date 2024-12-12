@@ -90,6 +90,9 @@ public class Live {
     @SerializedName("timeZone")
     private String timeZone;
 
+    @SerializedName("keep")
+    private String keep;
+
     @Ignore
     @SerializedName("type")
     private Integer type;
@@ -242,6 +245,14 @@ public class Live {
         this.timeZone = timeZone;
     }
 
+    public String getKeep() {
+        return TextUtils.isEmpty(keep) ? "" : keep;
+    }
+
+    public void setKeep(String keep) {
+        this.keep = keep;
+    }
+
     public Integer getType() {
         return type == null ? 0 : type;
     }
@@ -335,11 +346,17 @@ public class Live {
         return this;
     }
 
+    public Live keep(Channel channel) {
+        setKeep(channel.getGroup().getName() + AppDatabase.SYMBOL + channel.getName() + AppDatabase.SYMBOL + channel.getCurrent());
+        return this;
+    }
+
     public Live sync() {
         Live item = find(getName());
         if (item == null) return this;
         setBoot(item.isBoot());
         setPass(item.isPass());
+        setKeep(item.getKeep());
         return this;
     }
 

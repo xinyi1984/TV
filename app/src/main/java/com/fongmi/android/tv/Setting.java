@@ -25,14 +25,6 @@ public class Setting {
         Prefers.put("proxy", proxy);
     }
 
-    public static String getKeep() {
-        return Prefers.getString("keep");
-    }
-
-    public static void putKeep(String keep) {
-        Prefers.put("keep", keep);
-    }
-
     public static String getKeyword() {
         return Prefers.getString("keyword");
     }

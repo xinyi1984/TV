@@ -32,7 +32,7 @@ import java.io.File;
 @Database(entities = {Keep.class, Site.class, Live.class, Track.class, Config.class, Device.class, History.class}, version = AppDatabase.VERSION)
 public abstract class AppDatabase extends RoomDatabase {
 
-    public static final int VERSION = 32;
+    public static final int VERSION = 33;
     public static final String NAME = "tv";
     public static final String SYMBOL = "@@@";
 
@@ -83,6 +83,7 @@ public abstract class AppDatabase extends RoomDatabase {
         return Room.databaseBuilder(context, AppDatabase.class, NAME)
                 .addMigrations(Migrations.MIGRATION_30_31)
                 .addMigrations(Migrations.MIGRATION_31_32)
+                .addMigrations(Migrations.MIGRATION_32_33)
                 .allowMainThreadQueries().fallbackToDestructiveMigration().build();
     }
 
