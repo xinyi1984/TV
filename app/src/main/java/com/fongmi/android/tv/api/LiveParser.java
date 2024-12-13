@@ -73,7 +73,7 @@ public class LiveParser {
     }
 
     private static void spider(Live live) throws Exception {
-        String text = live.spider().liveContent(UrlUtil.convert(live.getUrl()));
+        String text = live.spider().liveContent(live.getUrl());
         if (Json.valid(text)) json(live, text);
         else text(live, text);
     }
