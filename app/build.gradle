@@ -14,7 +14,7 @@ android {
         //noinspection ExpiredTargetSdkVersion
         targetSdk 28
         versionCode 266
-        versionName "1213v2"
+        versionName "1213v3"
         javaCompileOptions {
             annotationProcessorOptions {
                 arguments = ["room.schemaLocation": "$projectDir/schemas".toString()]

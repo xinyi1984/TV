@@ -245,7 +245,7 @@ public class LiveConfig {
     }
 
     public int[] find(List<Group> items) {
-        if (home.getKeep().isEmpty()) return new int[]{1, 0};
+        if (home == null || home.getKeep().isEmpty()) return new int[]{1, 0};
         String[] splits = home.getKeep().split(AppDatabase.SYMBOL);
         for (int i = 0; i < items.size(); i++) {
             Group group = items.get(i);
