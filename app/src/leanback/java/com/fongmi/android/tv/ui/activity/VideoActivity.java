@@ -55,7 +55,6 @@ import com.fongmi.android.tv.event.ActionEvent;
 import com.fongmi.android.tv.event.ErrorEvent;
 import com.fongmi.android.tv.event.PlayerEvent;
 import com.fongmi.android.tv.event.RefreshEvent;
-import com.fongmi.android.tv.impl.Callback;
 import com.fongmi.android.tv.model.SiteViewModel;
 import com.fongmi.android.tv.player.Players;
 import com.fongmi.android.tv.player.exo.ExoUtil;
@@ -81,7 +80,6 @@ import com.fongmi.android.tv.utils.ResUtil;
 import com.fongmi.android.tv.utils.Sniffer;
 import com.fongmi.android.tv.utils.Traffic;
 import com.github.bassaer.library.MDColor;
-import com.github.catvod.net.OkHttp;
 import com.github.catvod.utils.Trans;
 import com.permissionx.guolindev.PermissionX;
 
@@ -89,8 +87,6 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.File;
-import java.io.IOException;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -102,9 +98,6 @@ import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.regex.Matcher;
-
-import okhttp3.Call;
-import okhttp3.Response;
 
 public class VideoActivity extends BaseActivity implements CustomKeyDownVod.Listener, TrackDialog.Listener, ArrayPresenter.OnClickListener, Clock.Callback {
 
@@ -463,10 +456,10 @@ public class VideoActivity extends BaseActivity implements CustomKeyDownVod.List
         setText(mBinding.content, R.string.detail_content, Html.fromHtml(item.getVodContent()).toString());
         setText(mBinding.director, R.string.detail_director, Html.fromHtml(item.getVodDirector()).toString());
         mFlagAdapter.setItems(item.getVodFlags(), null);
+        setPartAdapter(Part.get(item.getVodName()));
         mBinding.content.setMaxLines(getMaxLines());
         mBinding.video.requestFocus();
         setArtwork(item.getVodPic());
-        getPart(item.getVodName());
         App.removeCallbacks(mR4);
         checkHistory(item);
         checkFlag(item);
@@ -944,23 +937,6 @@ public class VideoActivity extends BaseActivity implements CustomKeyDownVod.List
 
             @Override
             public void onLoadCleared(@Nullable Drawable placeholder) {
-            }
-        });
-    }
-
-    private void getPart(String source) {
-        OkHttp.newCall("https://api.yesapi.cn/?service=App.Scws.GetWords&app_key=CEE4B8A091578B252AC4C92FB4E893C3&text=" + URLEncoder.encode(source.trim())).enqueue(new Callback() {
-            @Override
-            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                List<String> items = Part.get(response.body().string());
-                if (!items.contains(source)) items.add(0, source);
-                App.post(() -> setPartAdapter(items));
-            }
-
-            @Override
-            public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                List<String> items = Arrays.asList(source);
-                App.post(() -> setPartAdapter(items));
             }
         });
     }
