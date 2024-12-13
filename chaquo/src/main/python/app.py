@@ -86,8 +86,8 @@ def playerContent(ru, flag, id, vipFlags):
     return formatJo
 
 
-def liveContent(ru):
-    result = ru.liveContent()
+def liveContent(ru, url):
+    result = ru.liveContent(url)
     return result
 
 

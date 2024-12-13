@@ -75,8 +75,8 @@ public class Spider extends com.github.catvod.crawler.Spider {
     }
 
     @Override
-    public String liveContent() {
-        return app.callAttr("liveContent", obj).toString();
+    public String liveContent(String url) {
+        return app.callAttr("liveContent", obj, url).toString();
     }
 
     @Override

@@ -47,7 +47,7 @@ public class LiveParser {
         if (!live.getGroups().isEmpty()) return;
         if (live.getType() == 0) text(live, getText(live));
         if (live.getType() == 1) json(live, getText(live));
-        if (live.getType() == 3) spider(live, getText(live));
+        if (live.getType() == 3) spider(live);
     }
 
     public static void text(Live live, String text) {
@@ -72,8 +72,8 @@ public class LiveParser {
         }
     }
 
-    private static void spider(Live live, String text) throws Exception {
-        if (text.isEmpty()) text = live.spider().liveContent();
+    private static void spider(Live live) throws Exception {
+        String text = live.spider().liveContent(UrlUtil.convert(live.getUrl()));
         if (Json.valid(text)) json(live, text);
         else text(live, text);
     }

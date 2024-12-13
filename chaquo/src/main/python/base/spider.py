@@ -45,7 +45,7 @@ class Spider(metaclass=ABCMeta):
     def playerContent(self, flag, id, vipFlags):
         pass
 
-    def liveContent(self):
+    def liveContent(self, url):
         pass
 
     def localProxy(self, param):

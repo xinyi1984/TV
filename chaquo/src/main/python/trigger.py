@@ -28,8 +28,8 @@ class Trigger():
         return sp_obj.playerContent(flag, id, vipFlags)
 
     @staticmethod
-    def liveContent(sp_obj):
-        return sp_obj.liveContent()
+    def liveContent(sp_obj, url):
+        return sp_obj.liveContent(url)
 
     @staticmethod
     def isVideoFormat(sp_obj, url):

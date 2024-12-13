@@ -29,8 +29,8 @@ class Runner():
     def playerContent(self, flag, id, vipFlags):
         return self.spider.playerContent(flag, id, vipFlags)
 
-    def liveContent(self):
-        return self.spider.liveContent()
+    def liveContent(self, url):
+        return self.spider.liveContent(url)
 
     def localProxy(self, param):
         return self.spider.localProxy(param)
