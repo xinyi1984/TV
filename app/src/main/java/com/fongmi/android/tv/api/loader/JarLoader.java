@@ -84,8 +84,9 @@ public class JarLoader {
         if (loaders.containsKey(key)) return;
         String[] texts = jar.split(";md5;");
         String md5 = texts.length > 1 ? texts[1].trim() : "";
+        if (md5.startsWith("http")) md5 = OkHttp.string(md5).trim();
         jar = texts[0];
-        if (md5.length() > 0 && Util.equals(jar, md5)) {
+        if (!md5.isEmpty() && Util.equals(jar, md5)) {
             load(key, Path.jar(jar));
         } else if (jar.startsWith("img+")) {
             load(key, Decoder.getSpider(jar));
