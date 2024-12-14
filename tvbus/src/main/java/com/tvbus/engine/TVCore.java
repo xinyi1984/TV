@@ -3,7 +3,6 @@ package com.tvbus.engine;
 import android.content.Context;
 
 import com.github.catvod.Init;
-import com.github.catvod.utils.Github;
 
 public class TVCore {
 
@@ -11,7 +10,7 @@ public class TVCore {
 
     public TVCore(String so) {
         try {
-            System.load(Github.getSo(so));
+            System.load(so);
             handle = initialise();
         } catch (Throwable ignored) {
         }

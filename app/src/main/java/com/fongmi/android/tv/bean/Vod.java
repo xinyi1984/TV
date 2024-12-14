@@ -70,6 +70,9 @@ public class Vod implements Parcelable {
     @SerializedName("vod_play_url")
     private String vodPlayUrl;
 
+    @SerializedName("vod_wallpaper")
+    private String vodWallpaper;
+
     @SerializedName("vod_tag")
     private String vodTag;
 
@@ -164,6 +167,10 @@ public class Vod implements Parcelable {
 
     public String getVodPlayUrl() {
         return TextUtils.isEmpty(vodPlayUrl) ? "" : vodPlayUrl;
+    }
+
+    public String getVodWallpaper() {
+        return TextUtils.isEmpty(vodWallpaper) ? "" : vodWallpaper;
     }
 
     public String getVodTag() {
