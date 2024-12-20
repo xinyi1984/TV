@@ -79,6 +79,10 @@ public class Site implements Parcelable {
     private Integer changeable;
 
     @Ignore
+    @SerializedName("quickSearch")
+    private Integer quickSearch;
+
+    @Ignore
     @SerializedName("categories")
     private List<String> categories;
 
@@ -193,6 +197,10 @@ public class Site implements Parcelable {
         this.changeable = changeable;
     }
 
+    public Integer getQuickSearch() {
+        return quickSearch == null ? 1 : quickSearch;
+    }
+
     public List<String> getCategories() {
         return categories == null ? Collections.emptyList() : categories;
     }
@@ -245,6 +253,10 @@ public class Site implements Parcelable {
     public Site setChangeable(boolean changeable) {
         if (getChangeable() != 0) setChangeable(changeable ? 1 : 2);
         return this;
+    }
+
+    public boolean isQuickSearch() {
+        return getQuickSearch() == 1;
     }
 
     public boolean isEmpty() {

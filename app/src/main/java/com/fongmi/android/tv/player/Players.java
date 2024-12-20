@@ -1,5 +1,8 @@
 package com.fongmi.android.tv.player;
 
+import static androidx.media3.exoplayer.DefaultRenderersFactory.EXTENSION_RENDERER_MODE_ON;
+import static androidx.media3.exoplayer.DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER;
+
 import android.app.Activity;
 import android.app.PendingIntent;
 import android.content.Intent;
@@ -87,10 +90,6 @@ public class Players implements Player.Listener, ParseCallback {
         return player;
     }
 
-    public static boolean isHard(int decode) {
-        return decode == HARD;
-    }
-
     private Players(Activity activity) {
         decode = Setting.getDecode();
         builder = new StringBuilder();
@@ -115,7 +114,7 @@ public class Players implements Player.Listener, ParseCallback {
     }
 
     private void initExo(PlayerView exo) {
-        exoPlayer = new ExoPlayer.Builder(App.get()).setLoadControl(ExoUtil.buildLoadControl()).setTrackSelector(ExoUtil.buildTrackSelector()).setRenderersFactory(ExoUtil.buildRenderersFactory(decode)).setMediaSourceFactory(ExoUtil.buildMediaSourceFactory()).build();
+        exoPlayer = new ExoPlayer.Builder(App.get()).setLoadControl(ExoUtil.buildLoadControl()).setTrackSelector(ExoUtil.buildTrackSelector()).setRenderersFactory(ExoUtil.buildRenderersFactory(isHard() ? EXTENSION_RENDERER_MODE_ON : EXTENSION_RENDERER_MODE_PREFER)).setMediaSourceFactory(ExoUtil.buildMediaSourceFactory()).build();
         exoPlayer.setAudioAttributes(AudioAttributes.DEFAULT, true);
         exoPlayer.addAnalyticsListener(new EventLogger());
         exoPlayer.setHandleAudioBecomingNoisy(true);
@@ -187,7 +186,7 @@ public class Players implements Player.Listener, ParseCallback {
     }
 
     public long getPosition() {
-        return exoPlayer == null ? 0 : exoPlayer.getCurrentPosition();
+        return exoPlayer == null ? C.TIME_UNSET : exoPlayer.getCurrentPosition();
     }
 
     public long getDuration() {
@@ -281,7 +280,8 @@ public class Players implements Player.Listener, ParseCallback {
     }
 
     public void toggleDecode(PlayerView exo) {
-        Setting.putDecode(decode = isHard() ? SOFT : HARD);
+        decode = isHard() ? SOFT : HARD;
+        Setting.putDecode(decode);
         init(exo);
     }
 

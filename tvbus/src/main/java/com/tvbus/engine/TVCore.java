@@ -61,6 +61,15 @@ public class TVCore {
         }
     }
 
+    public TVCore domain(String str) {
+        try {
+            if (str.length() > 0) setDomainSuffix(handle, str);
+            return this;
+        } catch (Throwable ignored) {
+            return this;
+        }
+    }
+
     public TVCore broker(String str) {
         try {
             if (str.length() > 0) setMKBroker(handle, str);
@@ -140,6 +149,8 @@ public class TVCore {
     private native void setRunningMode(long handle, int mode);
 
     private native void setAuthUrl(long handle, String str);
+
+    private native void setDomainSuffix(long handle, String str);
 
     private native void setMKBroker(long handle, String str);
 

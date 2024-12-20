@@ -251,7 +251,7 @@ public class LiveConfig {
             Group group = items.get(i);
             if (group.getName().equals(splits[0])) {
                 int j = group.find(splits[1]);
-                if (j != -1 && !splits[2].isEmpty()) group.getChannel().get(j).setLine(splits[2]);
+                if (j != -1 && splits.length > 2) group.getChannel().get(j).setLine(splits[2]);
                 if (j != -1) return new int[]{i, j};
             }
         }

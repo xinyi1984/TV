@@ -18,6 +18,8 @@ public class Core {
     private String pass;
     @SerializedName("broker")
     private String broker;
+    @SerializedName("domain")
+    private String domain;
     @SerializedName("resp")
     private String resp;
     @SerializedName("sign")
@@ -41,6 +43,10 @@ public class Core {
 
     public String getBroker() {
         return TextUtils.isEmpty(broker) ? "" : broker;
+    }
+
+    public String getDomain() {
+        return TextUtils.isEmpty(domain) ? "" : domain;
     }
 
     public String getResp() {

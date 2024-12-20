@@ -31,8 +31,8 @@ public class LiveParser {
     private static final Pattern CATCHUP = Pattern.compile(".*catchup=\"(.?|.+?)\".*");
     private static final Pattern TVG_LOGO = Pattern.compile(".*tvg-logo=\"(.?|.+?)\".*");
     private static final Pattern TVG_NAME = Pattern.compile(".*tvg-name=\"(.?|.+?)\".*");
-    private static final Pattern TVG_URL = Pattern.compile(".*tvg-url=([^\\s]+)");
-    private static final Pattern URL_TVG = Pattern.compile(".*url-tvg=([^\\s]+)");
+    private static final Pattern TVG_URL = Pattern.compile(".*tvg-url=\"(.?|.+?)\".*");
+    private static final Pattern URL_TVG = Pattern.compile(".*url-tvg=\"(.?|.+?)\".*");
     private static final Pattern GROUP = Pattern.compile(".*group-title=\"(.?|.+?)\".*");
     private static final Pattern NAME = Pattern.compile(".*,(.+?)$");
     private static final Pattern M3U = Pattern.compile("#EXTM3U|#EXTINF");
@@ -40,6 +40,12 @@ public class LiveParser {
     private static String extract(String line, Pattern pattern) {
         Matcher matcher = pattern.matcher(line.trim());
         if (matcher.matches()) return matcher.group(1);
+        return "";
+    }
+
+    private static String extract(String line, String... keywords) {
+        String[] splits = line.split(" ");
+        for (String split : splits) for (String keyword : keywords) if (split.contains(keyword)) return split.split("=")[1].replace("\"", "");
         return "";
     }
 
@@ -92,6 +98,7 @@ public class LiveParser {
                 catchup.setSource(extract(line, CATCHUP_SOURCE));
                 if (live.getEpg().isEmpty()) live.setEpg(extract(line, TVG_URL).replace("\"", ""));
                 if (live.getEpg().isEmpty()) live.setEpg(extract(line, URL_TVG).replace("\"", ""));
+                if (live.getEpg().isEmpty()) live.setEpg(extract(line, "tvg-url=", "url-tvg="));
             } else if (line.startsWith("#EXTINF:")) {
                 Group group = live.find(Group.create(extract(line, GROUP), live.isPass()));
                 channel = group.find(Channel.create(extract(line, NAME)));
