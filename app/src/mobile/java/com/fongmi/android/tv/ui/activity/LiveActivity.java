@@ -768,6 +768,11 @@ public class LiveActivity extends BaseActivity implements CustomKeyDownLive.List
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onRefreshEvent(RefreshEvent event) {
+        switch (event.getState()) {
+            case 0:
+                setTrackVisible(false);
+                mClock.setCallback(this);
+                break;
         switch (event.getType()) {
             case LIVE:
                 setLive(getHome());
