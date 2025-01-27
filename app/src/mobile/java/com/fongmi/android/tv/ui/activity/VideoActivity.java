@@ -1104,6 +1104,10 @@ public class VideoActivity extends BaseActivity implements Clock.Callback, Custo
     public void onPlayerEvent(PlayerEvent event) {
         if (isRedirect()) return;
         switch (event.getState()) {
+            case 0:
+                setTrackVisible(false);
+                mClock.setCallback(this);
+                break;
             case PlayerEvent.PREPARE:
                 setInitTrack(true);
                 setPosition();
