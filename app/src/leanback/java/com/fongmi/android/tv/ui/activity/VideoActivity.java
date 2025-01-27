@@ -1056,6 +1056,8 @@ public class VideoActivity extends BaseActivity implements CustomKeyDownVod.List
         switch (event.getState()) {
             case PlayerEvent.PREPARE:
                 setInitTrack(true);
+                setTrackVisible(false);
+                mClock.setCallback(this);
                 setPosition();
                 break;
             case Player.STATE_BUFFERING:
