@@ -781,10 +781,6 @@ public class LiveActivity extends BaseActivity implements CustomKeyDownLive.List
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onPlayerEvent(PlayerEvent event) {
         switch (event.getState()) {
-            case 0:
-                setTrackVisible(false);
-                mClock.setCallback(this);
-                break;
             case Player.STATE_BUFFERING:
                 showProgress();
                 break;
@@ -799,6 +795,7 @@ public class LiveActivity extends BaseActivity implements CustomKeyDownLive.List
                 setMetadata();
                 mPlayers.reset();
                 setTrackVisible();
+                mClock.setCallback(this)
                 break;
             case PlayerEvent.SIZE:
                 mBinding.control.size.setText(mPlayers.getSizeText());
