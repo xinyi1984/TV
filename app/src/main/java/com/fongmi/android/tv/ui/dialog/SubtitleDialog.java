@@ -61,21 +61,21 @@ public final class SubtitleDialog extends BaseDialog {
 
     @Override
     protected void initEvent() {
-        //binding.up.setOnClickListener(this::onUp);
-        //binding.down.setOnClickListener(this::onDown);
-        //binding.large.setOnClickListener(this::onLarge);
-        //binding.small.setOnClickListener(this::onSmall);
+        binding.up.setOnClickListener(this::onUp);
+        binding.down.setOnClickListener(this::onDown);
+        binding.large.setOnClickListener(this::onLarge);
+        binding.small.setOnClickListener(this::onSmall);
         binding.reset.setOnClickListener(this::onReset);
     }
 
-    /*private void onUp(View view) {
-        subtitleView.subPosition(ResUtil.dp2px(4));
-        Setting.putSubtitlePosition(subtitleView.getTranslationY());
+    private void onUp(View view) {
+        subtitleView.addPosition(0.005f);
+        Setting.putSubtitlePosition(subtitleView.getPosition());
     }
 
     private void onDown(View view) {
-        subtitleView.addPosition(ResUtil.dp2px(4));
-        Setting.putSubtitlePosition(subtitleView.getTranslationY());
+        subtitleView.subPosition(0.005f);
+        Setting.putSubtitlePosition(subtitleView.getPosition());
     }
 
     private void onLarge(View view) {
@@ -86,12 +86,12 @@ public final class SubtitleDialog extends BaseDialog {
     private void onSmall(View view) {
         subtitleView.subTextSize(0.002f);
         Setting.putSubtitleTextSize(subtitleView.getTextSize());
-    }*/
+    }
 
     private void onReset(View view) {
         Setting.putSubtitleTextSize(0.0f);
         Setting.putSubtitlePosition(0.0f);
-        subtitleView.setTranslationY(0.0f);
+        subtitleView.setBottomPosition(0.0f);
         subtitleView.setUserDefaultTextSize();
     }
 
@@ -99,6 +99,6 @@ public final class SubtitleDialog extends BaseDialog {
     public void onResume() {
         super.onResume();
         if (full) setDimAmount(0.5f);
-        getDialog().getWindow().setLayout(ResUtil.dp2px(216), -1);
+        getDialog().getWindow().setLayout(ResUtil.dp2px(full ? 232 : 216), -1);
     }
 }
