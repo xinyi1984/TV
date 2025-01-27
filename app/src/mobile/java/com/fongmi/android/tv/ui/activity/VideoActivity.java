@@ -286,7 +286,7 @@ public class VideoActivity extends BaseActivity implements Clock.Callback, Custo
         mPlayers = Players.create(this);
         mDialogs = new ArrayList<>();
         mBroken = new ArrayList<>();
-        mBinding.display.size.setText(mPlayers.getSizeText());
+        mClock = Clock.create(mBinding.display.clock);
         mR0 = this::stopService;
         mR1 = this::hideControl;
         mR2 = this::setTraffic;
@@ -1062,6 +1062,7 @@ public class VideoActivity extends BaseActivity implements Clock.Callback, Custo
 
     @Override
     public void onTimeChanged() {
+        onTimeChangeDisplaySpeed();
         long position, duration;
         mHistory.setPosition(position = mPlayers.getPosition());
         mHistory.setDuration(duration = mPlayers.getDuration());
