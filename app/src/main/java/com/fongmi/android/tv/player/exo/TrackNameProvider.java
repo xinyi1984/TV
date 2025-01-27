@@ -202,8 +202,8 @@ public class TrackNameProvider {
                 return "DIVX";
             case MimeTypes.VIDEO_DOLBY_VISION:
                 return "DOLBY";
-            case MimeTypes.VIDEO_ProRes:
-                return "ProRes";
+            //case MimeTypes.VIDEO_ProRes:
+                //return "ProRes";
             case MimeTypes.TEXT_SSA:
                 return "SSA";
             case MimeTypes.TEXT_VTT:
