@@ -90,7 +90,7 @@ public class ExoUtil {
         exo.getSubtitleView().setStyle(getCaptionStyle());
         exo.getSubtitleView().setApplyEmbeddedFontSizes(false);
         exo.getSubtitleView().setApplyEmbeddedStyles(!Setting.isCaption());
-        if (Setting.getSubtitlePosition() != 0) exo.getSubtitleView().setBottomPosition(Setting.getSubtitlePosition());
+        //if (Setting.getSubtitlePosition() != 0) exo.getSubtitleView().setBottomPosition(Setting.getSubtitlePosition());
         if (Setting.getSubtitleTextSize() != 0) exo.getSubtitleView().setFractionalTextSize(Setting.getSubtitleTextSize());
     }
 
@@ -117,7 +117,7 @@ public class ExoUtil {
         //builder.setForceUseRtpTcp(Setting.getRtsp() == 1);
         //builder.setAds(Sniffer.getRegex(uri));
         builder.setMediaId(uri.toString());
-        builder.setDecode(decode);
+        //builder.setDecode(decode);
         return builder.build();
     }
 
