@@ -7,9 +7,7 @@ import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
 import com.fongmi.android.tv.App;
-import com.fongmi.android.tv.Setting;
-import com.fongmi.android.tv.api.config.LiveConfig;
-import com.fongmi.android.tv.api.config.VodConfig;
+import com.fongmi.android.tv.bean.Backup;
 import com.fongmi.android.tv.bean.Config;
 import com.fongmi.android.tv.bean.Device;
 import com.fongmi.android.tv.bean.History;
@@ -24,10 +22,13 @@ import com.fongmi.android.tv.db.dao.KeepDao;
 import com.fongmi.android.tv.db.dao.LiveDao;
 import com.fongmi.android.tv.db.dao.SiteDao;
 import com.fongmi.android.tv.db.dao.TrackDao;
+import com.fongmi.android.tv.utils.FileUtil;
 import com.github.catvod.utils.Path;
-import com.github.catvod.utils.Prefers;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 @Database(entities = {Keep.class, Site.class, Live.class, Track.class, Config.class, Device.class, History.class}, version = AppDatabase.VERSION)
 public abstract class AppDatabase extends RoomDatabase {
@@ -43,39 +44,36 @@ public abstract class AppDatabase extends RoomDatabase {
         return instance;
     }
 
-    public static File getBackup() {
-        return new File(Path.tv(), NAME);
-    }
-
     public static void backup() {
-        if (!VodConfig.hasUrl() && !LiveConfig.hasUrl()) return;
-        if (Setting.getBackupMode() == 0) backup(new com.fongmi.android.tv.impl.Callback());
+        backup(new com.fongmi.android.tv.impl.Callback());
     }
 
     public static void backup(com.fongmi.android.tv.impl.Callback callback) {
         App.execute(() -> {
-            File db = App.get().getDatabasePath(NAME).getAbsoluteFile();
-            File wal = App.get().getDatabasePath(NAME + "-wal").getAbsoluteFile();
-            File shm = App.get().getDatabasePath(NAME + "-shm").getAbsoluteFile();
-            if (db.exists()) Path.copy(db, new File(Path.tv(), db.getName()));
-            if (wal.exists()) Path.copy(wal, new File(Path.tv(), wal.getName()));
-            if (shm.exists()) Path.copy(shm, new File(Path.tv(), shm.getName()));
-            Prefers.backup(new File(Path.tv(), NAME + "-pref"));
-            App.post(callback::success);
+            File file = new File(Path.tv(), "tv-" + new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date()) + ".bk");
+            Backup backup = Backup.create();
+            if (backup.getConfig().isEmpty()) {
+                App.post(callback::error);
+            } else {
+                Path.write(file, backup.toString().getBytes());
+                FileUtil.gzipCompress(file);
+                App.post(callback::success);
+            }
         });
     }
 
-    public static void restore(com.fongmi.android.tv.impl.Callback callback) {
+    public static void restore(File file, com.fongmi.android.tv.impl.Callback callback) {
         App.execute(() -> {
-            File db = new File(Path.tv(), NAME);
-            File wal = new File(Path.tv(), NAME + "-wal");
-            File shm = new File(Path.tv(), NAME + "-shm");
-            File pref = new File(Path.tv(), NAME + "-pref");
-            if (db.exists()) Path.copy(db, App.get().getDatabasePath(db.getName()).getAbsoluteFile());
-            if (wal.exists()) Path.copy(wal, App.get().getDatabasePath(wal.getName()).getAbsoluteFile());
-            if (shm.exists()) Path.copy(shm, App.get().getDatabasePath(shm.getName()).getAbsoluteFile());
-            if (pref.exists()) Prefers.restore(pref);
-            App.post(callback::success);
+            File restore = Path.cache("restore");
+            FileUtil.gzipDecompress(file, restore);
+            Backup backup = Backup.objectFrom(Path.read(restore));
+            if (backup.getConfig().isEmpty()) {
+                App.post(callback::error);
+            } else {
+                backup.restore();
+                Path.clear(restore);
+                App.post(callback::success);
+            }
         });
     }
 

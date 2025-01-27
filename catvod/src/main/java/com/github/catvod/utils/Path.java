@@ -113,9 +113,7 @@ public class Path {
     }
 
     public static File jar(String name) {
-        File file = new File(jar(), Util.md5(name).concat(".jar"));
-        file.setReadOnly();
-        return file;
+        return new File(jar(), Util.md5(name).concat(".jar"));
     }
 
     public static File thunder(String name) {

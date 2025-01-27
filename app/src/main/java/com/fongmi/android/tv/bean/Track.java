@@ -1,6 +1,7 @@
 package com.fongmi.android.tv.bean;
 
 import androidx.annotation.NonNull;
+import androidx.media3.common.C;
 import androidx.room.Entity;
 import androidx.room.Index;
 import androidx.room.PrimaryKey;
@@ -97,6 +98,7 @@ public class Track {
     }
 
     public void save() {
+        if (getType() != C.TRACK_TYPE_TEXT) return;
         AppDatabase.get().getTrackDao().insert(this);
     }
 

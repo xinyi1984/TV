@@ -22,8 +22,9 @@ import android.view.inputmethod.InputMethodManager;
 
 import com.fongmi.android.tv.App;
 import com.fongmi.android.tv.R;
-import com.github.catvod.Init;
+import com.github.catvod.utils.Shell;
 
+import java.net.NetworkInterface;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Formatter;
@@ -94,11 +95,26 @@ public class Util {
 
     public static String getAndroidId() {
         try {
-            String id = Settings.Secure.getString(Init.context().getContentResolver(), Settings.Secure.ANDROID_ID);
+            String id = Settings.Secure.getString(App.get().getContentResolver(), Settings.Secure.ANDROID_ID);
             if (TextUtils.isEmpty(id)) throw new NullPointerException();
             return id;
         } catch (Exception e) {
             return "0000000000000000";
+        }
+    }
+
+    public static String getSerial() {
+        return Shell.exec("getprop ro.serialno").replace("\n", "");
+    }
+
+    public static String getMac(String name) {
+        try {
+            StringBuilder sb = new StringBuilder();
+            NetworkInterface nif = NetworkInterface.getByName(name);
+            for (byte b : nif.getHardwareAddress()) sb.append(String.format("%02X:", b));
+            return substring(sb.toString());
+        } catch (Exception e) {
+            return "";
         }
     }
 

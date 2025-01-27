@@ -161,14 +161,6 @@ public class Setting {
         Prefers.put("sync_mode", mode);
     }
 
-    public static int getBackupMode() {
-        return Prefers.getInt("backup_mode");
-    }
-
-    public static void putBackupMode(int auto) {
-        Prefers.put("backup_mode", auto);
-    }
-
     public static boolean isIncognito() {
         return Prefers.getBoolean("incognito");
     }

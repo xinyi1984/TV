@@ -33,6 +33,7 @@ import com.fongmi.android.tv.ui.dialog.DohDialog;
 import com.fongmi.android.tv.ui.dialog.HistoryDialog;
 import com.fongmi.android.tv.ui.dialog.LiveDialog;
 import com.fongmi.android.tv.ui.dialog.ProxyDialog;
+import com.fongmi.android.tv.ui.dialog.RestoreDialog;
 import com.fongmi.android.tv.ui.dialog.SiteDialog;
 import com.fongmi.android.tv.utils.FileUtil;
 import com.fongmi.android.tv.utils.Notify;
@@ -49,7 +50,6 @@ public class SettingActivity extends BaseActivity implements ConfigCallback, Sit
 
     private ActivitySettingBinding mBinding;
     private String[] quality;
-    private String[] backup;
     private String[] size;
     private int type;
 
@@ -86,14 +86,17 @@ public class SettingActivity extends BaseActivity implements ConfigCallback, Sit
         mBinding.vodUrl.setText(VodConfig.getDesc());
         mBinding.liveUrl.setText(LiveConfig.getDesc());
         mBinding.wallUrl.setText(WallConfig.getDesc());
-        mBinding.dohText.setText(getDohList()[getDohIndex()]);
         mBinding.versionText.setText(BuildConfig.VERSION_NAME);
+        setCacheText();
+        setOtherText();
+    }
+
+    private void setOtherText() {
+        mBinding.dohText.setText(getDohList()[getDohIndex()]);
         mBinding.proxyText.setText(getProxy(Setting.getProxy()));
         mBinding.incognitoText.setText(getSwitch(Setting.isIncognito()));
         mBinding.sizeText.setText((size = ResUtil.getStringArray(R.array.select_size))[Setting.getSize()]);
-        mBinding.backupText.setText((backup = ResUtil.getStringArray(R.array.select_backup))[Setting.getBackupMode()]);
         mBinding.qualityText.setText((quality = ResUtil.getStringArray(R.array.select_quality))[Setting.getQuality()]);
-        setCacheText();
     }
 
     private void setCacheText() {
@@ -114,13 +117,13 @@ public class SettingActivity extends BaseActivity implements ConfigCallback, Sit
         mBinding.cache.setOnClickListener(this::onCache);
         mBinding.backup.setOnClickListener(this::onBackup);
         mBinding.player.setOnClickListener(this::onPlayer);
+        mBinding.restore.setOnClickListener(this::onRestore);
         mBinding.version.setOnClickListener(this::onVersion);
         mBinding.vod.setOnLongClickListener(this::onVodEdit);
         mBinding.vodHome.setOnClickListener(this::onVodHome);
         mBinding.live.setOnLongClickListener(this::onLiveEdit);
         mBinding.liveHome.setOnClickListener(this::onLiveHome);
         mBinding.wall.setOnLongClickListener(this::onWallEdit);
-        mBinding.backup.setOnLongClickListener(this::onBackupMode);
         mBinding.vodHistory.setOnClickListener(this::onVodHistory);
         mBinding.version.setOnLongClickListener(this::onVersionDev);
         mBinding.liveHistory.setOnClickListener(this::onLiveHistory);
@@ -145,23 +148,23 @@ public class SettingActivity extends BaseActivity implements ConfigCallback, Sit
         switch (config.getType()) {
             case 0:
                 Notify.progress(this);
-                VodConfig.load(config, getCallback());
+                VodConfig.load(config, getCallback(0));
                 mBinding.vodUrl.setText(config.getDesc());
                 break;
             case 1:
                 Notify.progress(this);
-                LiveConfig.load(config, getCallback());
+                LiveConfig.load(config, getCallback(1));
                 mBinding.liveUrl.setText(config.getDesc());
                 break;
             case 2:
                 Notify.progress(this);
-                WallConfig.load(config, getCallback());
+                WallConfig.load(config, getCallback(2));
                 mBinding.wallUrl.setText(config.getDesc());
                 break;
         }
     }
 
-    private Callback getCallback() {
+    private Callback getCallback(int type) {
         return new Callback() {
             @Override
             public void success(String result) {
@@ -170,18 +173,18 @@ public class SettingActivity extends BaseActivity implements ConfigCallback, Sit
 
             @Override
             public void success() {
-                setConfig();
+                setConfig(type);
             }
 
             @Override
             public void error(String msg) {
                 Notify.show(msg);
-                setConfig();
+                setConfig(type);
             }
         };
     }
 
-    private void setConfig() {
+    private void setConfig(int type) {
         switch (type) {
             case 0:
                 setCacheText();
@@ -322,7 +325,7 @@ public class SettingActivity extends BaseActivity implements ConfigCallback, Sit
         Notify.progress(getActivity());
         Setting.putDoh(doh.toString());
         mBinding.dohText.setText(doh.getName());
-        VodConfig.load(Config.vod(), getCallback());
+        VodConfig.load(Config.vod(), getCallback(0));
     }
 
     private void onProxy(View view) {
@@ -335,8 +338,8 @@ public class SettingActivity extends BaseActivity implements ConfigCallback, Sit
         Setting.putProxy(proxy);
         OkHttp.get().setProxy(proxy);
         Notify.progress(getActivity());
-        VodConfig.load(Config.vod(), getCallback());
         mBinding.proxyText.setText(getProxy(proxy));
+        VodConfig.load(Config.vod(), getCallback(0));
     }
 
     private void onCache(View view) {
@@ -352,15 +355,36 @@ public class SettingActivity extends BaseActivity implements ConfigCallback, Sit
         PermissionX.init(this).permissions(Manifest.permission.WRITE_EXTERNAL_STORAGE).request((allGranted, grantedList, deniedList) -> AppDatabase.backup(new Callback() {
             @Override
             public void success() {
-                Notify.show(R.string.backed);
+                Notify.show(R.string.backup_success);
+            }
+
+            @Override
+            public void error() {
+                Notify.show(R.string.backup_fail);
             }
         }));
     }
 
-    private boolean onBackupMode(View view) {
-        int index = Setting.getBackupMode();
-        Setting.putBackupMode(index = index == backup.length - 1 ? 0 : ++index);
-        mBinding.backupText.setText(backup[index]);
-        return true;
+    private void onRestore(View view) {
+        PermissionX.init(this).permissions(Manifest.permission.WRITE_EXTERNAL_STORAGE).request((allGranted, grantedList, deniedList) -> RestoreDialog.create(this).show(new Callback() {
+            @Override
+            public void success() {
+                Notify.show(R.string.restore_success);
+                Notify.progress(getActivity());
+                setOtherText();
+                initConfig();
+            }
+
+            @Override
+            public void error() {
+                Notify.show(R.string.restore_fail);
+            }
+        }));
+    }
+
+    private void initConfig() {
+        WallConfig.get().init();
+        LiveConfig.get().init().load();
+        VodConfig.get().init().load(getCallback(0));
     }
 }

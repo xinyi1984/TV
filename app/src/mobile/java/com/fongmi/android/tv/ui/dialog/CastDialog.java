@@ -156,7 +156,7 @@ public class CastDialog extends BaseDialog implements DeviceAdapter.OnClickListe
 
     @Override
     public void onFind(List<Device> devices) {
-        if (devices.size() > 0) adapter.addAll(devices);
+        if (!devices.isEmpty()) adapter.addAll(devices);
     }
 
     @Override
@@ -181,6 +181,7 @@ public class CastDialog extends BaseDialog implements DeviceAdapter.OnClickListe
 
     @Override
     public void onSuccess(Unit unit) {
+        control.seek(video.getPosition(), null);
         control.play("1", null);
         onCasted();
     }

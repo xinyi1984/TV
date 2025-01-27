@@ -1,9 +1,7 @@
 package com.fongmi.android.tv.ui.activity;
 
-import android.Manifest;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
-import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
 
@@ -17,7 +15,6 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewbinding.ViewBinding;
 
-import com.android.cast.dlna.dmr.DLNARendererService;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.GlideException;
@@ -43,7 +40,6 @@ import com.fongmi.android.tv.event.CastEvent;
 import com.fongmi.android.tv.event.RefreshEvent;
 import com.fongmi.android.tv.event.ServerEvent;
 import com.fongmi.android.tv.impl.Callback;
-import com.fongmi.android.tv.impl.RestoreCallback;
 import com.fongmi.android.tv.model.SiteViewModel;
 import com.fongmi.android.tv.player.Source;
 import com.fongmi.android.tv.server.Server;
@@ -51,7 +47,6 @@ import com.fongmi.android.tv.ui.base.BaseActivity;
 import com.fongmi.android.tv.ui.custom.CustomRowPresenter;
 import com.fongmi.android.tv.ui.custom.CustomSelector;
 import com.fongmi.android.tv.ui.custom.CustomTitleView;
-import com.fongmi.android.tv.ui.dialog.RestoreDialog;
 import com.fongmi.android.tv.ui.dialog.SiteDialog;
 import com.fongmi.android.tv.ui.presenter.FuncPresenter;
 import com.fongmi.android.tv.ui.presenter.HeaderPresenter;
@@ -65,14 +60,13 @@ import com.fongmi.android.tv.utils.Notify;
 import com.fongmi.android.tv.utils.ResUtil;
 import com.fongmi.android.tv.utils.UrlUtil;
 import com.google.common.collect.Lists;
-import com.permissionx.guolindev.PermissionX;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.List;
 
-public class HomeActivity extends BaseActivity implements CustomTitleView.Listener, RestoreCallback, VodPresenter.OnClickListener, FuncPresenter.OnClickListener, HistoryPresenter.OnClickListener {
+public class HomeActivity extends BaseActivity implements CustomTitleView.Listener, VodPresenter.OnClickListener, FuncPresenter.OnClickListener, HistoryPresenter.OnClickListener {
 
     private ActivityHomeBinding mBinding;
     private ArrayObjectAdapter mHistoryAdapter;
@@ -100,7 +94,6 @@ public class HomeActivity extends BaseActivity implements CustomTitleView.Listen
 
     @Override
     protected void initView() {
-        DLNARendererService.Companion.start(this, R.drawable.ic_logo);
         mClock = Clock.create(mBinding.clock).format("MM/dd HH:mm:ss");
         mBinding.progressLayout.showProgress();
         Updater.get().release().start(this);
@@ -190,7 +183,6 @@ public class HomeActivity extends BaseActivity implements CustomTitleView.Listen
 
             @Override
             public void error(String msg) {
-                if (TextUtils.isEmpty(msg) && AppDatabase.getBackup().exists() && !VodConfig.hasUrl() && !LiveConfig.hasUrl()) RestoreDialog.create(getActivity()).show();
                 mBinding.progressLayout.showContent();
                 mResult = Result.empty();
                 Notify.show(msg);
@@ -241,6 +233,7 @@ public class HomeActivity extends BaseActivity implements CustomTitleView.Listen
         adapter.add(Func.create(R.string.home_search));
         adapter.add(Func.create(R.string.home_keep));
         adapter.add(Func.create(R.string.home_push));
+        adapter.add(Func.create(R.string.home_cast));
         adapter.add(Func.create(R.string.home_setting));
         return new ListRow(adapter);
     }
@@ -256,7 +249,7 @@ public class HomeActivity extends BaseActivity implements CustomTitleView.Listen
         boolean exist = recommendIndex - historyIndex == 2;
         if (renew) mHistoryAdapter = new ArrayObjectAdapter(mPresenter = new HistoryPresenter(this));
         if ((items.isEmpty() && exist) || (renew && exist)) mAdapter.removeItems(historyIndex, 1);
-        if ((items.size() > 0 && !exist) || (renew && exist)) mAdapter.add(historyIndex, new ListRow(mHistoryAdapter));
+        if ((!items.isEmpty() && !exist) || (renew && exist)) mAdapter.add(historyIndex, new ListRow(mHistoryAdapter));
         mHistoryAdapter.setItems(items, null);
     }
 
@@ -390,6 +383,9 @@ public class HomeActivity extends BaseActivity implements CustomTitleView.Listen
             case R.string.home_push:
                 PushActivity.start(this);
                 break;
+            case R.string.home_cast:
+                CastActivity.start(this);
+                break;
             case R.string.home_setting:
                 SettingActivity.start(this);
                 break;
@@ -437,17 +433,6 @@ public class HomeActivity extends BaseActivity implements CustomTitleView.Listen
     @Override
     public void onRefresh() {
         getVideo();
-    }
-
-    @Override
-    public void onRestore() {
-        PermissionX.init(this).permissions(Manifest.permission.WRITE_EXTERNAL_STORAGE).request((allGranted, grantedList, deniedList) -> AppDatabase.restore(new Callback() {
-            @Override
-            public void success() {
-                if (allGranted) mBinding.progressLayout.showProgress();
-                if (allGranted) initConfig();
-            }
-        }));
     }
 
     @Override

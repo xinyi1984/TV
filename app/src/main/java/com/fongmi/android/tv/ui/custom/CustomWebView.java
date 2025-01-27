@@ -38,6 +38,8 @@ import java.util.regex.Pattern;
 public class CustomWebView extends WebView implements DialogInterface.OnDismissListener {
 
     private static final String TAG = CustomWebView.class.getSimpleName();
+
+    private static final Pattern PLAYER = Pattern.compile("player/.*[?&][^=&]+=https?://");
     private static final String BLANK = "about:blank";
 
     private WebResourceResponse empty;
@@ -48,6 +50,7 @@ public class CustomWebView extends WebView implements DialogInterface.OnDismissL
     private String click;
     private String from;
     private String key;
+    private String url;
 
     public static CustomWebView create(@NonNull Context context) {
         return new CustomWebView(context);
@@ -84,11 +87,12 @@ public class CustomWebView extends WebView implements DialogInterface.OnDismissL
         this.click = click;
         this.from = from;
         this.key = key;
-        start(url, headers);
+        this.url = url;
+        start(headers);
         return this;
     }
 
-    private void start(String url, Map<String, String> headers) {
+    private void start(Map<String, String> headers) {
         OkCookieJar.setAcceptThirdPartyCookies(this);
         checkHeader(url, headers);
         loadUrl(url, headers);
@@ -110,7 +114,7 @@ public class CustomWebView extends WebView implements DialogInterface.OnDismissL
                 if (TextUtils.isEmpty(host) || isAd(host)) return empty;
                 Map<String, String> headers = request.getRequestHeaders();
                 if (url.contains("challenges.cloudflare.com/turnstile")) App.post(() -> showDialog());
-                if (detect && url.contains("player/?url=")) onParseAdd(headers, url);
+                if (detect && PLAYER.matcher(url).find()) onParseAdd(headers, url);
                 else if (isVideoFormat(url)) onParseSuccess(headers, url);
                 return super.shouldInterceptRequest(view, request);
             }
@@ -179,6 +183,7 @@ public class CustomWebView extends WebView implements DialogInterface.OnDismissL
     private boolean isVideoFormat(String url) {
         try {
             Logger.t(TAG).d(url);
+            if (!detect && url.equals(this.url)) return false;
             Spider spider = VodConfig.get().getSite(key).spider();
             if (spider.manualVideoCheck()) return spider.isVideoFormat(url);
             return Sniffer.isVideoFormat(url);

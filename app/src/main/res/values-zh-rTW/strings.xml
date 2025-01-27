@@ -78,10 +78,18 @@
     <string name="setting_proxy">Proxy</string>
     <string name="setting_cache">暫存</string>
     <string name="setting_backup">備份</string>
+    <string name="setting_restore">還原</string>
     <string name="setting_version">版本</string>
     <string name="setting_storage">權限</string>
     <string name="setting_off">關</string>
     <string name="setting_on">開</string>
+
+    <!-- Backup & Restore -->
+    <string name="restore_select">選擇備份</string>
+    <string name="restore_success">還原成功</string>
+    <string name="restore_fail">還原失敗</string>
+    <string name="backup_success">備份成功</string>
+    <string name="backup_fail">備份失敗</string>
 
     <!-- Player -->
     <string name="player">播放核心</string>
@@ -115,7 +123,10 @@
     <string name="error_play_next">已經是最後一集了！</string>
     <string name="error_play_prev">已經是第一集了！</string>
     <string name="error_play_parse">播放網址解析失敗</string>
-    <string name="error_play_url">播放網址載入失敗\n錯誤代碼：<xliff:g name="name">%s</xliff:g></string>
+    <string name="error_play_drm_scheme">本設備不支援所需的 DRM scheme</string>
+    <string name="error_play_url_code">播放網址載入失敗\n錯誤代碼：<xliff:g name="name">%s</xliff:g></string>
+    <string name="error_play_code">錯誤代碼：<xliff:g name="name">%s</xliff:g></string>
+    <string name="error_play_url">播放網址載入失敗</string>
     <string name="error_play_flag">暫無線路資料</string>
     <string name="error_play_timeout">連線逾時</string>
     <string name="error_detail">暫無播放資料</string>
@@ -135,18 +146,12 @@
 
     <!-- Hint -->
     <string name="copied">已複製</string>
-    <string name="backed">備份成功</string>
 
     <!-- UNIT -->
     <string name="all">全部</string>
     <string name="none">無</string>
     <string name="times">倍</string>
     <string name="lines">行</string>
-
-    <string-array name="select_backup">
-        <item>自動</item>
-        <item>手動</item>
-    </string-array>
 
     <string-array name="select_decode">
         <item>軟解</item>

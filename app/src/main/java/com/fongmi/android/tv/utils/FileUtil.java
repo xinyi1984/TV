@@ -18,10 +18,12 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.net.URLConnection;
 import java.text.DecimalFormat;
 import java.util.Enumeration;
 import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -39,7 +41,19 @@ public class FileUtil {
         App.get().startActivity(intent);
     }
 
-    public static void extractGzip(File target, File path) {
+    public static void gzipCompress(File target) {
+        byte[] buffer = new byte[1024];
+        try (FileInputStream is = new FileInputStream(target); GZIPOutputStream os = new GZIPOutputStream(new FileOutputStream(target.getAbsolutePath() + ".gz"))) {
+            int read;
+            while ((read = is.read(buffer)) > 0) os.write(buffer, 0, read);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            Path.clear(target);
+        }
+    }
+
+    public static void gzipDecompress(File target, File path) {
         byte[] buffer = new byte[1024];
         try (GZIPInputStream is = new GZIPInputStream(new BufferedInputStream(new FileInputStream(target))); BufferedOutputStream os = new BufferedOutputStream(new FileOutputStream(path))) {
             int read;
@@ -49,7 +63,7 @@ public class FileUtil {
         }
     }
 
-    public static void extractZip(File target, File path) {
+    public static void zipDecompress(File target, File path) {
         try (ZipFile zip = new ZipFile(target)) {
             Enumeration<?> entries = zip.entries();
             while (entries.hasMoreElements()) {
@@ -83,15 +97,6 @@ public class FileUtil {
         if (file.isDirectory()) for (File f : Path.list(file)) size += getDirectorySize(f);
         else size = file.length();
         return size;
-    }
-
-    public static long getTotalStorageSpace(File file) {
-        try {
-            StatFs stat = new StatFs(file.getAbsolutePath());
-            return stat.getBlockCountLong() * stat.getBlockSizeLong();
-        } catch (Exception e) {
-            return 0;
-        }
     }
 
     public static long getAvailableStorageSpace(File file) {

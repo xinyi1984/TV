@@ -52,8 +52,8 @@ public class ExoUtil {
         return trackSelector;
     }
 
-    public static RenderersFactory buildRenderersFactory(int renderMode) {
-        return new DefaultRenderersFactory(App.get()).setEnableDecoderFallback(true).setExtensionRendererMode(renderMode);
+    public static RenderersFactory buildRenderersFactory() {
+        return new DefaultRenderersFactory(App.get()).setEnableDecoderFallback(true);
     }
 
     public static MediaSource.Factory buildMediaSourceFactory() {
@@ -90,7 +90,7 @@ public class ExoUtil {
         exo.getSubtitleView().setStyle(getCaptionStyle());
         exo.getSubtitleView().setApplyEmbeddedFontSizes(false);
         exo.getSubtitleView().setApplyEmbeddedStyles(!Setting.isCaption());
-        if (Setting.getSubtitlePosition() != 0) exo.getSubtitleView().setTranslationY(Setting.getSubtitlePosition());
+        if (Setting.getSubtitlePosition() != 0) exo.getSubtitleView().setBottomPosition(Setting.getSubtitlePosition());
         if (Setting.getSubtitleTextSize() != 0) exo.getSubtitleView().setFractionalTextSize(Setting.getSubtitleTextSize());
     }
 
@@ -117,6 +117,7 @@ public class ExoUtil {
         //builder.setForceUseRtpTcp(Setting.getRtsp() == 1);
         //builder.setAds(Sniffer.getRegex(uri));
         builder.setMediaId(uri.toString());
+        builder.setDecode(decode);
         return builder.build();
     }
 

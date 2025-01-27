@@ -157,7 +157,7 @@ public class Result implements Parcelable {
     }
 
     public void setTypes(List<Class> types) {
-        if (types.size() > 0) this.types = types;
+        if (!types.isEmpty()) this.types = types;
     }
 
     public List<Vod> getList() {

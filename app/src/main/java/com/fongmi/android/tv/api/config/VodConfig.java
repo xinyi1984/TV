@@ -62,10 +62,6 @@ public class VodConfig {
         return get().getSites().indexOf(get().getHome());
     }
 
-    public static boolean hasUrl() {
-        return getUrl() != null && getUrl().length() > 0;
-    }
-
     public static boolean hasParse() {
         return !get().getParses().isEmpty();
     }
@@ -201,7 +197,7 @@ public class VodConfig {
     }
 
     private void initOther(JsonObject object) {
-        if (parses.size() > 0) parses.add(0, Parse.god());
+        if (!parses.isEmpty()) parses.add(0, Parse.god());
         if (home == null) setHome(sites.isEmpty() ? new Site() : sites.get(0));
         if (parse == null) setParse(parses.isEmpty() ? new Parse() : parses.get(0));
         setRules(Rule.arrayFrom(object.getAsJsonArray("rules")));

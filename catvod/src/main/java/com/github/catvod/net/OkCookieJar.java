@@ -59,7 +59,7 @@ public class OkCookieJar implements CookieJar {
             List<Cookie> items = new ArrayList<>();
             String cookie = manager.getCookie(url.toString());
             if (TextUtils.isEmpty(cookie)) return Collections.emptyList();
-            if (url.host().equals("127.0.0.1")) return Collections.emptyList();
+            if ("127.0.0.1".equals(url.host())) return Collections.emptyList();
             for (String split : cookie.split(";")) add(items, Cookie.parse(url, split));
             return items;
         } catch (Throwable e) {
@@ -70,7 +70,7 @@ public class OkCookieJar implements CookieJar {
     @Override
     public synchronized void saveFromResponse(@NonNull HttpUrl url, @NonNull List<Cookie> cookies) {
         try {
-            if (url.host().equals("127.0.0.1")) return;
+            if ("127.0.0.1".equals(url.host())) return;
             for (Cookie cookie : cookies) manager.setCookie(url.toString(), cookie.toString());
         } catch (Throwable ignored) {
         }

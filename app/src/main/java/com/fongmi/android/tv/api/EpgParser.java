@@ -52,7 +52,7 @@ public class EpgParser {
 
     private static void readGzip(Live live, File file) throws Exception {
         File xml = Path.epg(file.getName().replace(".gz", ""));
-        if (!xml.exists()) FileUtil.extractGzip(file, xml);
+        if (!xml.exists()) FileUtil.gzipDecompress(file, xml);
         readXml(live, xml);
     }
 

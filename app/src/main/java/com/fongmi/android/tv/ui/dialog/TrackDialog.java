@@ -15,6 +15,7 @@ import androidx.media3.common.MimeTypes;
 import androidx.media3.common.Tracks;
 import androidx.viewbinding.ViewBinding;
 
+import com.fongmi.android.tv.App;
 import com.fongmi.android.tv.R;
 import com.fongmi.android.tv.bean.Sub;
 import com.fongmi.android.tv.bean.Track;
@@ -79,7 +80,7 @@ public final class TrackDialog extends BaseDialog implements TrackAdapter.OnClic
         binding.recycler.post(() -> binding.recycler.scrollToPosition(adapter.getSelected()));
         binding.recycler.setVisibility(adapter.getItemCount() == 0 ? View.GONE : View.VISIBLE);
         binding.choose.setVisibility(type == C.TRACK_TYPE_TEXT && player.isVod() ? View.VISIBLE : View.GONE);
-        binding.subtitle.setVisibility(type == C.TRACK_TYPE_TEXT ? View.VISIBLE : View.GONE);
+        binding.subtitle.setVisibility(type == C.TRACK_TYPE_TEXT && player.haveTrack(C.TRACK_TYPE_TEXT) ? View.VISIBLE : View.GONE);
         binding.title.setText(ResUtil.getStringArray(R.array.select_track)[type - 1]);
     }
 
@@ -133,7 +134,7 @@ public final class TrackDialog extends BaseDialog implements TrackAdapter.OnClic
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode != Activity.RESULT_OK || requestCode != FileChooser.REQUEST_PICK_FILE) return;
-        player.setSub(Sub.from(FileChooser.getPathFromUri(getContext(), data.getData())));
+        App.post(() -> player.setSub(Sub.from(FileChooser.getPathFromUri(data.getData()))), 250);
         dismiss();
     }
 

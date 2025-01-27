@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.os.HandlerCompat;
 
+import com.fongmi.android.tv.event.EventIndex;
 import com.fongmi.android.tv.ui.activity.CrashActivity;
 import com.fongmi.android.tv.utils.Notify;
 import com.fongmi.hook.Hook;
@@ -23,6 +24,8 @@ import com.orhanobut.logger.AndroidLogAdapter;
 import com.orhanobut.logger.LogAdapter;
 import com.orhanobut.logger.Logger;
 import com.orhanobut.logger.PrettyFormatStrategy;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -108,6 +111,7 @@ public class App extends Application {
         Logger.addLogAdapter(getLogAdapter());
         OkHttp.get().setProxy(Setting.getProxy());
         OkHttp.get().setDoh(Doh.objectFrom(Setting.getDoh()));
+        EventBus.builder().addIndex(new EventIndex()).installDefaultEventBus();
         CaocConfig.Builder.create().backgroundMode(CaocConfig.BACKGROUND_MODE_SILENT).errorActivity(CrashActivity.class).apply();
         registerActivityLifecycleCallbacks(new ActivityLifecycleCallbacks() {
             @Override

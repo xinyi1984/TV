@@ -50,12 +50,12 @@ public class SettingPlayerFragment extends BaseFragment implements UaCallback, B
 
     @Override
     protected void initView() {
-        setVisible();
         format = new DecimalFormat("0.#");
         mBinding.uaText.setText(Setting.getUa());
         mBinding.tunnelText.setText(getSwitch(Setting.isTunnel()));
         mBinding.speedText.setText(format.format(Setting.getSpeed()));
         mBinding.bufferText.setText(String.valueOf(Setting.getBuffer()));
+        mBinding.caption.setVisibility(Setting.hasCaption() ? View.VISIBLE : View.GONE);
         mBinding.rtspText.setText((rtsp = ResUtil.getStringArray(R.array.select_rtsp))[Setting.getRtsp()]);
         mBinding.scaleText.setText((scale = ResUtil.getStringArray(R.array.select_scale))[Setting.getScale()]);
         mBinding.renderText.setText((render = ResUtil.getStringArray(R.array.select_render))[Setting.getRender()]);
@@ -75,10 +75,6 @@ public class SettingPlayerFragment extends BaseFragment implements UaCallback, B
         mBinding.caption.setOnClickListener(this::setCaption);
         mBinding.caption.setOnLongClickListener(this::onCaption);
         mBinding.background.setOnClickListener(this::onBackground);
-    }
-
-    private void setVisible() {
-        mBinding.caption.setVisibility(Setting.hasCaption() ? View.VISIBLE : View.GONE);
     }
 
     private void onUa(View view) {
@@ -158,6 +154,6 @@ public class SettingPlayerFragment extends BaseFragment implements UaCallback, B
 
     @Override
     public void onHiddenChanged(boolean hidden) {
-        if (!hidden) setVisible();
+        if (!hidden) initView();
     }
 }

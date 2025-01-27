@@ -36,8 +36,6 @@
     <string name="dialog_delete_record">刪除全部紀錄？</string>
     <string name="dialog_delete_keep">收藏紀錄將會全部刪除。</string>
     <string name="dialog_delete_history">觀看紀錄將會全部刪除。</string>
-    <string name="dialog_restore">還原備份資料？</string>
-    <string name="dialog_restore_msg">將會還原配置、觀看紀錄及各項設定。</string>
 
     <!-- Timer -->
     <string name="timer_5">5 分鐘</string>

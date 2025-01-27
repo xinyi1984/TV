@@ -68,7 +68,7 @@ public class SiteViewModel extends ViewModel {
                 String homeContent = spider.homeContent(true);
                 SpiderDebug.log(homeContent);
                 Result result = Result.fromJson(homeContent);
-                if (result.getList().size() > 0) return result;
+                if (!result.getList().isEmpty()) return result;
                 String homeVideoContent = spider.homeVideoContent();
                 SpiderDebug.log(homeVideoContent);
                 result.setList(Result.fromJson(homeVideoContent).getList());

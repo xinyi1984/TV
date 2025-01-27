@@ -154,7 +154,7 @@ public class CollectActivity extends BaseActivity implements CustomScroller.Call
             mCollectAdapter.add(result.getList());
         });
         mViewModel.result.observe(this, result -> {
-            boolean same = result.getList().size() > 0 && mCollectAdapter.getActivated().getSite().equals(result.getList().get(0).getSite());
+            boolean same = !result.getList().isEmpty() && mCollectAdapter.getActivated().getSite().equals(result.getList().get(0).getSite());
             if (same) mCollectAdapter.getActivated().getList().addAll(result.getList());
             if (same) mSearchAdapter.addAll(result.getList());
             mScroller.endLoading(result);

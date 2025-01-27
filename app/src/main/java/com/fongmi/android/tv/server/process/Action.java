@@ -161,7 +161,7 @@ public class Action implements Process {
     private void syncKeep(Map<String, String> params, boolean force) {
         List<Keep> targets = Keep.arrayFrom(params.get("targets"));
         List<Config> configs = Config.arrayFrom(params.get("configs"));
-        if (TextUtils.isEmpty(VodConfig.getUrl()) && configs.size() > 0) {
+        if (TextUtils.isEmpty(VodConfig.getUrl()) && !configs.isEmpty()) {
             VodConfig.load(Config.find(configs.get(0)), getCallback(configs, targets));
         } else {
             if (force) Keep.deleteAll();

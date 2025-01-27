@@ -47,9 +47,14 @@ public class JarLoader {
     }
 
     private void load(String key, File file) {
-        loaders.put(key, new DexClassLoader(file.getAbsolutePath(), Path.jar().getAbsolutePath(), null, App.get().getClassLoader()));
+        if (!file.setReadOnly()) return;
+        loaders.put(key, dex(file));
         invokeInit(key);
         putProxy(key);
+    }
+
+    private DexClassLoader dex(File file) {
+        return new DexClassLoader(file.getAbsolutePath(), Path.jar().getAbsolutePath(), null, App.get().getClassLoader());
     }
 
     private void invokeInit(String key) {

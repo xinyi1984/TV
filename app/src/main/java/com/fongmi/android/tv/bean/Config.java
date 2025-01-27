@@ -250,7 +250,7 @@ public class Config {
 
     public Config save() {
         if (isEmpty()) return this;
-        AppDatabase.get().getConfigDao().update(this);
+        AppDatabase.get().getConfigDao().insertOrUpdate(this);
         return this;
     }
 
