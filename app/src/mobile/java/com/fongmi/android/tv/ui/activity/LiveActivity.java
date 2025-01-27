@@ -795,7 +795,7 @@ public class LiveActivity extends BaseActivity implements CustomKeyDownLive.List
                 setMetadata();
                 mPlayers.reset();
                 setTrackVisible();
-                mClock.setCallback(this)
+                mClock.setCallback(this);
                 break;
             case PlayerEvent.SIZE:
                 mBinding.control.size.setText(mPlayers.getSizeText());
