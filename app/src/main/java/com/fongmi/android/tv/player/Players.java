@@ -194,10 +194,6 @@ public class Players implements Player.Listener, ParseCallback {
         return ++retry > 2;
     }
 
-    public boolean canAdjustSpeed() {
-        return !Setting.isTunnel();
-    }
-
     public boolean haveTrack(int type) {
         return exoPlayer != null && ExoUtil.haveTrack(exoPlayer.getCurrentTracks(), type);
     }
@@ -219,11 +215,11 @@ public class Players implements Player.Listener, ParseCallback {
     }
 
     public boolean isLive() {
-        return getDuration() < 3 * 60 * 1000 || exoPlayer.isCurrentMediaItemLive();
+        return getDuration() < 60 * 1000 || exoPlayer.isCurrentMediaItemLive();
     }
 
     public boolean isVod() {
-        return getDuration() > 3 * 60 * 1000 && !exoPlayer.isCurrentMediaItemLive();
+        return getDuration() > 60 * 1000 && !exoPlayer.isCurrentMediaItemLive();
     }
 
     public boolean isHard() {

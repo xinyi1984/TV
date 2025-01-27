@@ -190,7 +190,6 @@ public class LiveActivity extends BaseActivity implements GroupPresenter.OnClick
         mBinding.control.change.setActivated(Setting.isChange());
         mBinding.control.speed.setText(mPlayers.getSpeedText());
         mBinding.control.decode.setText(mPlayers.getDecodeText());
-        mBinding.control.speed.setEnabled(mPlayers.canAdjustSpeed());
         mBinding.control.home.setVisibility(LiveConfig.isOnly() ? View.GONE : View.VISIBLE);
     }
     

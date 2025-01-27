@@ -369,7 +369,6 @@ public class VideoActivity extends BaseActivity implements CustomKeyDownVod.List
         mPlayers.init(mBinding.exo);
         ExoUtil.setSubtitleView(mBinding.exo);
         mBinding.control.decode.setText(mPlayers.getDecodeText());
-        mBinding.control.speed.setEnabled(mPlayers.canAdjustSpeed());
         mBinding.control.reset.setText(ResUtil.getStringArray(R.array.select_reset)[Setting.getReset()]);
     }
 
@@ -796,6 +795,7 @@ public class VideoActivity extends BaseActivity implements CustomKeyDownVod.List
         long current = mPlayers.getPosition();
         long duration = mPlayers.getDuration();
         if (current < 0 || duration < 0) return;
+        if (mHistory.getOpening() < 0) mHistory.setOpening(0);
         setOpening(Math.min(mHistory.getOpening() + 1000, duration / 2));
     }
 
@@ -810,7 +810,7 @@ public class VideoActivity extends BaseActivity implements CustomKeyDownVod.List
 
     private void setOpening(long opening) {
         mHistory.setOpening(opening);
-        mBinding.control.opening.setText(opening == 0 ? getString(R.string.play_op) : mPlayers.stringToTime(mHistory.getOpening()));
+        mBinding.control.opening.setText(opening <= 0 ? getString(R.string.play_op) : mPlayers.stringToTime(mHistory.getOpening()));
     }
 
     private void onEnding() {
@@ -838,7 +838,7 @@ public class VideoActivity extends BaseActivity implements CustomKeyDownVod.List
 
     private void setEnding(long ending) {
         mHistory.setEnding(ending);
-        mBinding.control.ending.setText(ending == 0 ? getString(R.string.play_ed) : mPlayers.stringToTime(mHistory.getEnding()));
+        mBinding.control.ending.setText(ending <= 0 ? getString(R.string.play_ed) : mPlayers.stringToTime(mHistory.getEnding()));
     }
 
     private void onChoose() {
@@ -1083,8 +1083,7 @@ public class VideoActivity extends BaseActivity implements CustomKeyDownVod.List
     }
 
     private void setPosition() {
-        if (mHistory == null) return;
-        mPlayers.seekTo(Math.max(mHistory.getOpening(), mHistory.getPosition()));
+        if (mHistory != null) mPlayers.seekTo(Math.max(mHistory.getOpening(), mHistory.getPosition()));
     }
 
     private void checkEnded() {
@@ -1353,7 +1352,7 @@ public class VideoActivity extends BaseActivity implements CustomKeyDownVod.List
 
     @Override
     public void onSpeedUp() {
-        if (!mPlayers.isPlaying() || !mPlayers.canAdjustSpeed()) return;
+        if (!mPlayers.isPlaying()) return;
         mBinding.control.speed.setText(mPlayers.setSpeed(Setting.getSpeed()));
         mBinding.widget.speed.startAnimation(ResUtil.getAnim(R.anim.forward));
         mBinding.widget.speed.setVisibility(View.VISIBLE);

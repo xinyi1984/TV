@@ -209,7 +209,6 @@ public class LiveActivity extends BaseActivity implements CustomKeyDownLive.List
         mBinding.control.action.change.setActivated(Setting.isChange());
         mBinding.control.action.speed.setText(mPlayers.getSpeedText());
         mBinding.control.action.decode.setText(mPlayers.getDecodeText());
-        mBinding.control.action.speed.setEnabled(mPlayers.canAdjustSpeed());
         mBinding.control.action.home.setVisibility(LiveConfig.isOnly() ? View.GONE : View.VISIBLE);
         mBinding.video.addOnLayoutChangeListener((view, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) -> mPiP.update(getActivity(), view));
     }
@@ -979,7 +978,7 @@ public class LiveActivity extends BaseActivity implements CustomKeyDownLive.List
 
     @Override
     public void onSpeedUp() {
-        if (mPlayers.isLive() || !mPlayers.isPlaying() || !mPlayers.canAdjustSpeed()) return;
+        if (mPlayers.isLive() || !mPlayers.isPlaying()) return;
         mBinding.control.action.speed.setText(mPlayers.setSpeed(Setting.getSpeed()));
         mBinding.widget.speed.startAnimation(ResUtil.getAnim(R.anim.forward));
         mBinding.widget.speed.setVisibility(View.VISIBLE);
