@@ -72,11 +72,10 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-public class LiveActivity extends BaseActivity implements CustomKeyDownLive.Listener, TrackDialog.Listener, Biometric.Callback, PassCallback, LiveCallback, GroupAdapter.OnClickListener, ChannelAdapter.OnClickListener, EpgDataAdapter.OnClickListener, CastDialog.Listener, InfoDialog.Listener, Clock.Callback {
+public class LiveActivity extends BaseActivity implements CustomKeyDownLive.Listener, TrackDialog.Listener, Biometric.Callback, PassCallback, LiveCallback, GroupAdapter.OnClickListener, ChannelAdapter.OnClickListener, EpgDataAdapter.OnClickListener, CastDialog.Listener, InfoDialog.Listener {
 
     private ActivityLiveBinding mBinding;
     private ChannelAdapter mChannelAdapter;
@@ -142,7 +141,7 @@ public class LiveActivity extends BaseActivity implements CustomKeyDownLive.List
     @Override
     protected void initView(Bundle savedInstanceState) {
         mKeyDown = CustomKeyDownLive.create(this, mBinding.video);
-        mClock = Clock.create(Arrays.asList(mBinding.widget.clock, mBinding.display.clock));
+        mClock = Clock.create(mBinding.widget.clock);
         setPadding(mBinding.control.getRoot());
         setPadding(mBinding.widget.epg, true);
         setPadding(mBinding.recycler, true);
@@ -159,7 +158,6 @@ public class LiveActivity extends BaseActivity implements CustomKeyDownLive.List
         setForeground(true);
         setRecyclerView();
         setVideoView();
-        setDisplayView();
         setViewModel();
         checkLive();
     }
@@ -212,12 +210,6 @@ public class LiveActivity extends BaseActivity implements CustomKeyDownLive.List
         mBinding.control.action.speed.setEnabled(mPlayers.canAdjustSpeed());
         mBinding.control.action.home.setVisibility(LiveConfig.isOnly() ? View.GONE : View.VISIBLE);
         mBinding.video.addOnLayoutChangeListener((view, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) -> mPiP.update(getActivity(), view));
-    }
-
-    private void setDisplayView() {
-        mBinding.display.getRoot().setVisibility(View.VISIBLE);
-        mBinding.display.progress.setVisibility(View.GONE);
-        showDisplayInfo();
     }
 
     private void setDecode() {
@@ -405,7 +397,7 @@ public class LiveActivity extends BaseActivity implements CustomKeyDownLive.List
     }
 
     private void onDecode() {
-        mPlayers.toggleDecode(mBinding.exo);
+        mPlayers.toggleDecode();
         setR1Callback();
         setDecode();
     }
@@ -492,22 +484,6 @@ public class LiveActivity extends BaseActivity implements CustomKeyDownLive.List
         App.removeCallbacks(mR1);
     }
 
-    private void showDisplayInfo() {
-        boolean controlVisible = isVisible(mBinding.control.getRoot()) || isVisible(mBinding.widget.info);
-        boolean visible = (!controlVisible && !isLock());
-        mBinding.display.clock.setVisibility(Setting.isDisplayTime() && visible && !isInPictureInPictureMode() ? View.VISIBLE : View.GONE); 
-        mBinding.display.netspeed.setVisibility(Setting.isDisplaySpeed() && visible && !isInPictureInPictureMode() && !isVisible(mBinding.widget.info) ? View.VISIBLE : View.GONE); 
-        mBinding.display.duration.setVisibility(View.GONE);
-        mBinding.display.titleLayout.setVisibility(Setting.isDisplayVideoTitle() && visible && !isVisible(mBinding.recycler) && !isInPictureInPictureMode() ? View.VISIBLE : View.GONE);
-    }
-
-    private void onTimeChangeDisplaySpeed() {
-        boolean controlVisible = isVisible(mBinding.control.getRoot()) || isVisible(mBinding.widget.info);
-        boolean visible = (!controlVisible && !isLock());
-        if (Setting.isDisplaySpeed() && visible) Traffic.setSpeed(mBinding.display.netspeed);
-        showDisplayInfo();
-    }
-
     private void showInfo() {
         boolean pip = Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N && isInPictureInPictureMode();
         mBinding.widget.infoPip.setVisibility(pip ? View.VISIBLE : View.GONE);
@@ -580,7 +556,7 @@ public class LiveActivity extends BaseActivity implements CustomKeyDownLive.List
 
     @Override
     public void onItemClick(Channel item) {
-        if (item.getData().getList().size() > 0 && item.isSelected() && mChannel != null && mChannel.equals(item) && mChannel.getGroup().equals(mGroup)) {
+        if (!item.getData().getList().isEmpty() && item.isSelected() && mChannel != null && mChannel.equals(item) && mChannel.getGroup().equals(mGroup)) {
             showEpg(item);
         } else {
             mGroup.setPosition(mChannelAdapter.setSelected(item.group(mGroup)));
@@ -633,7 +609,6 @@ public class LiveActivity extends BaseActivity implements CustomKeyDownLive.List
         mChannel.loadLogo(mBinding.widget.logo);
         mBinding.widget.name.setText(mChannel.getName());
         mBinding.control.title.setText(mChannel.getName());
-        mBinding.display.title.setText(mBinding.control.title.getText());
         mBinding.widget.namePip.setText(mChannel.getName());
         mBinding.widget.line.setText(mChannel.getLineText());
         mBinding.widget.number.setText(mChannel.getNumber());
@@ -710,11 +685,6 @@ public class LiveActivity extends BaseActivity implements CustomKeyDownLive.List
     }
 
     @Override
-    public void onTimeChanged() {
-        onTimeChangeDisplaySpeed();
-    }
-
-    @Override
     public void onSubtitleClick() {
         App.post(this::hideControl, 200);
         App.post(() -> SubtitleDialog.create().view(mBinding.exo.getSubtitleView()).full(true).show(this), 200);
@@ -782,36 +752,32 @@ public class LiveActivity extends BaseActivity implements CustomKeyDownLive.List
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onPlayerEvent(PlayerEvent event) {
         switch (event.getState()) {
-            case 0:
-                setTrackVisible(false);
-                mClock.setCallback(this);
-                break;
-            case Player.STATE_IDLE:
-                break;
             case Player.STATE_BUFFERING:
                 showProgress();
                 break;
             case Player.STATE_READY:
-                setMetadata();
                 hideProgress();
-                mPlayers.reset();
-                setTrackVisible(true);
                 checkPlayImg(mPlayers.isPlaying());
-                mBinding.control.size.setText(mPlayers.getSizeText());
-                mBinding.display.size.setText(mPlayers.getSizeText());
-                if (isVisible(mBinding.control.getRoot())) showControl();
                 break;
             case Player.STATE_ENDED:
                 checkNext();
                 break;
+            case PlayerEvent.TRACK:
+                setMetadata();
+                mPlayers.reset();
+                setTrackVisible();
+                break;
+            case PlayerEvent.SIZE:
+                mBinding.control.size.setText(mPlayers.getSizeText());
+                break;
         }
     }
 
-    private void setTrackVisible(boolean visible) {
-        mBinding.control.action.text.setVisibility(visible ? View.VISIBLE : View.GONE);
-        mBinding.control.action.speed.setVisibility(visible && mPlayers.isVod() ? View.VISIBLE : View.GONE);
-        mBinding.control.action.audio.setVisibility(visible && mPlayers.haveTrack(C.TRACK_TYPE_AUDIO) ? View.VISIBLE : View.GONE);
-        mBinding.control.action.video.setVisibility(visible && mPlayers.haveTrack(C.TRACK_TYPE_VIDEO) ? View.VISIBLE : View.GONE);
+    private void setTrackVisible() {
+        mBinding.control.action.text.setVisibility(mPlayers.haveTrack(C.TRACK_TYPE_TEXT) || mPlayers.isVod() ? View.VISIBLE : View.GONE);
+        mBinding.control.action.audio.setVisibility(mPlayers.haveTrack(C.TRACK_TYPE_AUDIO) ? View.VISIBLE : View.GONE);
+        mBinding.control.action.video.setVisibility(mPlayers.haveTrack(C.TRACK_TYPE_VIDEO) ? View.VISIBLE : View.GONE);
+        mBinding.control.action.speed.setVisibility(mPlayers.isVod() ? View.VISIBLE : View.GONE);
     }
 
     private void setMetadata() {
@@ -1089,8 +1055,8 @@ public class LiveActivity extends BaseActivity implements CustomKeyDownLive.List
     }
 
     @Override
-    public void onPictureInPictureModeChanged(boolean isInPictureInPictureMode) {
-        super.onPictureInPictureModeChanged(isInPictureInPictureMode);
+    public void onPictureInPictureModeChanged(boolean isInPictureInPictureMode, @NonNull Configuration newConfig) {
+        super.onPictureInPictureModeChanged(isInPictureInPictureMode, newConfig);
         if (isInPictureInPictureMode) {
             PlaybackService.start(mPlayers);
             hideControl();
