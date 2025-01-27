@@ -743,7 +743,7 @@ public class LiveActivity extends BaseActivity implements GroupPresenter.OnClick
                 setMetadata();
                 mPlayers.reset();
                 setTrackVisible();
-                mClock.setCallback(this)
+                mClock.setCallback(this);
                 break;
             case PlayerEvent.SIZE:
                 mBinding.widget.size.setText(mPlayers.getSizeText());
