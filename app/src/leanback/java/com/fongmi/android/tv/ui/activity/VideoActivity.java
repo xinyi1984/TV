@@ -1055,10 +1055,6 @@ public class VideoActivity extends BaseActivity implements CustomKeyDownVod.List
     public void onPlayerEvent(PlayerEvent event) {
         if (isBackground()) return;
         switch (event.getState()) {
-            case 0:
-                setTrackVisible(false);
-                mClock.setCallback(this);
-                break;
             case PlayerEvent.PREPARE:
                 setInitTrack(true);
                 setPosition();
