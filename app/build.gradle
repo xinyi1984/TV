@@ -13,8 +13,8 @@ android {
         minSdk 21
         //noinspection ExpiredTargetSdkVersion
         targetSdk 28
-        versionCode 293
-        versionName "2.9.3"
+        versionCode 295
+        versionName "2.9.5"
         javaCompileOptions {
             annotationProcessorOptions {
                 arguments = ["room.schemaLocation": "$projectDir/schemas".toString(), "eventBusIndex": "com.fongmi.android.tv.event.EventIndex"]
@@ -93,23 +93,8 @@ dependencies {
     pythonImplementation project(':chaquo')
     implementation 'androidx.appcompat:appcompat:1.7.0'
     implementation 'androidx.media:media:1.7.0'
-    implementation 'androidx.media3:media3-common:' + media3Version
-    implementation 'androidx.media3:media3-container:' + media3Version
-    implementation 'androidx.media3:media3-database:' + media3Version
-    implementation 'androidx.media3:media3-datasource:' + media3Version
-    implementation 'androidx.media3:media3-datasource-okhttp:' + media3Version
-    implementation 'androidx.media3:media3-datasource-rtmp:' + media3Version
-    implementation 'androidx.media3:media3-decoder:' + media3Version
-    implementation 'androidx.media3:media3-exoplayer:' + media3Version
-    implementation 'androidx.media3:media3-exoplayer-dash:' + media3Version
-    implementation 'androidx.media3:media3-exoplayer-hls:' + media3Version
-    implementation 'androidx.media3:media3-exoplayer-rtsp:' + media3Version
-    implementation 'androidx.media3:media3-exoplayer-smoothstreaming:' + media3Version
-    implementation 'androidx.media3:media3-extractor:' + media3Version
-    implementation 'androidx.media3:media3-ui:' + media3Version
     implementation 'androidx.room:room-runtime:2.6.1'
     implementation 'cat.ereza:customactivityoncrash:2.4.0'
-    implementation('com.github.anilbeesetti.nextlib:nextlib-media3ext:0.8.4') { exclude group: 'androidx.media3', module: 'media3-exoplayer' }
     implementation 'com.github.bassaer:materialdesigncolors:1.0.0'
     implementation 'com.github.bumptech.glide:glide:4.16.0'
     implementation 'com.github.bumptech.glide:annotations:4.16.0'
