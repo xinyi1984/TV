@@ -13,11 +13,11 @@ android {
         minSdk 21
         //noinspection ExpiredTargetSdkVersion
         targetSdk 28
-        versionCode 270
-        versionName "1222"
+        versionCode 295
+        versionName "2.9.5"
         javaCompileOptions {
             annotationProcessorOptions {
-                arguments = ["room.schemaLocation": "$projectDir/schemas".toString()]
+                arguments = ["room.schemaLocation": "$projectDir/schemas".toString(), "eventBusIndex": "com.fongmi.android.tv.event.EventIndex"]
             }
         }
     }
@@ -34,10 +34,6 @@ android {
         }
         python {
             dimension "api"
-        }
-        x86 {
-            dimension "abi"
-            ndk { abiFilters "x86" }
         }
         arm64_v8a {
             dimension "abi"
@@ -68,11 +64,6 @@ android {
         }
     }
 
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_11
-        targetCompatibility JavaVersion.VERSION_11
-    }
-
     android.applicationVariants.configureEach { variant ->
         variant.outputs.configureEach { output ->
             outputFileName = "${variant.productFlavors[0].name}-${variant.productFlavors[1].name}-${variant.productFlavors[2].name}.apk"
@@ -88,9 +79,15 @@ android {
     lint {
         disable 'UnsafeOptInUsageError'
     }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
 }
 
 dependencies {
+    implementation fileTree(dir: "libs", include: ["*.aar"])
     implementation project(':catvod')
     implementation project(':quickjs')
     pythonImplementation project(':chaquo')
@@ -113,41 +110,13 @@ dependencies {
     implementation 'javax.servlet:javax.servlet-api:3.1.0'
     implementation 'net.java.dev.jna:jna:5.2.0'
     implementation 'org.chromium.net:cronet-embedded:76.3809.111'
-    implementation 'org.eclipse.jetty:jetty-client:8.1.22.v20160922'
-    implementation('org.eclipse.jetty:jetty-server:8.1.22.v20160922') { exclude group: 'org.eclipse.jetty.orbit', module: 'javax.servlet' }
-    implementation('org.eclipse.jetty:jetty-servlet:8.1.22.v20160922') { exclude group: 'org.eclipse.jetty.orbit', module: 'javax.servlet' }
-    implementation 'org.fourthline.cling:cling-core:2.1.2-SNAPSHOT'
-    implementation 'org.fourthline.cling:cling-support:2.1.2-SNAPSHOT'
+    implementation 'org.eclipse.jetty:jetty-client:8.1.21.v20160908'
+    implementation('org.eclipse.jetty:jetty-server:8.1.21.v20160908') { exclude group: 'org.eclipse.jetty.orbit', module: 'javax.servlet' }
+    implementation('org.eclipse.jetty:jetty-servlet:8.1.21.v20160908') { exclude group: 'org.eclipse.jetty.orbit', module: 'javax.servlet' }
+    implementation 'org.fourthline.cling:cling-core:2.1.1'
+    implementation 'org.fourthline.cling:cling-support:2.1.1'
     implementation 'org.greenrobot:eventbus:3.3.1'
     implementation('org.simpleframework:simple-xml:2.7.1') { exclude group: 'stax', module: 'stax-api' exclude group: 'xpp3', module: 'xpp3' }
-    implementation(ext: 'aar', name: 'dlna-core-release', group: 'fongmi', version: 'release')
-    implementation(ext: 'aar', name: 'dlna-dmc-release', group: 'fongmi', version: 'release')
-    implementation(ext: 'aar', name: 'dlna-dmr-release', group: 'fongmi', version: 'release')
-    implementation(ext: 'aar', name: 'forcetech-release', group: 'fongmi', version: 'release')
-    implementation(ext: 'aar', name: 'hook-release', group: 'fongmi', version: 'release')
-    implementation(ext: 'aar', name: 'jianpian-release', group: 'fongmi', version: 'release')
-    implementation(ext: 'aar', name: 'nanohttpd-release', group: 'fongmi', version: 'release')
-    implementation(ext: 'aar', name: 'thunder-release', group: 'fongmi', version: 'release')
-    implementation(ext: 'aar', name: 'tvbus-release', group: 'fongmi', version: 'release')
-    implementation(ext: 'aar', name: 'youtube-release', group: 'fongmi', version: 'release')
-    implementation(ext: 'aar', name: 'zlive-release', group: 'fongmi', version: 'release')
-    implementation project(':media-lib-common')
-    implementation project(':media-lib-container')
-    implementation project(':media-lib-database')
-    implementation project(':media-lib-datasource')
-    implementation project(':media-lib-datasource-okhttp')
-    implementation project(':media-lib-datasource-rtmp')
-    implementation project(':media-lib-decoder')
-    implementation project(':media-lib-decoder-av1')
-    implementation project(':media-lib-decoder-iamf')
-    implementation project(':media-lib-decoder-ffmpeg')
-    implementation project(':media-lib-exoplayer')
-    implementation project(':media-lib-exoplayer-dash')
-    implementation project(':media-lib-exoplayer-hls')
-    implementation project(':media-lib-exoplayer-rtsp')
-    implementation project(':media-lib-exoplayer-smoothstreaming')
-    implementation project(':media-lib-extractor')
-    implementation project(':media-lib-ui')
     leanbackImplementation 'androidx.leanback:leanback:1.2.0-alpha04'
     leanbackImplementation 'com.github.JessYanCoding:AndroidAutoSize:1.2.1'
     mobileImplementation 'androidx.biometric:biometric:1.1.0'
@@ -156,4 +125,5 @@ dependencies {
     mobileImplementation('com.journeyapps:zxing-android-embedded:4.3.0') { transitive = false }
     annotationProcessor 'androidx.room:room-compiler:2.6.1'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.16.0'
+    annotationProcessor 'org.greenrobot:eventbus-annotation-processor:3.3.1'
 }
