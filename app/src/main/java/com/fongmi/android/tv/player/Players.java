@@ -1,5 +1,7 @@
 package com.fongmi.android.tv.player;
 
+import static androidx.media3.common.Player.COMMAND_SET_SPEED_AND_PITCH;
+
 import android.app.Activity;
 import android.app.PendingIntent;
 import android.content.Intent;
@@ -243,7 +245,8 @@ public class Players implements Player.Listener, ParseCallback {
     }
 
     public String setSpeed(float speed) {
-        if (exoPlayer != null && !Setting.isTunnel()) exoPlayer.setPlaybackSpeed(speed);
+        if (exoPlayer == null || !exoPlayer.isCommandAvailable(COMMAND_SET_SPEED_AND_PITCH)) return getSpeedText();
+        exoPlayer.setPlaybackParameters(exoPlayer.getPlaybackParameters().withSpeed(speed));
         return getSpeedText();
     }
 
