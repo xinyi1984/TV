@@ -1,4 +1,4 @@
-name: Merge upstream dev→dev
+name: Merge upstream okjack→okjack
 
 on:
   # 推送代码后触发
