@@ -43,8 +43,8 @@ public class ExoUtil {
         return Util.getUserAgent(App.get(), BuildConfig.APPLICATION_ID);
     }
 
-    public static LoadControl buildLoadControl() { 
-        return new DefaultLoadControl();
+    public static LoadControl buildLoadControl() {
+        return new DefaultLoadControl.Builder().setBufferDurationsMs(DefaultLoadControl.DEFAULT_MIN_BUFFER_MS * Setting.getBuffer(), DefaultLoadControl.DEFAULT_MAX_BUFFER_MS * Setting.getBuffer(), DefaultLoadControl.DEFAULT_BUFFER_FOR_PLAYBACK_MS, DefaultLoadControl.DEFAULT_BUFFER_FOR_PLAYBACK_AFTER_REBUFFER_MS).setBackBuffer(30000, true).build();
     }
 
     public static TrackSelector buildTrackSelector() {
@@ -53,9 +53,9 @@ public class ExoUtil {
         return trackSelector;
     }
 
-    /*public static RenderersFactory buildRenderersFactory(int renderMode) {
-        return new NextRenderersFactory(App.get()).setAudioPrefer(Setting.isAudioPrefer()).setEnableDecoderFallback(true).setExtensionRendererMode(renderMode);
-    }*/
+    public static RenderersFactory buildRenderersFactory(int renderMode) {
+        return new NextRenderersFactory(App.get()).setEnableDecoderFallback(true).setExtensionRendererMode(renderMode);
+    }
 
     public static MediaSource.Factory buildMediaSourceFactory() {
         return new MediaSourceFactory();
