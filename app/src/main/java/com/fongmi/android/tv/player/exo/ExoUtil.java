@@ -14,7 +14,6 @@ import androidx.media3.common.TrackSelectionOverride;
 import androidx.media3.common.Tracks;
 import androidx.media3.common.util.Util;
 import androidx.media3.exoplayer.DefaultLoadControl;
-import androidx.media3.exoplayer.DefaultRenderersFactory;
 import androidx.media3.exoplayer.ExoPlayer;
 import androidx.media3.exoplayer.LoadControl;
 import androidx.media3.exoplayer.RenderersFactory;
@@ -36,6 +35,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import io.github.anilbeesetti.nextlib.media3ext.ffdecoder.NextRenderersFactory;
+
 public class ExoUtil {
 
     public static String getUa() {
@@ -43,7 +44,7 @@ public class ExoUtil {
     }
 
     public static LoadControl buildLoadControl() {
-        return new DefaultLoadControl();
+        return new DefaultLoadControl.Builder().setBufferDurationsMs(DefaultLoadControl.DEFAULT_MIN_BUFFER_MS * Setting.getBuffer(), DefaultLoadControl.DEFAULT_MAX_BUFFER_MS * Setting.getBuffer(), DefaultLoadControl.DEFAULT_BUFFER_FOR_PLAYBACK_MS, DefaultLoadControl.DEFAULT_BUFFER_FOR_PLAYBACK_AFTER_REBUFFER_MS).setBackBuffer(30000, true).build();
     }
 
     public static TrackSelector buildTrackSelector() {
@@ -52,8 +53,8 @@ public class ExoUtil {
         return trackSelector;
     }
 
-    public static RenderersFactory buildRenderersFactory() {
-        return new DefaultRenderersFactory(App.get()).setEnableDecoderFallback(true);
+    public static RenderersFactory buildRenderersFactory(int renderMode) {
+        return new NextRenderersFactory(App.get()).setAudioPrefer(Setting.isAudioPrefer()).setEnableDecoderFallback(true).setExtensionRendererMode(renderMode);
     }
 
     public static MediaSource.Factory buildMediaSourceFactory() {
@@ -90,7 +91,7 @@ public class ExoUtil {
         exo.getSubtitleView().setStyle(getCaptionStyle());
         exo.getSubtitleView().setApplyEmbeddedFontSizes(false);
         exo.getSubtitleView().setApplyEmbeddedStyles(!Setting.isCaption());
-        //if (Setting.getSubtitlePosition() != 0) exo.getSubtitleView().setBottomPosition(Setting.getSubtitlePosition());
+        if (Setting.getSubtitlePosition() != 0) exo.getSubtitleView().setBottomPosition(Setting.getSubtitlePosition());
         if (Setting.getSubtitleTextSize() != 0) exo.getSubtitleView().setFractionalTextSize(Setting.getSubtitleTextSize());
     }
 
@@ -103,7 +104,7 @@ public class ExoUtil {
     }
 
     public static String getMimeType(int errorCode) {
-        //if (errorCode == PlaybackException.ERROR_CODE_PARSING_MANIFEST_UNSUPPORTED || errorCode == PlaybackException.ERROR_CODE_PARSING_MANIFEST_MALFORMED) return MimeTypes.APPLICATION_OCTET;
+        if (errorCode == PlaybackException.ERROR_CODE_PARSING_MANIFEST_UNSUPPORTED || errorCode == PlaybackException.ERROR_CODE_PARSING_MANIFEST_MALFORMED) return MimeTypes.APPLICATION_OCTET;
         if (errorCode == PlaybackException.ERROR_CODE_PARSING_CONTAINER_UNSUPPORTED || errorCode == PlaybackException.ERROR_CODE_PARSING_CONTAINER_MALFORMED || errorCode == PlaybackException.ERROR_CODE_IO_UNSPECIFIED) return MimeTypes.APPLICATION_M3U8;
         return null;
     }
@@ -114,10 +115,10 @@ public class ExoUtil {
         builder.setSubtitleConfigurations(getSubtitleConfigs(subs));
         if (drm != null) builder.setDrmConfiguration(drm.get());
         if (mimeType != null) builder.setMimeType(mimeType);
-        //builder.setForceUseRtpTcp(Setting.getRtsp() == 1);
-        //builder.setAds(Sniffer.getRegex(uri));
+        builder.setForceUseRtpTcp(Setting.getRtsp() == 1);
+        builder.setAds(Sniffer.getRegex(uri));
         builder.setMediaId(uri.toString());
-        //builder.setDecode(decode);
+        builder.setDecode(decode);
         return builder.build();
     }
 
