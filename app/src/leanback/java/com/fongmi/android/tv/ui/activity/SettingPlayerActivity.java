@@ -18,7 +18,6 @@ import com.fongmi.android.tv.ui.dialog.BufferDialog;
 import com.fongmi.android.tv.ui.dialog.SpeedDialog;
 import com.fongmi.android.tv.ui.dialog.UaDialog;
 import com.fongmi.android.tv.utils.ResUtil;
-import com.fongmi.android.tv.ui.dialog.DisplayDialog;
 
 import java.text.DecimalFormat;
 
@@ -53,6 +52,7 @@ public class SettingPlayerActivity extends BaseActivity implements UaCallback, B
         mBinding.tunnelText.setText(getSwitch(Setting.isTunnel()));
         mBinding.speedText.setText(format.format(Setting.getSpeed()));
         mBinding.bufferText.setText(String.valueOf(Setting.getBuffer()));
+        mBinding.audioDecodeText.setText(getSwitch(Setting.isAudioPrefer()));
         mBinding.rtspText.setText((rtsp = ResUtil.getStringArray(R.array.select_rtsp))[Setting.getRtsp()]);
         mBinding.scaleText.setText((scale = ResUtil.getStringArray(R.array.select_scale))[Setting.getScale()]);
         mBinding.renderText.setText((render = ResUtil.getStringArray(R.array.select_render))[Setting.getRender()]);
@@ -70,15 +70,11 @@ public class SettingPlayerActivity extends BaseActivity implements UaCallback, B
         mBinding.tunnel.setOnClickListener(this::setTunnel);
         mBinding.caption.setOnClickListener(this::setCaption);
         mBinding.caption.setOnLongClickListener(this::onCaption);
-        mBinding.display.setOnClickListener(this::onDisplay);
+        mBinding.audioDecode.setOnClickListener(this::setAudioDecode);
     }
 
     private void setVisible() {
         mBinding.caption.setVisibility(Setting.hasCaption() ? View.VISIBLE : View.GONE);
-    }
-
-    private void onDisplay(View view) {
-        DisplayDialog.create(this).show();
     }
 
     private void onUa(View view) {
@@ -144,5 +140,10 @@ public class SettingPlayerActivity extends BaseActivity implements UaCallback, B
     private boolean onCaption(View view) {
         if (Setting.isCaption()) startActivity(new Intent(Settings.ACTION_CAPTIONING_SETTINGS));
         return Setting.isCaption();
+    }
+
+    private void setAudioDecode(View view) {
+        Setting.putAudioPrefer(!Setting.isAudioPrefer());
+        mBinding.audioDecodeText.setText(getSwitch(Setting.isAudioPrefer()));
     }
 }
