@@ -53,9 +53,9 @@ public class ExoUtil {
         return trackSelector;
     }
 
-    public static RenderersFactory buildRenderersFactory(int renderMode) {
+    /*public static RenderersFactory buildRenderersFactory(int renderMode) {
         return new NextRenderersFactory(App.get()).setAudioPrefer(Setting.isAudioPrefer()).setEnableDecoderFallback(true).setExtensionRendererMode(renderMode);
-    }
+    }*/
 
     public static MediaSource.Factory buildMediaSourceFactory() {
         return new MediaSourceFactory();
