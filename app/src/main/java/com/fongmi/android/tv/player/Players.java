@@ -1,6 +1,8 @@
 package com.fongmi.android.tv.player;
 
 import static androidx.media3.common.Player.COMMAND_SET_SPEED_AND_PITCH;
+import static androidx.media3.exoplayer.DefaultRenderersFactory.EXTENSION_RENDERER_MODE_ON;
+import static androidx.media3.exoplayer.DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER;
 
 import android.app.Activity;
 import android.app.PendingIntent;
@@ -114,7 +116,7 @@ public class Players implements Player.Listener, ParseCallback {
     }
 
     private void setPlayer(PlayerView view) {
-        exoPlayer = new ExoPlayer.Builder(App.get()).setLoadControl(ExoUtil.buildLoadControl()).setTrackSelector(ExoUtil.buildTrackSelector()).setRenderersFactory(ExoUtil.buildRenderersFactory()).setMediaSourceFactory(ExoUtil.buildMediaSourceFactory()).build();
+        exoPlayer = new ExoPlayer.Builder(App.get()).setLoadControl(ExoUtil.buildLoadControl()).setTrackSelector(ExoUtil.buildTrackSelector()).setRenderersFactory(ExoUtil.buildRenderersFactory(isHard() ? EXTENSION_RENDERER_MODE_ON : EXTENSION_RENDERER_MODE_PREFER)).setMediaSourceFactory(ExoUtil.buildMediaSourceFactory()).build();
         exoPlayer.setAudioAttributes(AudioAttributes.DEFAULT, true);
         exoPlayer.addAnalyticsListener(new EventLogger());
         exoPlayer.setHandleAudioBecomingNoisy(true);
@@ -176,6 +178,10 @@ public class Players implements Player.Listener, ParseCallback {
         return exoPlayer == null ? 0 : exoPlayer.getVideoSize().height;
     }
 
+    public int getRetry() {
+        return retry;
+    }
+
     public float getSpeed() {
         return exoPlayer == null ? 1.0f : exoPlayer.getPlaybackParameters().speed;
     }
@@ -226,6 +232,10 @@ public class Players implements Player.Listener, ParseCallback {
 
     public boolean isHard() {
         return decode == HARD;
+    }
+
+    public boolean isSoft() {
+        return decode == SOFT;
     }
 
     public boolean isPortrait() {
@@ -300,6 +310,11 @@ public class Players implements Player.Listener, ParseCallback {
 
     public void seekTo(long time) {
         if (exoPlayer != null) exoPlayer.seekTo(time);
+    }
+
+    public void seekToDefaultPosition() {
+        if (exoPlayer != null) exoPlayer.seekToDefaultPosition();
+        prepare();
     }
 
     public void prepare() {
