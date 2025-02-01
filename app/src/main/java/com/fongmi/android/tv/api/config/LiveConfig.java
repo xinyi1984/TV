@@ -184,8 +184,8 @@ public class LiveConfig {
         for (JsonElement element : Json.safeListElement(object, "lives")) {
             Live live = Live.objectFrom(element);
             if (lives.contains(live)) continue;
-            live.setApi(parseApi(live.getApi()));
-            live.setExt(parseExt(live.getExt()));
+            live.setApi(UrlUtil.convert(live.getApi()));
+            live.setExt(UrlUtil.convert(live.getExt()));
             live.setJar(parseJar(live, spider));
             lives.add(live.check().sync());
         }
@@ -200,17 +200,6 @@ public class LiveConfig {
         if (home == null) setHome(lives.isEmpty() ? new Live() : lives.get(0), true);
         setRules(Rule.arrayFrom(object.getAsJsonArray("rules")));
         setAds(Json.safeListString(object, "ads"));
-    }
-
-    private String parseApi(String api) {
-        if (api.startsWith("file") || api.startsWith("assets")) return UrlUtil.convert(api);
-        return api;
-    }
-
-    private String parseExt(String ext) {
-        if (ext.startsWith("file") || ext.startsWith("assets")) return UrlUtil.convert(ext);
-        if (ext.startsWith("img+")) return Decoder.getExt(ext);
-        return ext;
     }
 
     private String parseJar(Live live, String spider) {

@@ -1,7 +1,5 @@
 package com.fongmi.android.tv.api;
 
-import android.util.Base64;
-
 import androidx.media3.common.MimeTypes;
 
 import com.fongmi.android.tv.bean.Catchup;
@@ -16,7 +14,6 @@ import com.fongmi.android.tv.bean.XStream;
 import com.fongmi.android.tv.utils.UrlUtil;
 import com.github.catvod.net.OkHttp;
 import com.github.catvod.utils.Json;
-import com.github.catvod.utils.Path;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -163,15 +160,7 @@ public class LiveParser {
 
     private static String getText(Live live) {
         if (live.isXtream() && !XtreamParser.isGetUrl(live.getUrl())) return "";
-        return getText(live.getUrl(), live.getHeaders());
-    }
-
-    private static String getText(String url, Map<String, String> header) {
-        if (url.startsWith("file")) return Path.read(url);
-        if (url.startsWith("http")) return OkHttp.string(url, header);
-        if (url.startsWith("assets") || url.startsWith("proxy")) return getText(UrlUtil.convert(url), header);
-        if (!url.isEmpty() && url.length() % 4 == 0) return getText(new String(Base64.decode(url, Base64.DEFAULT)), header);
-        return "";
+        return OkHttp.string(UrlUtil.convert(live.getUrl()), live.getHeaders());
     }
 
     private static class Setting {

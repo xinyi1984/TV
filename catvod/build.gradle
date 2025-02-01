@@ -27,6 +27,7 @@ dependencies {
     api 'com.squareup.okhttp3:okhttp:' + okhttpVersion
     api 'com.squareup.okhttp3:okhttp-dnsoverhttps:' + okhttpVersion
     api 'com.squareup.okhttp3:logging-interceptor:' + okhttpVersion
+    api 'org.conscrypt:conscrypt-android:2.5.2'
     api('com.google.guava:guava:33.0.0-android') {
         exclude group: 'com.google.code.findbugs', module: 'jsr305'
         exclude group: 'org.checkerframework', module: 'checker-compat-qual'
