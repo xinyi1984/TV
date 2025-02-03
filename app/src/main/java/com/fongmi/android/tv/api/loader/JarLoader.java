@@ -101,6 +101,17 @@ public class JarLoader {
         }
     }
 
+    public DexClassLoader dex(String jar) {
+        try {
+            String jaKey = Util.md5(jar);
+            if (!loaders.containsKey(jaKey)) parseJar(jaKey, jar);
+            return loaders.get(jaKey);
+        } catch (Throwable e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     public Spider getSpider(String key, String api, String ext, String jar) {
         try {
             String jaKey = Util.md5(jar);

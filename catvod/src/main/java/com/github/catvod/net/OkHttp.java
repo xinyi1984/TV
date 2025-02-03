@@ -10,11 +10,8 @@ import com.github.catvod.net.interceptor.RequestInterceptor;
 import com.github.catvod.net.interceptor.ResponseInterceptor;
 import com.github.catvod.utils.Path;
 
-import org.conscrypt.Conscrypt;
-
 import java.net.ProxySelector;
 import java.security.SecureRandom;
-import java.security.Security;
 import java.security.cert.X509Certificate;
 import java.util.Map;
 import java.util.Objects;
@@ -49,7 +46,6 @@ public class OkHttp {
 
     static {
         defaultSelector = ProxySelector.getDefault();
-        Security.insertProviderAt(Conscrypt.newProvider(), 1);
     }
 
     private static class Loader {

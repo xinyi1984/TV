@@ -208,8 +208,7 @@ public class VodConfig {
     }
 
     private String parseJar(Site site, String spider) {
-        if (site.getJar().isEmpty() && site.getApi().startsWith("csp_")) return spider;
-        return site.getJar();
+        return site.getJar().isEmpty() ? spider : site.getJar();
     }
 
     public List<Doh> getDoh() {

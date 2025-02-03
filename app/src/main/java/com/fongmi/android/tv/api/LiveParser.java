@@ -27,6 +27,7 @@ public class LiveParser {
     private static final Pattern CATCHUP_REPLACE = Pattern.compile(".*catchup-replace=\"(.?|.+?)\".*");
     private static final Pattern CATCHUP_SOURCE = Pattern.compile(".*catchup-source=\"(.?|.+?)\".*");
     private static final Pattern CATCHUP = Pattern.compile(".*catchup=\"(.?|.+?)\".*");
+    private static final Pattern TVG_CHNO = Pattern.compile(".*tvg-chno=\"(.?|.+?)\".*");
     private static final Pattern TVG_LOGO = Pattern.compile(".*tvg-logo=\"(.?|.+?)\".*");
     private static final Pattern TVG_NAME = Pattern.compile(".*tvg-name=\"(.?|.+?)\".*");
     private static final Pattern TVG_URL = Pattern.compile(".*tvg-url=\"(.?|.+?)\".*");
@@ -61,7 +62,7 @@ public class LiveParser {
         if (live.isXtream()) xtream(live);
         for (Group group : live.getGroups()) {
             for (Channel channel : group.getChannel()) {
-                channel.setNumber(++number);
+                if (channel.getNumber().isEmpty()) channel.setNumber(++number);
                 channel.live(live);
             }
         }
@@ -102,6 +103,7 @@ public class LiveParser {
                 Group group = live.find(Group.create(extract(line, GROUP), live.isPass()));
                 channel = group.find(Channel.create(extract(line, NAME)));
                 channel.setTvgName(extract(line, TVG_NAME));
+                channel.setNumber(extract(line, TVG_CHNO));
                 channel.setLogo(extract(line, TVG_LOGO));
                 Catchup unknown = Catchup.create();
                 unknown.setType(extract(line, CATCHUP));

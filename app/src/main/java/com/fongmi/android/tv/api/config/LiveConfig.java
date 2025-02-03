@@ -203,8 +203,7 @@ public class LiveConfig {
     }
 
     private String parseJar(Live live, String spider) {
-        if (live.getJar().isEmpty() && live.getApi().startsWith("csp_")) return spider;
-        return live.getJar();
+        return live.getJar().isEmpty() ? spider : live.getJar();
     }
 
     private void bootLive() {
