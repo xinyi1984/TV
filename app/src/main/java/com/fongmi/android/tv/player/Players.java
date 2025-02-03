@@ -120,7 +120,7 @@ public class Players implements Player.Listener, ParseCallback {
         exoPlayer.setAudioAttributes(AudioAttributes.DEFAULT, true);
         exoPlayer.addAnalyticsListener(new EventLogger());
         exoPlayer.setHandleAudioBecomingNoisy(true);
-        //view.setRender(Setting.getRender());
+        view.setRender(Setting.getRender());
         exoPlayer.setPlayWhenReady(true);
         exoPlayer.addListener(this);
         view.setPlayer(exoPlayer);
@@ -352,10 +352,10 @@ public class Players implements Player.Listener, ParseCallback {
     public void start(Channel channel, int timeout) {
         if (channel.hasMsg()) {
             ErrorEvent.extract(channel.getMsg());
-        } else if (channel.getParse() == 1) {
-            startParse(channel.result(), false);
         } else if (isIllegal(channel.getUrl())) {
             ErrorEvent.url();
+        } else if (channel.getParse() == 1) {
+            startParse(channel.result(), false);
         } else if (channel.getDrm() != null && !FrameworkMediaDrm.isCryptoSchemeSupported(channel.getDrm().getUUID())) {
             ErrorEvent.drm();
         } else {
@@ -366,10 +366,10 @@ public class Players implements Player.Listener, ParseCallback {
     public void start(Result result, boolean useParse, int timeout) {
         if (result.hasMsg()) {
             ErrorEvent.extract(result.getMsg());
-        } else if (result.getParse(1) == 1 || result.getJx() == 1) {
-            startParse(result, useParse);
         } else if (isIllegal(result.getRealUrl())) {
             ErrorEvent.url();
+        } else if (result.getParse(1) == 1 || result.getJx() == 1) {
+            startParse(result, useParse);
         } else if (result.getDrm() != null && !FrameworkMediaDrm.isCryptoSchemeSupported(result.getDrm().getUUID())) {
             ErrorEvent.drm();
         } else {
@@ -458,6 +458,8 @@ public class Players implements Player.Listener, ParseCallback {
         String host = UrlUtil.host(uri);
         String scheme = UrlUtil.scheme(uri);
         if ("data".equals(scheme)) return false;
+        if (url.startsWith("json:")) return false;
+        if (url.startsWith("parse:")) return false;
         return scheme.isEmpty() || "file".equals(scheme) ? !Path.exists(url) : host.isEmpty();
     }
 
