@@ -40,9 +40,10 @@ public class Global {
         this.executor = executor;
         this.timer = new Timer();
         this.ctx = ctx;
+        setProperty();
     }
 
-    public void setProperty() {
+    private void setProperty() {
         for (Method method : getClass().getMethods()) {
             if (!method.isAnnotationPresent(JSMethod.class)) continue;
             ctx.getGlobalObject().setProperty(method.getName(), args -> {

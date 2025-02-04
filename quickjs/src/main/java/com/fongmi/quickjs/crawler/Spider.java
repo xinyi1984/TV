@@ -3,10 +3,10 @@ package com.fongmi.quickjs.crawler;
 import android.content.Context;
 
 import com.fongmi.quickjs.bean.Res;
-import com.fongmi.quickjs.method.Async;
 import com.fongmi.quickjs.method.Console;
 import com.fongmi.quickjs.method.Global;
 import com.fongmi.quickjs.method.Local;
+import com.fongmi.quickjs.utils.Async;
 import com.fongmi.quickjs.utils.JSUtil;
 import com.fongmi.quickjs.utils.Module;
 import com.github.catvod.utils.Asset;
@@ -59,7 +59,6 @@ public class Spider extends com.github.catvod.crawler.Spider {
     }
 
     private Object call(String func, Object... args) throws Exception {
-        //return executor.submit((Function.call(jsObject, func, args))).get();
         return CompletableFuture.supplyAsync(() -> Async.run(jsObject, func, args), executor).join().get();
     }
 
@@ -149,7 +148,7 @@ public class Spider extends com.github.catvod.crawler.Spider {
     private void initializeJS() throws Exception {
         submit(() -> {
             createCtx();
-            createDex();
+            createFun();
             createObj();
             return null;
         }).get();
@@ -159,7 +158,6 @@ public class Spider extends com.github.catvod.crawler.Spider {
         ctx = QuickJSContext.create();
         ctx.setConsole(new Console());
         ctx.evaluate(Asset.read("js/lib/http.js"));
-        Global.create(ctx, executor).setProperty();
         ctx.getGlobalObject().setProperty("local", Local.class);
         ctx.setModuleLoader(new QuickJSContext.BytecodeModuleLoader() {
             @Override
@@ -174,9 +172,9 @@ public class Spider extends com.github.catvod.crawler.Spider {
         });
     }
 
-    private void createDex() {
+    private void createFun() {
         try {
-            if (dex == null) return;
+            Global.create(ctx, executor);
             Class<?> clz = dex.loadClass("com.github.catvod.js.Function");
             clz.getDeclaredConstructor(QuickJSContext.class).newInstance(ctx);
         } catch (Throwable e) {
