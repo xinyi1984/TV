@@ -199,6 +199,7 @@ public class LiveParser {
             else if (line.startsWith("#EXTVLCOPT:http-referrer")) referer(line);
             else if (line.startsWith("#KODIPROP:inputstream.adaptive.license_key")) key(line);
             else if (line.startsWith("#KODIPROP:inputstream.adaptive.license_type")) type(line);
+            else if (line.startsWith("#KODIPROP:inputstream.adaptive.drm_legacy")) drmLegacy(line);
             else if (line.startsWith("#KODIPROP:inputstream.adaptive.manifest_type")) format(line);
             else if (line.startsWith("#KODIPROP:inputstream.adaptive.stream_headers")) headers(line);
         }
@@ -281,6 +282,18 @@ public class LiveParser {
                 type = line.split("license_type=")[1].trim();
             } catch (Exception e) {
                 type = null;
+            }
+        }
+
+        public void drmLegacy(String line) {
+            try {
+                line = line.split("drm_legacy=")[1].trim();
+                type = line.split("\\|")[0].trim();
+                key = line.split("\\|")[1].trim();
+                if (!key.startsWith("http")) convert();
+            } catch (Exception e) {
+                type = null;
+                key = null;
             }
         }
 
