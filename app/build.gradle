@@ -13,8 +13,8 @@ android {
         minSdk 21
         //noinspection ExpiredTargetSdkVersion
         targetSdk 28
-        versionCode 304
-        versionName "3.0.4"
+        versionCode 305
+        versionName "3.0.5"
         javaCompileOptions {
             annotationProcessorOptions {
                 arguments = ["room.schemaLocation": "$projectDir/schemas".toString(), "eventBusIndex": "com.fongmi.android.tv.event.EventIndex"]
@@ -81,6 +81,7 @@ android {
     }
 
     compileOptions {
+        coreLibraryDesugaringEnabled true
         sourceCompatibility JavaVersion.VERSION_11
         targetCompatibility JavaVersion.VERSION_11
     }
@@ -93,32 +94,15 @@ dependencies {
     pythonImplementation project(':chaquo')
     implementation 'androidx.appcompat:appcompat:1.7.0'
     implementation 'androidx.media:media:1.7.0'
-    implementation project(':media-lib-common')
-    implementation project(':media-lib-container')
-    implementation project(':media-lib-database')
-    implementation project(':media-lib-datasource')
-    implementation project(':media-lib-datasource-okhttp')
-    implementation project(':media-lib-datasource-rtmp')
-    implementation project(':media-lib-decoder')
-    implementation project(':media-lib-decoder-av1')
-    implementation project(':media-lib-decoder-iamf')
-    implementation project(':media-lib-decoder-ffmpeg')
-    implementation project(':media-lib-exoplayer')
-    implementation project(':media-lib-exoplayer-dash')
-    implementation project(':media-lib-exoplayer-hls')
-    implementation project(':media-lib-exoplayer-rtsp')
-    implementation project(':media-lib-exoplayer-smoothstreaming')
-    implementation project(':media-lib-extractor')
-    implementation project(':media-lib-ui')
     implementation 'androidx.room:room-runtime:2.6.1'
     implementation 'cat.ereza:customactivityoncrash:2.4.0'
-    implementation('com.github.anilbeesetti.nextlib:nextlib-media3ext:0.8.4') { exclude group: 'androidx.media3', module: 'media3-exoplayer' }
     implementation 'com.github.bassaer:materialdesigncolors:1.0.0'
     implementation 'com.github.bumptech.glide:glide:4.16.0'
     implementation 'com.github.bumptech.glide:annotations:4.16.0'
     implementation 'com.github.bumptech.glide:okhttp3-integration:4.16.0'
     implementation 'com.github.jahirfiquitiva:TextDrawable:1.0.3'
     implementation 'com.github.thegrizzlylabs:sardine-android:0.9'
+    implementation 'com.github.teamnewpipe:NewPipeExtractor:v0.24.5'
     implementation 'com.google.android.material:material:1.12.0'
     implementation 'com.google.zxing:core:3.3.0'
     implementation 'com.guolindev.permissionx:permissionx:1.8.0'
@@ -141,4 +125,5 @@ dependencies {
     annotationProcessor 'androidx.room:room-compiler:2.6.1'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.16.0'
     annotationProcessor 'org.greenrobot:eventbus-annotation-processor:3.3.1'
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs_nio:2.1.4'
 }
