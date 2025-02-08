@@ -707,30 +707,34 @@ public class VideoActivity extends BaseActivity implements CustomKeyDownVod.List
     }
 
     private void checkNext() {
-        if (mHistory.isRevPlay()) onPrev();
-        else onNext();
+        checkNext(true);
+    }
+
+    private void checkNext(boolean notify) {
+        if (mHistory.isRevPlay()) onPrev(notify);
+        else onNext(notify);
     }
 
     private void checkPrev() {
-        if (mHistory.isRevPlay()) onNext();
-        else onPrev();
+        if (mHistory.isRevPlay()) onNext(true);
+        else onPrev(true);
     }
 
-    private void onNext() {
+    private void onNext(boolean notify) {
         int current = getEpisodePosition();
         int max = mEpisodeAdapter.size() - 1;
         current = ++current > max ? max : current;
         Episode item = (Episode) mEpisodeAdapter.get(current);
-        if (item.isActivated()) Notify.show(mHistory.isRevPlay() ? R.string.error_play_prev : R.string.error_play_next);
-        else setEpisodeActivated(item);
+        if (!item.isActivated()) setEpisodeActivated(item);
+        else if (notify) Notify.show(mHistory.isRevPlay() ? R.string.error_play_prev : R.string.error_play_next);
     }
 
-    private void onPrev() {
+    private void onPrev(boolean notify) {
         int current = getEpisodePosition();
         current = --current < 0 ? 0 : current;
         Episode item = (Episode) mEpisodeAdapter.get(current);
-        if (item.isActivated()) Notify.show(mHistory.isRevPlay() ? R.string.error_play_next : R.string.error_play_prev);
-        else setEpisodeActivated(item);
+        if (!item.isActivated()) setEpisodeActivated(item);
+        else if (notify) Notify.show(mHistory.isRevPlay() ? R.string.error_play_next : R.string.error_play_prev);
     }
 
     private void onScale() {
@@ -1025,7 +1029,7 @@ public class VideoActivity extends BaseActivity implements CustomKeyDownVod.List
         mHistory.setDuration(duration = mPlayers.getDuration());
         if (position >= 0 && duration > 0 && !Setting.isIncognito()) App.execute(() -> mHistory.update());
         if (mHistory.getEnding() > 0 && duration > 0 && mHistory.getEnding() + position >= duration) {
-            checkEnded();
+            checkEnded(false);
         }
     }
 
@@ -1066,7 +1070,7 @@ public class VideoActivity extends BaseActivity implements CustomKeyDownVod.List
                 hideProgress();
                 break;
             case Player.STATE_ENDED:
-                checkEnded();
+                checkEnded(true);
                 break;
             case PlayerEvent.TRACK:
                 setMetadata();
@@ -1086,12 +1090,12 @@ public class VideoActivity extends BaseActivity implements CustomKeyDownVod.List
         if (mHistory != null) mPlayers.seekTo(Math.max(mHistory.getOpening(), mHistory.getPosition()));
     }
 
-    private void checkEnded() {
+    private void checkEnded(boolean notify) {
         if (mBinding.control.loop.isActivated()) {
             onReset(true);
         } else {
             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-            checkNext();
+            checkNext(notify);
         }
     }
 
