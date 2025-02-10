@@ -582,6 +582,9 @@ public class Players implements Player.Listener, ParseCallback {
     @Override
     public void onPlayerError(@NonNull PlaybackException error) {
         Logger.t(TAG).e(error.errorCode + "," + url);
-        ErrorEvent.url(error.errorCode);
+        if (retried()) ErrorEvent.extract(error.getErrorCodeName());
+        else if (error.errorCode == PlaybackException.ERROR_CODE_BEHIND_LIVE_WINDOW) seekToDefaultPosition();
+        else if (error.errorCode >= PlaybackException.ERROR_CODE_DECODER_INIT_FAILED && error.errorCode <= PlaybackException.ERROR_CODE_DECODING_RESOURCES_RECLAIMED) toggleDecode();
+        else if (error.errorCode == PlaybackException.ERROR_CODE_IO_UNSPECIFIED || error.errorCode >= PlaybackException.ERROR_CODE_PARSING_CONTAINER_MALFORMED && error.errorCode <= PlaybackException.ERROR_CODE_PARSING_MANIFEST_UNSUPPORTED) setFormat(ExoUtil.getMimeType(error.errorCode));
     }
 }
