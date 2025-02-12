@@ -38,7 +38,7 @@ public class OkDns implements Dns {
 
     private List<InetAddress> getAllByName(String host) {
         try {
-            return new ArrayList<>(Arrays.asList(InetAddress.getAllByName(host)));
+            return Arrays.asList(InetAddress.getAllByName(host));
         } catch (Exception e) {
             return new ArrayList<>();
         }
