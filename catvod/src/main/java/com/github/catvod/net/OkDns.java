@@ -4,17 +4,17 @@ import androidx.annotation.NonNull;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.regex.Pattern;
 
 import okhttp3.Dns;
 import okhttp3.dnsoverhttps.DnsOverHttps;
 
 public class OkDns implements Dns {
 
-    private final Pattern IP = Pattern.compile("\\b(?:(?:[0-9]{1,3}\\.){3}[0-9]{1,3}|[0-9a-fA-F:]{2,39})\\b");
-    private final HashMap<String, String> map;
+    private final HashMap<String, List<InetAddress>> map;
     private DnsOverHttps doh;
 
     public OkDns() {
@@ -29,23 +29,25 @@ public class OkDns implements Dns {
         for (String host : hosts) {
             if (!host.contains("=")) continue;
             String[] splits = host.split("=");
-            map.put(splits[0], splits[1]);
+            String oldHost = splits[0];
+            String newHost = splits[1];
+            if (!map.containsKey(oldHost)) map.put(oldHost, new ArrayList<>());
+            map.get(oldHost).addAll(getAllByName(newHost));
         }
     }
 
-    private boolean isAddress(String input) {
+    private List<InetAddress> getAllByName(String host) {
         try {
-            return IP.matcher(input).find();
+            return new ArrayList<>(Arrays.asList(InetAddress.getAllByName(host)));
         } catch (Exception e) {
-            return false;
+            return new ArrayList<>();
         }
     }
 
     @NonNull
     @Override
     public List<InetAddress> lookup(@NonNull String hostname) throws UnknownHostException {
-        String target = map.containsKey(hostname) ? map.get(hostname) : hostname;
-        return isAddress(target) ? List.of(InetAddress.getByName(target)) : (doh != null ? doh : Dns.SYSTEM).lookup(target);
+        return map.containsKey(hostname) ? map.get(hostname) : (doh != null ? doh : Dns.SYSTEM).lookup(hostname);
     }
 }
 
