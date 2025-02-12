@@ -629,6 +629,7 @@ public class LiveActivity extends BaseActivity implements CustomKeyDownLive.List
         mViewModel.getEpg(mChannel);
         mBinding.widget.play.setText("");
         mChannel.loadLogo(mBinding.widget.logo);
+        mBinding.control.title.setSelected(true);
         mBinding.widget.name.setText(mChannel.getName());
         mBinding.control.title.setText(mChannel.getName());
         mBinding.display.title.setText(mBinding.control.title.getText());
