@@ -6,26 +6,26 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 import okhttp3.Dns;
 import okhttp3.dnsoverhttps.DnsOverHttps;
 
 public class OkDns implements Dns {
 
-    private final HashMap<String, List<InetAddress>> map;
+    private final ConcurrentHashMap<String, List<InetAddress>> map;
     private DnsOverHttps doh;
 
     public OkDns() {
-        this.map = new HashMap<>();
+        this.map = new ConcurrentHashMap<>();
     }
 
     public void setDoh(DnsOverHttps doh) {
         this.doh = doh;
     }
 
-    public void addAll(List<String> hosts) {
+    public synchronized void addAll(List<String> hosts) {
         for (String host : hosts) {
             if (!host.contains("=")) continue;
             String[] splits = host.split("=");
