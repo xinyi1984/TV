@@ -38,6 +38,8 @@ public class OkHttp {
     private static final int CACHE = 100 * 1024 * 1024;
     private static final ProxySelector defaultSelector;
 
+    private ResponseInterceptor responseInterceptor;
+    private RequestInterceptor requestInterceptor;
     private OkProxySelector selector;
     private OkHttpClient client;
     private OkDns dns;
@@ -62,16 +64,26 @@ public class OkHttp {
         client = null;
     }
 
-    public static OkDns dns() {
-        if (get().dns != null) return get().dns;
-        return get().dns = new OkDns();
-    }
-
     public void setProxy(String proxy) {
         ProxySelector.setDefault(TextUtils.isEmpty(proxy) ? defaultSelector : selector());
         if (!TextUtils.isEmpty(proxy)) selector().setProxy(proxy);
         this.proxy = !TextUtils.isEmpty(proxy);
         client = null;
+    }
+
+    public static OkDns dns() {
+        if (get().dns != null) return get().dns;
+        return get().dns = new OkDns();
+    }
+
+    public static ResponseInterceptor responseInterceptor() {
+        if (get().responseInterceptor != null) return get().responseInterceptor;
+        return get().responseInterceptor = new ResponseInterceptor();
+    }
+
+    public static RequestInterceptor requestInterceptor() {
+        if (get().requestInterceptor != null) return get().requestInterceptor;
+        return get().requestInterceptor = new RequestInterceptor();
     }
 
     public static OkProxySelector selector() {
@@ -152,9 +164,9 @@ public class OkHttp {
 
     private static OkHttpClient.Builder getBuilder() {
         HttpLoggingInterceptor logging = new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY);
-        OkHttpClient.Builder builder = new OkHttpClient.Builder().cookieJar(OkCookieJar.get()).addInterceptor(new RequestInterceptor()).addNetworkInterceptor(new ResponseInterceptor()).connectTimeout(TIMEOUT, TimeUnit.MILLISECONDS).readTimeout(TIMEOUT, TimeUnit.MILLISECONDS).writeTimeout(TIMEOUT, TimeUnit.MILLISECONDS).dns(dns()).hostnameVerifier((hostname, session) -> true).sslSocketFactory(getSSLContext().getSocketFactory(), trustAllCertificates());
+        OkHttpClient.Builder builder = new OkHttpClient.Builder().cookieJar(OkCookieJar.get()).addInterceptor(requestInterceptor()).addNetworkInterceptor(responseInterceptor()).connectTimeout(TIMEOUT, TimeUnit.MILLISECONDS).readTimeout(TIMEOUT, TimeUnit.MILLISECONDS).writeTimeout(TIMEOUT, TimeUnit.MILLISECONDS).dns(dns()).hostnameVerifier((hostname, session) -> true).sslSocketFactory(getSSLContext().getSocketFactory(), trustAllCertificates());
         builder.proxySelector(get().proxy ? selector() : defaultSelector);
-        //builder.addNetworkInterceptor(logging);
+        builder.addNetworkInterceptor(logging);
         return builder;
     }
 
