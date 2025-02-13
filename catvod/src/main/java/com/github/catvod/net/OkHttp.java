@@ -45,6 +45,7 @@ public class OkHttp {
     private OkDns dns;
 
     private boolean proxy;
+    private boolean debug;
 
     static {
         defaultSelector = ProxySelector.getDefault();
@@ -56,6 +57,10 @@ public class OkHttp {
 
     public static OkHttp get() {
         return Loader.INSTANCE;
+    }
+
+    public void setDebug(boolean debug) {
+        this.debug = debug;
     }
 
     public void setDoh(Doh doh) {
@@ -163,10 +168,10 @@ public class OkHttp {
     }
 
     private static OkHttpClient.Builder getBuilder() {
-        HttpLoggingInterceptor logging = new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY);
         OkHttpClient.Builder builder = new OkHttpClient.Builder().cookieJar(OkCookieJar.get()).addInterceptor(requestInterceptor()).addNetworkInterceptor(responseInterceptor()).connectTimeout(TIMEOUT, TimeUnit.MILLISECONDS).readTimeout(TIMEOUT, TimeUnit.MILLISECONDS).writeTimeout(TIMEOUT, TimeUnit.MILLISECONDS).dns(dns()).hostnameVerifier((hostname, session) -> true).sslSocketFactory(getSSLContext().getSocketFactory(), trustAllCertificates());
+        HttpLoggingInterceptor logging = new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY);
         builder.proxySelector(get().proxy ? selector() : defaultSelector);
-        //builder.addNetworkInterceptor(logging);
+        if (get().debug) builder.addNetworkInterceptor(logging);
         return builder;
     }
 
