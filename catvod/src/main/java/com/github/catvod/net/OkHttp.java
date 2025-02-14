@@ -5,10 +5,14 @@ import android.text.TextUtils;
 
 import androidx.collection.ArrayMap;
 
+import com.github.catvod.Init;
 import com.github.catvod.bean.Doh;
 import com.github.catvod.net.interceptor.RequestInterceptor;
 import com.github.catvod.net.interceptor.ResponseInterceptor;
 import com.github.catvod.utils.Path;
+import com.google.net.cronet.okhttptransport.CronetInterceptor;
+
+import org.chromium.net.CronetEngine;
 
 import java.net.ProxySelector;
 import java.security.SecureRandom;
@@ -164,6 +168,7 @@ public class OkHttp {
 
     private static OkHttpClient.Builder getBuilder() {
         OkHttpClient.Builder builder = new OkHttpClient.Builder().cookieJar(OkCookieJar.get()).addInterceptor(requestInterceptor()).addNetworkInterceptor(responseInterceptor()).connectTimeout(TIMEOUT, TimeUnit.MILLISECONDS).readTimeout(TIMEOUT, TimeUnit.MILLISECONDS).writeTimeout(TIMEOUT, TimeUnit.MILLISECONDS).dns(dns()).hostnameVerifier((hostname, session) -> true).sslSocketFactory(getSSLContext().getSocketFactory(), trustAllCertificates());
+        builder.addInterceptor(CronetInterceptor.newBuilder(new CronetEngine.Builder(Init.context()).build()).build());
         HttpLoggingInterceptor logging = new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY);
         builder.proxySelector(get().proxy ? selector() : defaultSelector);
         //builder.addNetworkInterceptor(logging);
