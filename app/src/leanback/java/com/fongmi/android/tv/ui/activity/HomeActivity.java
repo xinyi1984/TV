@@ -331,7 +331,7 @@ public class HomeActivity extends BaseActivity implements CustomTitleView.Listen
     public void onServerEvent(ServerEvent event) {
         switch (event.getType()) {
             case SEARCH:
-                CollectActivity.start(this, event.getText(), true);
+                CollectActivity.start(this, event.getText());
                 break;
             case PUSH:
                 VideoActivity.push(this, event.getText());
@@ -396,7 +396,7 @@ public class HomeActivity extends BaseActivity implements CustomTitleView.Listen
     public void onItemClick(Vod item) {
         if (item.isAction()) mViewModel.action(getHome().getKey(), item.getAction());
         else if (getHome().isIndex()) CollectActivity.start(getActivity(), item.getVodName());
-        else VideoActivity.start(this, item.getVodId(), item.getVodName(), item.getVodPic());
+        else VideoActivity.start(this, getHome().getKey(), item.getVodId(), item.getVodName(), item.getVodPic());
     }
 
     @Override
