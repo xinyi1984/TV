@@ -140,48 +140,35 @@ public class VideoActivity extends BaseActivity implements CustomKeyDownVod.List
     public static void file(FragmentActivity activity, String path) {
         if (TextUtils.isEmpty(path)) return;
         String name = new File(path).getName();
-        PermissionX.init(activity).permissions(Manifest.permission.WRITE_EXTERNAL_STORAGE).request((allGranted, grantedList, deniedList) -> start(activity, "push_agent", "file://" + path, name, true));
+        PermissionX.init(activity).permissions(Manifest.permission.WRITE_EXTERNAL_STORAGE).request((allGranted, grantedList, deniedList) -> start(activity, "push_agent", "file://" + path, name));
     }
 
     public static void cast(Activity activity, History history) {
-        start(activity, history.getSiteKey(), history.getVodId(), history.getVodName(), history.getVodPic(), null, true, true, false);
+        start(activity, history.getSiteKey(), history.getVodId(), history.getVodName(), history.getVodPic(), null, true, false);
     }
 
     public static void collect(Activity activity, String key, String id, String name, String pic) {
-        start(activity, key, id, name, pic, null, false, false, true);
+        start(activity, key, id, name, pic, null, false, true);
     }
 
     public static void start(Activity activity, String url) {
-        start(activity, url, true);
+        start(activity, "push_agent", url, url);
     }
 
-    public static void start(Activity activity, String url, boolean clear) {
-        start(activity, "push_agent", url, url, clear);
-    }
-
-    public static void start(Activity activity, String id, String name, String pic) {
-        start(activity, VodConfig.get().getHome().getKey(), id, name, pic);
+    public static void start(Activity activity, String key, String id, String name) {
+        start(activity, key, id, name, null);
     }
 
     public static void start(Activity activity, String key, String id, String name, String pic) {
-        start(activity, key, id, name, pic, null, false);
+        start(activity, key, id, name, pic, null);
     }
 
     public static void start(Activity activity, String key, String id, String name, String pic, String mark) {
-        start(activity, key, id, name, pic, mark, false);
+        start(activity, key, id, name, pic, mark, false, false);
     }
 
-    public static void start(Activity activity, String key, String id, String name, boolean clear) {
-        start(activity, key, id, name, null, null, clear, false, false);
-    }
-
-    public static void start(Activity activity, String key, String id, String name, String pic, String mark, boolean clear) {
-        start(activity, key, id, name, pic, mark, clear, false, false);
-    }
-
-    public static void start(Activity activity, String key, String id, String name, String pic, String mark, boolean clear, boolean cast, boolean collect) {
-        Intent intent = new Intent(activity, VideoActivity.class);
-        if (clear) intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+    public static void start(Activity activity, String key, String id, String name, String pic, String mark, boolean cast, boolean collect) {
+        Intent intent = new Intent(activity, VideoActivity.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.putExtra("collect", collect);
         intent.putExtra("cast", cast);
         intent.putExtra("mark", mark);
@@ -189,7 +176,7 @@ public class VideoActivity extends BaseActivity implements CustomKeyDownVod.List
         intent.putExtra("pic", pic);
         intent.putExtra("key", key);
         intent.putExtra("id", id);
-        activity.startActivityForResult(intent, 1000);
+        activity.startActivity(intent);
     }
 
     private boolean isCast() {
@@ -262,6 +249,16 @@ public class VideoActivity extends BaseActivity implements CustomKeyDownVod.List
     @Override
     protected ViewBinding getBinding() {
         return mBinding = ActivityVideoBinding.inflate(getLayoutInflater());
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        String id = Objects.toString(intent.getStringExtra("id"), "");
+        if (TextUtils.isEmpty(id) || id.equals(getId())) return;
+        getIntent().putExtras(intent);
+        stopSearch();
+        checkId();
     }
 
     @Override
@@ -1367,16 +1364,7 @@ public class VideoActivity extends BaseActivity implements CustomKeyDownVod.List
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode != RESULT_OK) return;
-        switch (requestCode) {
-            case 1000:
-                setResult(RESULT_OK);
-                finish();
-                break;
-            case 1001:
-                mPlayers.checkData(data);
-                break;
-        }
+        if (resultCode == RESULT_OK && requestCode == 1001) mPlayers.checkData(data);
     }
 
     @Override
