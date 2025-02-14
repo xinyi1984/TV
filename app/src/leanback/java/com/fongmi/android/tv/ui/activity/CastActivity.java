@@ -550,6 +550,7 @@ public class CastActivity extends BaseActivity implements CustomKeyDownCast.List
         mClock.release();
         mPlayers.release();
         unbindService(this);
+        PlaybackService.stop();
         mService.bindRealPlayer(null);
         App.removeCallbacks(mR1, mR2);
     }
