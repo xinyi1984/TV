@@ -131,6 +131,7 @@ public class CollectActivity extends BaseActivity {
 
     private void search() {
         mAdapter.add(Collect.all());
+        if (mExecutor != null) stop();
         mBinding.pager.getAdapter().notifyDataSetChanged();
         mExecutor = new PauseExecutor(Constant.THREAD_POOL);
         mBinding.result.setText(getString(R.string.collect_result, getKeyword()));
