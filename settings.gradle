@@ -12,7 +12,7 @@ dependencyResolutionManagement {
         mavenCentral()
         jcenter()
         google()
-        flatDir { dirs "$rootDir/app/libs", "$rootDir/quickjs/libs" }
+        flatDir { dirs "$rootDir/app/libs" }
         maven { url "https://jitpack.io" }
         maven { url 'https://download.01.org/crosswalk/releases/crosswalk/android/maven2' }
         maven { url "https://maven.aliyun.com/repository/releases" }
