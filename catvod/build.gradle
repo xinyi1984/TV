@@ -28,7 +28,7 @@ dependencies {
     api 'com.squareup.okhttp3:okhttp:' + okhttpVersion
     api 'com.squareup.okhttp3:okhttp-dnsoverhttps:' + okhttpVersion
     api 'com.squareup.okhttp3:logging-interceptor:' + okhttpVersion
-    api 'org.chromium.net:cronet-embedded:119.6045.31'
+    api 'org.chromium.net:cronet-embedded:76.3809.111'
     api('com.google.guava:guava:33.3.1-android') {
         exclude group: 'com.google.code.findbugs', module: 'jsr305'
         exclude group: 'org.checkerframework', module: 'checker-compat-qual'
