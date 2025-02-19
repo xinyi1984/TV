@@ -603,6 +603,8 @@ public class LiveActivity extends BaseActivity implements CustomKeyDownLive.List
             fetch(item);
         } else if (mChannel.hasCatchup()) {
             Notify.show(getString(R.string.play_ready, item.getTitle()));
+            mBinding.control.epg.setVisibility(View.VISIBLE);
+            mBinding.control.epg.setText(item.getTitle());
             mEpgDataAdapter.setSelected(item);
             fetch(item);
         }
@@ -627,6 +629,7 @@ public class LiveActivity extends BaseActivity implements CustomKeyDownLive.List
         mBinding.widget.play.setText("");
         mChannel.loadLogo(mBinding.widget.logo);
         mBinding.control.title.setSelected(true);
+        mBinding.control.epg.setVisibility(View.GONE);
         mBinding.widget.name.setText(mChannel.getName());
         mBinding.control.title.setText(mChannel.getName());
         mBinding.display.title.setText(mBinding.control.title.getText());
