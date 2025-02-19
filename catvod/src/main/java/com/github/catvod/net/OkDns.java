@@ -25,6 +25,10 @@ public class OkDns implements Dns {
         this.doh = doh;
     }
 
+    public void clear() {
+        map.clear();
+    }
+
     public synchronized void addAll(List<String> hosts) {
         for (String host : hosts) {
             if (!host.contains("=")) continue;
