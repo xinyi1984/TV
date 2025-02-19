@@ -58,6 +58,12 @@ public class OkHttp {
         return Loader.INSTANCE;
     }
 
+    public void clear() {
+        dns().clear();
+        selector().clear();
+        requestInterceptor().clear();
+    }
+
     public void setDoh(Doh doh) {
         OkHttpClient c = new OkHttpClient.Builder().cache(new Cache(Path.doh(), CACHE)).build();
         dns().setDoh(doh.getUrl().isEmpty() ? null : new DnsOverHttps.Builder().client(c).url(HttpUrl.get(doh.getUrl())).bootstrapDnsHosts(doh.getHosts()).build());
