@@ -2,7 +2,7 @@ package com.github.catvod.utils;
 
 public class Github {
 
-    public static final String URL = "https://raw.githubusercontent.com/FongMi/Release/fongmi";
+    public static final String URL = "https://raw.githubusercontent.com/xinyi1984/TVBox-TV/fongmi";
 
     private static String getUrl(String path, String name) {
         return URL + "/" + path + "/" + name;
