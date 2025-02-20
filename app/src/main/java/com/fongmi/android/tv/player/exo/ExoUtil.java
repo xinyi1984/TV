@@ -118,6 +118,7 @@ public class ExoUtil {
         builder.setForceUseRtpTcp(Setting.getRtsp() == 1);
         builder.setAds(Sniffer.getRegex(uri));
         builder.setMediaId(uri.toString());
+        builder.setImageDurationMs(15000);
         builder.setDecode(decode);
         return builder.build();
     }
