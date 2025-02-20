@@ -2,9 +2,12 @@ package com.github.catvod.net;
 
 import androidx.annotation.NonNull;
 
+import com.github.catvod.utils.Util;
+
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import okhttp3.Dns;
@@ -40,7 +43,7 @@ public class OkDns implements Dns {
     @NonNull
     @Override
     public List<InetAddress> lookup(@NonNull String hostname) throws UnknownHostException {
-        return (doh != null ? doh : Dns.SYSTEM).lookup(map.containsKey(hostname) ? map.get(hostname) : hostname);
+        for (Map.Entry<String, String> entry : map.entrySet()) if (Util.containOrMatch(hostname, entry.getKey())) hostname = entry.getValue();
+        return (doh != null ? doh : Dns.SYSTEM).lookup(hostname);
     }
 }
-
