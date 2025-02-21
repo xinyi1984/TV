@@ -10,6 +10,10 @@ public class Github {
         return URL + "/" + path + "/" + name;
     }
 
+    private static String getUrl1(String path, String name) {
+        return URL1 + "/" + path + "/" + name;
+    }
+
     public static String getJson(boolean dev, String name) {
         return getUrl("apk/" + (dev ? "dev" : "release"), name + ".json");
     }
