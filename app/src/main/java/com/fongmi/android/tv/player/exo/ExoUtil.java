@@ -59,8 +59,8 @@ public class ExoUtil {
         return new NextRenderersFactory(App.get()).setEnableDecoderFallback(true).setExtensionRendererMode(renderMode);
     }
 
-    public static MediaSource.Factory buildMediaSourceFactory(AssHandler assHandler, AssSubtitleParserFactory subtitleParserFactory) {
-        return new MediaSourceFactory(assHandler, subtitleParserFactory);
+    public static MediaSource.Factory buildMediaSourceFactory() {
+        return new MediaSourceFactory();
     }
 
     public static CaptionStyleCompat getCaptionStyle() {
