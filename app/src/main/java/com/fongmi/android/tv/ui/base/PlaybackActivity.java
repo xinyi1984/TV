@@ -179,7 +179,6 @@ public abstract class PlaybackActivity extends BaseActivity implements MediaCont
     }
 
     private void initPlayerViews() {
-        getExoView().setRender(Setting.getRender());
         ExoUtil.setSubtitleView(getExoView());
         getSeekView().setPlayer(mController);
     }

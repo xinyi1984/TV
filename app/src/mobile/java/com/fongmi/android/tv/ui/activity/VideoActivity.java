@@ -82,7 +82,6 @@ import com.fongmi.android.tv.ui.dialog.EpisodeListDialog;
 import com.fongmi.android.tv.ui.dialog.InfoDialog;
 import com.fongmi.android.tv.ui.dialog.ReceiveDialog;
 import com.fongmi.android.tv.ui.dialog.SubtitleDialog;
-import com.fongmi.android.tv.ui.dialog.TitleDialog;
 import com.fongmi.android.tv.ui.dialog.TrackDialog;
 import com.fongmi.android.tv.utils.Clock;
 import com.fongmi.android.tv.utils.FileChooser;
@@ -736,7 +735,6 @@ public class VideoActivity extends PlaybackActivity implements Clock.Callback, C
     }
 
     private void onTitle() {
-        TitleDialog.create().player(player()).show(this);
         hideControl();
     }
 
@@ -1323,7 +1321,7 @@ public class VideoActivity extends PlaybackActivity implements Clock.Callback, C
     }
 
     private void setTitleVisible() {
-        mBinding.control.action.title.setVisibility(player().haveTitle() ? View.VISIBLE : View.GONE);
+        mBinding.control.action.title.setVisibility(View.GONE);
     }
 
     private void setMetadata() {

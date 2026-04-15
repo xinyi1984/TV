@@ -66,7 +66,6 @@ import com.fongmi.android.tv.ui.custom.CustomSeekView;
 import com.fongmi.android.tv.ui.dialog.ContentDialog;
 import com.fongmi.android.tv.ui.dialog.DanmakuDialog;
 import com.fongmi.android.tv.ui.dialog.SubtitleDialog;
-import com.fongmi.android.tv.ui.dialog.TitleDialog;
 import com.fongmi.android.tv.ui.dialog.TrackDialog;
 import com.fongmi.android.tv.utils.Clock;
 import com.fongmi.android.tv.utils.FileChooser;
@@ -802,7 +801,6 @@ public class VideoActivity extends PlaybackActivity implements CustomKeyDownVod.
     }
 
     private void onTitle() {
-        TitleDialog.create().player(player()).show(this);
         hideControl();
     }
 
@@ -1160,7 +1158,7 @@ public class VideoActivity extends PlaybackActivity implements CustomKeyDownVod.
     }
 
     private void setTitleVisible() {
-        mBinding.control.action.title.setVisibility(player().haveTitle() ? View.VISIBLE : View.GONE);
+        mBinding.control.action.title.setVisibility(View.GONE);
     }
 
     private void setMetadata() {

@@ -6,7 +6,6 @@ import android.text.TextUtils;
 import androidx.annotation.NonNull;
 import androidx.media3.common.MediaItem;
 import androidx.media3.common.MediaMetadata;
-import androidx.media3.common.MediaTitle;
 import androidx.media3.common.PlaybackException;
 import androidx.media3.common.Player;
 import androidx.media3.common.Tracks;
@@ -100,10 +99,6 @@ public class PlayerManager implements ParseCallback {
         return exoPlayer.getCurrentTracks();
     }
 
-    public List<MediaTitle> getCurrentMediaTitles() {
-        return exoPlayer.getCurrentMediaTitles();
-    }
-
     public MediaItem getCurrentMediaItem() {
         return exoPlayer.getCurrentMediaItem();
     }
@@ -168,10 +163,6 @@ public class PlayerManager implements ParseCallback {
         return TrackUtil.count(exoPlayer.getCurrentTracks(), type) > 0;
     }
 
-    public boolean haveTitle() {
-        return !exoPlayer.getCurrentMediaTitles().isEmpty();
-    }
-
     public boolean haveDanmaku() {
         return danmakus != null && danmakus.stream().anyMatch(Danmaku::isSelected);
     }
@@ -229,11 +220,6 @@ public class PlayerManager implements ParseCallback {
     public void setFormat(String format) {
         this.format = format;
         setMediaItem();
-    }
-
-    public void setTitle(MediaTitle title) {
-        setMediaItem(UrlUtil.uri(url).buildUpon().fragment("title=" + title.index).build().toString());
-        exoPlayer.seekTo(0);
     }
 
     public void setMetadata(String title, String artist, String artUri) {
@@ -481,11 +467,6 @@ public class PlayerManager implements ParseCallback {
             setTrack(Track.find(getKey()));
             callback.onTracksChanged();
             initTrack = true;
-        }
-
-        @Override
-        public void onMediaTitlesChanged(@NonNull List<MediaTitle> titles) {
-            callback.onTitlesChanged();
         }
 
         @Override
