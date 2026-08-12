@@ -61,6 +61,12 @@
     <string name="play_switch_flag">Switching flag to <xliff:g name="name">%s</xliff:g></string>
     <string name="play_switch_site">Switching site to <xliff:g name="name">%s</xliff:g></string>
     <string name="play_switch_parse">Switching parse to <xliff:g name="name">%s</xliff:g></string>
+    <string name="play_time">Time</string>
+    <string name="play_netspeed">Net Speed</string>
+    <string name="play_duration">Duration</string>
+    <string name="play_mini_progress">Mini Progress</string>
+    <string name="play_video_title">Title</string>
+    <string name="play_display">Display</string>
 
     <!-- Playback Setting -->
     <string name="setting_tab_offset">Offset</string>
