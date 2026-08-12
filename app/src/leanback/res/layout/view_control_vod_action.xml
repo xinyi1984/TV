@@ -132,6 +132,14 @@
             style="@style/Control"
             android:nextFocusRight="@id/next"
             android:text="@string/play_ed" />
+        
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/display"
+            style="@style/Control"
+            android:layout_marginEnd="8dp"
+            android:text="@string/play_display"
+            android:visibility="gone"
+            tools:visibility="visible" />
 
     </androidx.appcompat.widget.LinearLayoutCompat>
 </HorizontalScrollView>
