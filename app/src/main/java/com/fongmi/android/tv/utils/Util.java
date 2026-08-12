@@ -124,7 +124,13 @@ public class Util {
     public static String clean(String text) {
         if (!text.contains("<")) return text;
         StringBuilder sb = new StringBuilder();
-        text = Html.fromHtml(text, Html.FROM_HTML_MODE_LEGACY).toString().replace("\u00A0", " ").replace("\u3000", " ");
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            // 仅在 Android 7.0 （API 24）及以上执行：使用带模式参数的新方法
+            text = Html.fromHtml(text, Html.FROM_HTML_MODE_LEGACY).toString().replace("\u00A0", "").replace("\u3000", "");
+        } else {
+            // 在 Android 6.0 （API 23）及以下执行：使用低版本兼容的旧方法
+            text = Html.fromHtml(text).toString().replace("\u00A0", "").replace("\u3000", "");
+        }
         for (String line : text.split("\\r?\\n")) sb.append(line.trim()).append("\n");
         return substring(sb.toString()).trim();
     }
