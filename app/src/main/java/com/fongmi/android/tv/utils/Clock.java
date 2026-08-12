@@ -6,6 +6,9 @@ import com.fongmi.android.tv.App;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Date;
 import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -14,7 +17,8 @@ public class Clock {
 
     private DateTimeFormatter format;
     private Callback callback;
-    private TextView view;
+    private final Date date;
+    private List<TextView> views; // 修改：从单个TextView改为TextView列表
     private Timer timer;
 
     public static Clock create() {
@@ -25,11 +29,22 @@ public class Clock {
         return new Clock().view(view).format("HH:mm:ss");
     }
 
+    // 新增：支持多个TextView的创建方法
+    public static Clock create(TextView... views) {
+        Clock clock = new Clock().format("HH:mm:ss");
+        for (TextView view : views) {
+            clock.view(view);
+        }
+        return clock;
+    }
+
     public Clock() {
+        this.date = new Date();
+        this.views = new ArrayList<>(); // 新增：初始化TextView列表
     }
 
     public Clock view(TextView view) {
-        this.view = view;
+        this.views.add(view); // 修改：将TextView添加到列表而不是设置单个view
         return this;
     }
 
@@ -56,7 +71,10 @@ public class Clock {
         try {
             long time = System.currentTimeMillis();
             if (callback != null) callback.onTimeChanged(time);
-            if (view != null) view.setText(format.format(LocalDateTime.now()));
+            // 修改：遍历所有TextView并更新时间显示
+            for (TextView view : views) {
+                if (view != null) view.setText(format.format(LocalDateTime.now()));
+            }  
         } catch (Exception ignored) {
         }
     }
@@ -69,6 +87,7 @@ public class Clock {
     public void release() {
         if (timer != null) timer.cancel();
         if (callback != null) callback = null;
+        if (views != null) views.clear(); // 新增：清理TextView列表
     }
 
     public interface Callback {
