@@ -42,6 +42,7 @@ import com.bumptech.glide.request.transition.Transition;
 import com.fongmi.android.tv.App;
 import com.fongmi.android.tv.Constant;
 import com.fongmi.android.tv.R;
+import com.fongmi.android.tv.setting.Setting;
 import com.fongmi.android.tv.api.DanmakuApi;
 import com.fongmi.android.tv.api.SiteApi;
 import com.fongmi.android.tv.api.config.VodConfig;
@@ -295,7 +296,7 @@ public class VideoActivity extends PlaybackActivity implements Clock.Callback, C
         mFrameParams = mBinding.video.getLayoutParams();
         mBinding.progressLayout.showProgress();
         mBinding.swipeLayout.setEnabled(false);
-        mClock = Clock.create();
+        mClock = Clock.create(mBinding.display.clock);
         mR1 = this::hideControl;
         mR2 = this::setTraffic;
         mR3 = this::setOrient;
@@ -304,6 +305,7 @@ public class VideoActivity extends PlaybackActivity implements Clock.Callback, C
         checkDanmakuImg();
         setRecyclerView();
         setVideoView();
+        setDisplayView();
         setViewModel();
         showProgress();
         setAnimator();
@@ -394,6 +396,33 @@ public class VideoActivity extends PlaybackActivity implements Clock.Callback, C
         } else {
             mBinding.video.setLayoutParams(mFrameParams);
         }
+    }
+
+    private void setDisplayView() {
+        mBinding.display.getRoot().setVisibility(View.VISIBLE);
+        showDisplayInfo();
+    }
+
+    private void showDisplayInfo() {
+        boolean pictureMode = false;
+        if (isInPictureInPictureMode()) pictureMode = true;
+        boolean controlVisible = isVisible(mBinding.control.getRoot());
+        boolean visible = (!controlVisible || isLock()) && !pictureMode;
+        mBinding.display.clock.setVisibility(Setting.isDisplayTime() && visible && isFullscreen() && !isInPictureInPictureMode() ? View.VISIBLE : View.GONE);
+        mBinding.display.netspeed.setVisibility(Setting.isDisplaySpeed() && visible && isFullscreen() && !isInPictureInPictureMode() ? View.VISIBLE : View.GONE); 
+        mBinding.display.duration.setVisibility(Setting.isDisplayDuration() && visible && isFullscreen() && !isInPictureInPictureMode() ? View.VISIBLE : View.GONE);
+        mBinding.display.displayProgress.setVisibility(Setting.isDisplayMiniProgress() && visible && (service() != null && player().isVod()) && isFullscreen() && !isInPictureInPictureMode() ? View.VISIBLE : View.GONE);
+        mBinding.display.titleLayout.setVisibility(Setting.isDisplayVideoTitle() && visible && isFullscreen() && !isInPictureInPictureMode() ? View.VISIBLE : View.GONE); 
+    }
+    
+    private void onTimeChangeDisplaySpeed() {
+        boolean controlVisible = isVisible(mBinding.control.getRoot());
+        boolean visible = (!controlVisible || isLock());
+        long position = player().getPosition();
+        if (Setting.isDisplaySpeed() && visible) Traffic.setSpeed(mBinding.display.netspeed);
+        if (Setting.isDisplayDuration() && visible && position > 0) mBinding.display.duration.setText(player().getPositionTime(0) + "/" + player().getDurationTime());
+        if (Setting.isDisplayMiniProgress() && visible && position > 0 && (service() != null && player().isVod())) mBinding.display.displayProgress.setProgress((int)(position * 100 / player().getDuration()));
+        showDisplayInfo();
     }
 
     private void setAnimator() {
@@ -712,6 +741,8 @@ public class VideoActivity extends PlaybackActivity implements Clock.Callback, C
         if (service() != null && isOwner()) player().setMetadata(metadata);
         mBinding.control.title.setText(metadata.displayTitle);
         mBinding.control.title.setSelected(true);
+        mBinding.display.title.setText(getString(R.string.detail_title, metadata.title != null ? metadata.title.toString().replaceAll("【.*?】", "").replaceAll(".*?([\\u4e00-\\u9fa5]+).*", "$1") : "", metadata.artist != null ? metadata.artist.toString().replaceAll("【.*?】|(?<!\\[|第|ep|EP|E|SP|OVA|Extra|Season|Part|Vol\\.|Episode|Ch|Chapter)\\b\\d{4}\\b(?![\\d\\.]*\\s*[KMGT]i?B\\]|集|话)|\\d{3,4}p|WEB-DL|H26\\d|DDP\\d+\\.\\d+|_?[4-8]K|\\d+FPS|\\+|\\(\\d+\\)|\\b(?:SP|OVA|Extra|Season|Part|EP|P|Vol|Episode|Ch|Chapter)\\d*\\b|\\d+[\\.\\d]*(声道|ch)|\\.\\w+$|\\d{1,2}(?=;)", "").replaceAll(".*?(\\[[\\d\\.]+\\s*[KMGT]i?B\\]).*?(?:S\\d+E?|E|EP|第|话|Vol\\.|CD|[-_.\\s])*(\\d{1,4})(?![\\d]|\\d+话|\\d+GB|\\d+K).*", "$1 $2").replaceAll("[^\\dGBKM T\\[\\]\\.]", " ").replaceAll(" +", " ").trim() : ""));
+        mBinding.display.title.setSelected(true);
     }
 
     @Override
@@ -1379,6 +1410,7 @@ public class VideoActivity extends PlaybackActivity implements Clock.Callback, C
     protected void onSizeChanged(VideoSize size) {
         changeHeight();
         checkOrientation();
+        mBinding.display.size.setText(player().getSizeText());
     }
 
     @Override
@@ -1388,6 +1420,7 @@ public class VideoActivity extends PlaybackActivity implements Clock.Callback, C
         long duration = player().getDuration();
         if (position < 0 || duration <= 0) return;
         mVod.onTimeChanged(time, position, duration);
+        onTimeChangeDisplaySpeed();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
