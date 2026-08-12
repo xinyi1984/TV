@@ -61,6 +61,12 @@
     <string name="play_switch_flag">正在切換線路至「<xliff:g name="name">%s</xliff:g>」</string>
     <string name="play_switch_site">正在切換站源至「<xliff:g name="name">%s</xliff:g>」</string>
     <string name="play_switch_parse">正在切换解析至「<xliff:g name="name">%s</xliff:g>」</string>
+    <string name="play_time">時間</string>
+    <string name="play_netspeed">網速</string>
+    <string name="play_duration">進度</string>
+    <string name="play_mini_progress">迷你進度</string>
+    <string name="play_video_title">標題</string>
+    <string name="play_display">屏顯</string>
 
     <!-- Playback Setting -->
     <string name="setting_tab_offset">偏移</string>
