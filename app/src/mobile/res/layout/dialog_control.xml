@@ -269,6 +269,85 @@
     </androidx.appcompat.widget.LinearLayoutCompat>
 
     <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/display"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="8dp"
+        android:text="@string/control_display"
+        android:textColor="?attr/colorOnSurface"
+        android:textSize="16sp" />
+
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fillViewport="true"
+        android:scrollbars="none">
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/dptime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/shape_accent"
+                android:text="@string/play_time"
+                android:textColor="@color/selector_control"
+                android:textSize="14sp"
+                tools:text="时间" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/dpspeed"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/shape_accent"
+                android:text="@string/play_netspeed"
+                android:textColor="@color/selector_control"
+                android:textSize="14sp"
+                tools:text="网速" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/dpduration"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/shape_accent"
+                android:text="@string/play_duration"
+                android:textColor="@color/selector_control"
+                android:textSize="14sp"
+                tools:text="进度时间" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/dpminiprogress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/shape_accent"
+                android:text="@string/play_mini_progress"
+                android:textColor="@color/selector_control"
+                android:textSize="14sp"
+                tools:text="迷你进度条" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/dpvideotitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/shape_accent"
+                android:text="@string/play_video_title"
+                android:textColor="@color/selector_control"
+                android:textSize="14sp"
+                tools:text="标题分辨率" />
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+    </HorizontalScrollView>
+
+    <com.google.android.material.textview.MaterialTextView
         android:id="@+id/other"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
