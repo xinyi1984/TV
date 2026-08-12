@@ -25,6 +25,7 @@ import com.bumptech.glide.request.transition.Transition;
 import com.fongmi.android.tv.App;
 import com.fongmi.android.tv.Constant;
 import com.fongmi.android.tv.R;
+import com.fongmi.android.tv.setting.Setting;
 import com.fongmi.android.tv.api.config.LiveConfig;
 import com.fongmi.android.tv.bean.Channel;
 import com.fongmi.android.tv.bean.Config;
@@ -77,7 +78,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class LiveActivity extends PlaybackActivity implements GroupAdapter.OnClickListener, ChannelAdapter.OnClickListener, EpgDataAdapter.OnClickListener, CustomKeyDownLive.Listener, CustomLiveListView.Callback, PassListener, ConfigListener, LiveListener, LivePlaybackHost {
+public class LiveActivity extends PlaybackActivity implements GroupAdapter.OnClickListener, ChannelAdapter.OnClickListener, EpgDataAdapter.OnClickListener, CustomKeyDownLive.Listener, CustomLiveListView.Callback, PassListener, ConfigListener, LiveListener, LivePlaybackHost, Clock.Callback {
 
     private ActivityLiveBinding mBinding;
     private LiveViewModel mViewModel;
@@ -154,7 +155,7 @@ public class LiveActivity extends PlaybackActivity implements GroupAdapter.OnCli
     @Override
     protected void initView(Bundle savedInstanceState) {
         super.initView(savedInstanceState);
-        mClock = Clock.create(mBinding.widget.clock);
+        mClock = Clock.create(mBinding.widget.clock, mBinding.display.clock);
         mKeyDown = CustomKeyDownLive.create(this);
         mHides = new ArrayList<>();
         mR0 = this::setSelected;
@@ -165,6 +166,7 @@ public class LiveActivity extends PlaybackActivity implements GroupAdapter.OnCli
         setRecyclerView();
         setVideoView();
         setViewModel();
+        setDisplayView();
         checkLive();
     }
 
@@ -215,6 +217,33 @@ public class LiveActivity extends PlaybackActivity implements GroupAdapter.OnCli
         mBinding.control.action.invert.setSelected(LiveSetting.isInvert());
         mBinding.control.action.across.setSelected(LiveSetting.isAcross());
         mBinding.control.action.change.setSelected(LiveSetting.isChange());
+    }
+    
+     private void setDisplayView() {
+        mBinding.display.getRoot().setVisibility(View.VISIBLE);
+        mBinding.display.displayProgress.setVisibility(View.GONE);
+        showDisplayInfo();
+    }
+
+    private void showDisplayInfo() {
+        boolean controlVisible = isVisible(mBinding.control.getRoot());
+        boolean visible = !controlVisible;
+        mBinding.display.clock.setVisibility(Setting.isDisplayTime() && visible || isVisible(mBinding.control.getRoot()) ? View.VISIBLE : View.GONE); 
+        mBinding.display.netspeed.setVisibility(Setting.isDisplaySpeed() && !isVisible(mBinding.control.getRoot()) || isVisible(mBinding.widget.bottom) ? View.VISIBLE : View.GONE); 
+        mBinding.display.duration.setVisibility(View.GONE);
+        mBinding.display.titleLayout.setVisibility(Setting.isDisplayVideoTitle() && visible && !isVisible(mBinding.recycler) && isVisible(mBinding.control.getRoot()) ? View.VISIBLE : View.GONE);
+    }
+    
+    private void onTimeChangeDisplaySpeed() {
+        boolean controlVisible = isVisible(mBinding.control.getRoot());
+        boolean visible = !controlVisible;
+        if (Setting.isDisplaySpeed() && visible) Traffic.setSpeed(mBinding.display.netspeed);
+        showDisplayInfo();
+    }
+
+    @Override
+    public void onTimeChanged(long time) {
+        onTimeChangeDisplaySpeed();
     }
 
     private void setPlaybackMode() {
@@ -477,6 +506,7 @@ public class LiveActivity extends PlaybackActivity implements GroupAdapter.OnCli
     @Override
     protected void onTracksChanged() {
         setTrackVisible();
+        mClock.setCallback(this);
     }
 
     @Override
@@ -518,6 +548,7 @@ public class LiveActivity extends PlaybackActivity implements GroupAdapter.OnCli
     @Override
     protected void onSizeChanged(VideoSize size) {
         mBinding.widget.size.setText(player().getSizeText());
+        mBinding.display.size.setText(player().getSizeText());
     }
 
     @Override
@@ -689,6 +720,7 @@ public class LiveActivity extends PlaybackActivity implements GroupAdapter.OnCli
         mChannel.loadLogo(mBinding.widget.logo);
         mBinding.widget.line.setText(mChannel.getLine());
         mBinding.widget.name.setText(mChannel.getShow());
+        mBinding.display.title.setText(mBinding.widget.name.getText());
         mBinding.widget.number.setText(mChannel.getNumber());
         mBinding.control.action.line.setText(mChannel.getLine());
         mBinding.widget.line.setVisibility(mChannel.getLineVisible());
