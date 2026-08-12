@@ -13,6 +13,7 @@ import androidx.viewbinding.ViewBinding;
 
 import com.fongmi.android.tv.App;
 import com.fongmi.android.tv.R;
+import com.fongmi.android.tv.setting.Setting;
 import com.fongmi.android.tv.bean.Parse;
 import com.fongmi.android.tv.databinding.ActivityVideoBinding;
 import com.fongmi.android.tv.databinding.DialogControlBinding;
@@ -80,6 +81,11 @@ public class ControlDialog extends BaseBottomSheetDialog implements ParseAdapter
         binding.opening.setText(parent.control.action.opening.getText());
         binding.repeat.setSelected(parent.control.action.repeat.isSelected());
         binding.timer.setSelected(Timer.get().isRunning());
+        binding.dptime.setSelected(Setting.isDisplayTime());
+        binding.dpspeed.setSelected(Setting.isDisplaySpeed());
+        binding.dpduration.setSelected(Setting.isDisplayDuration());
+        binding.dpminiprogress.setSelected(Setting.isDisplayMiniProgress());
+        binding.dpvideotitle.setSelected(Setting.isDisplayVideoTitle());
         SpeedSetting.setup(binding.speed);
         setMediaOptionVisible();
         setTrackVisible();
@@ -107,6 +113,46 @@ public class ControlDialog extends BaseBottomSheetDialog implements ParseAdapter
         binding.player.setOnLongClickListener(v -> longClick(binding.player, parent.control.action.player));
         binding.ending.setOnLongClickListener(v -> longClick(binding.ending, parent.control.action.ending));
         binding.opening.setOnLongClickListener(v -> longClick(binding.opening, parent.control.action.opening));
+        binding.dptime.setOnClickListener(v -> displayTime());
+        binding.dpspeed.setOnClickListener(v -> displaySpeed());
+        binding.dpduration.setOnClickListener(v -> displayDuration());
+        binding.dpminiprogress.setOnClickListener(v -> displayMiniProgress());
+        binding.dpvideotitle.setOnClickListener(v -> displayVideoTitle());
+    }
+
+    private void displayTime() {
+        boolean display = Setting.isDisplayTime();
+        parent.display.clock.setVisibility(!display ? View.VISIBLE : View.GONE);
+        Setting.putDisplayTime(!display);
+        binding.dptime.setSelected(!display);
+    }
+
+    private void displaySpeed() {
+        boolean display = Setting.isDisplaySpeed();
+        parent.display.netspeed.setVisibility(!display ? View.VISIBLE : View.GONE);
+        Setting.putDisplaySpeed(!display);
+        binding.dpspeed.setSelected(!display);
+    }
+
+    private void displayDuration() {
+        boolean display = Setting.isDisplayDuration();
+        parent.display.duration.setVisibility(!display ? View.VISIBLE : View.GONE);
+        Setting.putDisplayDuration(!display);
+        binding.dpduration.setSelected(!display);
+    }
+
+    private void displayMiniProgress() {
+        boolean display = Setting.isDisplayMiniProgress();
+        parent.display.displayProgress.setVisibility(!display ? View.VISIBLE : View.GONE);
+        Setting.putDisplayMiniProgress(!display);
+        binding.dpminiprogress.setSelected(!display);
+    }
+
+    private void displayVideoTitle() {
+        boolean display = Setting.isDisplayVideoTitle();
+        parent.display.titleLayout.setVisibility(!display ? View.VISIBLE : View.GONE);
+        Setting.putDisplayVideoTitle(!display);
+        binding.dpvideotitle.setSelected(!display);
     }
 
     private void onTimer(View view) {
