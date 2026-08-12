@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:id="@+id/titleLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="10dp"
+        android:layout_toStartOf="@+id/clock"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="24dp"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="10dp">
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/title"
+            style="@style/Shadow"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="marquee"
+            android:singleLine="true"
+            android:textColor="@color/white"
+            android:textSize="14sp"
+            tools:text="慶餘年第一季：第一集" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/size"
+            style="@style/Shadow"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/title"
+            android:layout_alignStart="@+id/title"
+            android:textColor="@color/white"
+            android:textSize="12sp"
+            tools:text="1920 x 1080" />
+
+    </RelativeLayout>
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/clock"
+        style="@style/Shadow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="10dp"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="24dp"
+        android:fontFeatureSettings="tnum"
+        android:textColor="@color/white"
+        android:textSize="14sp"
+        tools:text="09:20:00" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/duration"
+        style="@style/Shadow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="10dp"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="24dp"
+        android:fontFeatureSettings="tnum"
+        android:textColor="@color/white"
+        android:textSize="12sp"
+        tools:text="00:00/10:20" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/netspeed"
+        style="@style/Shadow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="10dp"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="24dp"
+        android:textColor="@color/white"
+        android:textSize="12sp"
+        tools:text="10MB/S"/>
+
+    <ProgressBar
+        android:id="@+id/display_progress"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_alignParentBottom="true"
+        android:progressTint="@color/white"
+        android:progressBackgroundTint="@color/transparent"
+        android:layout_marginTop="0dp"
+        android:layout_marginBottom="0dp"
+        android:max="100"
+        android:progress="0"
+        tools:progress="50" />
+
+</RelativeLayout>
