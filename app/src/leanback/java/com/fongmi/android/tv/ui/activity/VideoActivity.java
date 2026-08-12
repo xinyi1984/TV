@@ -32,6 +32,7 @@ import com.bumptech.glide.request.transition.Transition;
 import com.fongmi.android.tv.App;
 import com.fongmi.android.tv.Constant;
 import com.fongmi.android.tv.R;
+import com.fongmi.android.tv.setting.Setting;
 import com.fongmi.android.tv.api.DanmakuApi;
 import com.fongmi.android.tv.api.SiteApi;
 import com.fongmi.android.tv.api.config.VodConfig;
@@ -79,6 +80,7 @@ import com.fongmi.android.tv.ui.dialog.EditionDialog;
 import com.fongmi.android.tv.ui.dialog.ParseDialog;
 import com.fongmi.android.tv.ui.dialog.PlayerEngineDialog;
 import com.fongmi.android.tv.ui.dialog.SpeedSettingDialog;
+import com.fongmi.android.tv.ui.dialog.DisplayDialog;
 import com.fongmi.android.tv.ui.dialog.TrackDialog;
 import com.fongmi.android.tv.utils.Clock;
 import com.fongmi.android.tv.utils.FileChooser;
@@ -272,7 +274,7 @@ public class VideoActivity extends PlaybackActivity implements VodPlaybackHost, 
     protected void initView(Bundle savedInstanceState) {
         super.initView(savedInstanceState);
         mFrameParams = mBinding.video.getLayoutParams();
-        mClock = Clock.create(mBinding.widget.clock);
+        mClock = Clock.create(mBinding.widget.clock, mBinding.display.clock);
         mKeyDown = CustomKeyDownVod.create(this);
         mR1 = this::hideControl;
         mR2 = this::updateFocus;
@@ -280,6 +282,7 @@ public class VideoActivity extends PlaybackActivity implements VodPlaybackHost, 
         mR4 = this::showEmpty;
         setRecyclerView();
         setVideoView();
+        setDisplayView(); 
         setViewModel();
         checkCast();
         checkId();
@@ -295,6 +298,7 @@ public class VideoActivity extends PlaybackActivity implements VodPlaybackHost, 
         mBinding.control.action.text.setOnClickListener(this::onTrack);
         mBinding.control.action.audio.setOnClickListener(this::onTrack);
         mBinding.control.action.video.setOnClickListener(this::onTrack);
+        mBinding.control.action.display.setOnClickListener(this::onDisplay);
         mBinding.control.action.ending.setUpListener(this::onEndingAdd);
         mBinding.control.action.ending.setDownListener(this::onEndingSub);
         mBinding.control.action.opening.setUpListener(this::onOpeningAdd);
@@ -364,6 +368,33 @@ public class VideoActivity extends PlaybackActivity implements VodPlaybackHost, 
         setActionFocusBoundary(mBinding.control.action.getRoot());
         PlayerEngineDialog.setText(mBinding.control.action.player);
         mBinding.control.action.danmaku.setVisibility(DanmakuSetting.isLoad() ? View.VISIBLE : View.GONE);
+        mBinding.control.action.display.setVisibility(View.VISIBLE); 
+    }
+
+     private void setDisplayView() {
+        mBinding.display.getRoot().setVisibility(View.VISIBLE);
+        showDisplayInfo();
+    }
+
+    private void showDisplayInfo() {
+        mBinding.display.clock.setVisibility(Setting.isDisplayTime() || isVisible(mBinding.widget.top)  ? View.VISIBLE : View.GONE);
+        mBinding.display.netspeed.setVisibility(Setting.isDisplaySpeed() && !isVisible(mBinding.widget.top) && !isVisible(mBinding.control.getRoot()) && isFullscreen() || (isVisible(mBinding.widget.top) && !isVisible(mBinding.control.getRoot())) ? View.VISIBLE : View.GONE);
+        mBinding.display.duration.setVisibility(Setting.isDisplayDuration() && !isVisible(mBinding.widget.top) && !isVisible(mBinding.control.getRoot()) && isFullscreen() || (isVisible(mBinding.widget.top) && !isVisible(mBinding.control.getRoot())) ? View.VISIBLE : View.GONE);
+        mBinding.display.displayProgress.setVisibility((Setting.isDisplayMiniProgress() && !isVisible(mBinding.widget.top) && !isVisible(mBinding.control.getRoot()) && (service() != null && player().isVod()) && isFullscreen()) || (isVisible(mBinding.widget.top) && !isVisible(mBinding.control.getRoot())) ? View.VISIBLE : View.GONE);
+        mBinding.display.titleLayout.setVisibility(Setting.isDisplayVideoTitle() && !isVisible(mBinding.widget.top) && !isVisible(mBinding.control.getRoot()) && isFullscreen() || (!isVisible(mBinding.widget.top) && isVisible(mBinding.control.getRoot())) ? View.VISIBLE : View.GONE);
+    }
+    
+    private void onTimeChangeDisplaySpeed() {
+        boolean visible = !isVisible(mBinding.control.getRoot());
+        long position = player().getPosition();
+        if (Setting.isDisplaySpeed() && visible) Traffic.setSpeed(mBinding.display.netspeed);
+        if (Setting.isDisplayDuration() && visible && position > 0) mBinding.display.duration.setText(player().getPositionTime(0) + "/" + player().getDurationTime());
+        if (Setting.isDisplayMiniProgress() && visible && position > 0 && (service() != null && player().isVod())) mBinding.display.displayProgress.setProgress((int)(position * 100 / player().getDuration()));
+        showDisplayInfo();
+    }
+
+    private void onDisplay(View view) {
+        DisplayDialog.create(this).show();
     }
 
     private void setPlaybackMode() {
@@ -668,6 +699,8 @@ public class VideoActivity extends PlaybackActivity implements VodPlaybackHost, 
         if (service() != null && isOwner()) player().setMetadata(metadata);
         mBinding.widget.title.setText(metadata.displayTitle);
         mBinding.widget.title.setSelected(true);
+        mBinding.display.title.setText(getString(R.string.detail_title, metadata.title != null ? metadata.title.toString().replaceAll("【.*?】", "").replaceAll(".*?([\\u4e00-\\u9fa5]+).*", "$1") : "", metadata.artist != null ? metadata.artist.toString().replaceAll("【.*?】|(?<!\\[|第|ep|EP|E|SP|OVA|Extra|Season|Part|Vol\\.|Episode|Ch|Chapter)\\b\\d{4}\\b(?![\\d\\.]*\\s*[KMGT]i?B\\]|集|话)|\\d{3,4}p|WEB-DL|H26\\d|DDP\\d+\\.\\d+|_?[4-8]K|\\d+FPS|\\+|\\(\\d+\\)|\\b(?:SP|OVA|Extra|Season|Part|EP|P|Vol|Episode|Ch|Chapter)\\d*\\b|\\d+[\\.\\d]*(声道|ch)|\\.\\w+$|\\d{1,2}(?=;)", "").replaceAll(".*?(\\[[\\d\\.]+\\s*[KMGT]i?B\\]).*?(?:S\\d+E?|E|EP|第|话|Vol\\.|CD|[-_.\\s])*(\\d{1,4})(?![\\d]|\\d+话|\\d+GB|\\d+K).*", "$1 $2").replaceAll("[^\\dGBKM T\\[\\]\\.]", " ").replaceAll(" +", " ").trim() : ""));
+        mBinding.display.title.setSelected(true);
     }
 
     @Override
@@ -1208,6 +1241,7 @@ public class VideoActivity extends PlaybackActivity implements VodPlaybackHost, 
     @Override
     protected void onTracksChanged() {
         setTrackVisible();
+        mClock.setCallback(this);
     }
 
     @Override
@@ -1258,6 +1292,7 @@ public class VideoActivity extends PlaybackActivity implements VodPlaybackHost, 
     @Override
     protected void onSizeChanged(VideoSize size) {
         mBinding.widget.size.setText(player().getSizeText());
+        mBinding.display.size.setText(player().getSizeText());
     }
 
     @Override
@@ -1267,6 +1302,7 @@ public class VideoActivity extends PlaybackActivity implements VodPlaybackHost, 
         long duration = player().getDuration();
         if (position < 0 || duration <= 0) return;
         mVod.onTimeChanged(time, position, duration);
+        onTimeChangeDisplaySpeed();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
