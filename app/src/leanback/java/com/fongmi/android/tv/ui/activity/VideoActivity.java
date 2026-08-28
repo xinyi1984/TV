@@ -84,6 +84,7 @@ import com.fongmi.android.tv.ui.dialog.DisplayDialog;
 import com.fongmi.android.tv.ui.dialog.TrackDialog;
 import com.fongmi.android.tv.utils.Clock;
 import com.fongmi.android.tv.utils.FileChooser;
+import com.fongmi.android.tv.utils.FileUtil;
 import com.fongmi.android.tv.utils.ImgUtil;
 import com.fongmi.android.tv.utils.KeyUtil;
 import com.fongmi.android.tv.utils.Notify;
@@ -98,7 +99,6 @@ import com.github.bassaer.library.MDColor;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -130,14 +130,13 @@ public class VideoActivity extends PlaybackActivity implements VodPlaybackHost, 
 
     public static void push(FragmentActivity activity, String text) {
         Uri uri = UrlUtil.uri(text);
-        if (FileChooser.isValid(activity, uri)) file(activity, FileChooser.getPathFromUri(uri));
+        if (FileChooser.isFileSource(uri)) FileChooser.getFileUri(uri, fileUri -> file(activity, fileUri));
         else start(activity, Sniffer.getUrl(text));
     }
 
-    public static void file(FragmentActivity activity, String path) {
-        if (TextUtils.isEmpty(path)) return;
-        String name = new File(path).getName();
-        start(activity, SiteApi.PUSH, "file://" + path, name);
+    public static void file(FragmentActivity activity, Uri fileUri) {
+        if (fileUri == null || activity.isFinishing() || activity.isDestroyed()) return;
+        start(activity, SiteApi.PUSH, fileUri.toString(), FileUtil.getDisplayName(fileUri));
     }
 
     public static void cast(Activity activity, History history) {
@@ -170,10 +169,16 @@ public class VideoActivity extends PlaybackActivity implements VodPlaybackHost, 
         intent.putExtra("cast", cast);
         intent.putExtra("mark", mark);
         intent.putExtra("name", name);
-        intent.putExtra("pic", pic);
         intent.putExtra("key", key);
         intent.putExtra("id", id);
+        putPic(intent, pic);
         activity.startActivity(intent);
+    }
+
+    private static void putPic(Intent intent, String pic) {
+        intent.removeExtra("pic");
+        pic = ImgUtil.cache(pic);
+        if (!TextUtils.isEmpty(pic)) intent.putExtra("pic", pic);
     }
 
     private boolean isCast() {
@@ -513,32 +518,15 @@ public class VideoActivity extends PlaybackActivity implements VodPlaybackHost, 
     }
 
     @Override
-    public void requestDetail(String key, String id) {
-        mViewModel.detailContent(key, id);
-    }
-
-    @Override
-    public void requestPlayer(VodPlayRequest request) {
-        mViewModel.playerContent(request);
+    public void onPlaybackRequested() {
         showProgress();
-    }
-
-    @Override
-    public void requestPreload(VodPlayRequest request) {
-        mViewModel.preloadContent(request);
-    }
-
-    @Override
-    public void requestSearch(List<Site> sites, String keyword) {
-        mQuickAdapter.clear();
-        mViewModel.searchContent(sites, keyword, true);
     }
 
     @Override
     public void prepareSource(Vod item) {
         getIntent().putExtra("key", item.getSiteKey());
-        getIntent().putExtra("pic", item.getPic());
         getIntent().putExtra("id", item.getId());
+        putPic(getIntent(), item.getPic());
         mBinding.scroll.scrollTo(0, 0);
         mClock.setCallback(null);
         updateNavigationKey();
@@ -716,6 +704,7 @@ public class VideoActivity extends PlaybackActivity implements VodPlaybackHost, 
     @Override
     public void onSearchStarted(String keyword) {
         mBinding.part.setTag(keyword);
+        mQuickAdapter.clear();
     }
 
     @Override

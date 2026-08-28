@@ -24,7 +24,7 @@ import com.fongmi.android.tv.api.config.VodConfig;
 import com.fongmi.android.tv.api.config.WallConfig;
 import com.fongmi.android.tv.bean.Config;
 import com.fongmi.android.tv.databinding.ActivityHomeBinding;
-import com.fongmi.android.tv.db.AppDatabase;
+import com.fongmi.android.tv.db.BackupManager;
 import com.fongmi.android.tv.event.ConfigEvent;
 import com.fongmi.android.tv.event.RefreshEvent;
 import com.fongmi.android.tv.event.ServerEvent;
@@ -104,9 +104,9 @@ public class HomeActivity extends BaseActivity implements NavigationBarView.OnIt
 
     private void checkType(Intent intent) {
         if ("text/plain".equals(intent.getType()) || UrlUtil.path(intent.getData()).endsWith(".m3u")) {
-            loadLive("file:/" + FileChooser.getPathFromUri(intent.getData()));
+            FileChooser.getUri(intent, uri -> loadLive(uri.toString()));
         } else {
-            VideoActivity.push(this, intent.getData().toString());
+            FileChooser.getUri(intent, uri -> VideoActivity.file(this, uri));
         }
     }
 
@@ -146,6 +146,7 @@ public class HomeActivity extends BaseActivity implements NavigationBarView.OnIt
     }
 
     private void loadLive(String url) {
+        if (isFinishing() || isDestroyed()) return;
         LiveConfig.load(Config.find(url, 1), new Callback() {
             @Override
             public void success() {
@@ -244,7 +245,7 @@ public class HomeActivity extends BaseActivity implements NavigationBarView.OnIt
     protected void onDestroy() {
         LiveConfig.get().clear();
         VodConfig.get().clear();
-        AppDatabase.backup();
+        BackupManager.backup();
         OkHttp.get().clear();
         Source.get().exit();
         Server.get().stop();
