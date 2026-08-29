@@ -104,7 +104,7 @@ public class HomeActivity extends BaseActivity implements NavigationBarView.OnIt
 
     private void checkType(Intent intent) {
         if ("text/plain".equals(intent.getType()) || UrlUtil.path(intent.getData()).endsWith(".m3u")) {
-            FileChooser.getUri(intent, uri -> loadLive(uri.toString()));
+            FileChooser.getUri(intent, uri -> loadLive(UrlUtil.toLocalUrl(uri)));
         } else {
             FileChooser.getUri(intent, uri -> VideoActivity.file(this, uri));
         }
