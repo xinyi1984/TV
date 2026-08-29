@@ -21,6 +21,7 @@ import com.fongmi.android.tv.databinding.DialogConfigBinding;
 import com.fongmi.android.tv.impl.ConfigListener;
 import com.fongmi.android.tv.ui.custom.CustomTextListener;
 import com.fongmi.android.tv.utils.FileChooser;
+import com.fongmi.android.tv.utils.UrlUtil;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 public class ConfigDialog extends BaseAlertDialog {
@@ -135,7 +136,7 @@ public class ConfigDialog extends BaseAlertDialog {
 
     private void setConfig(Uri uri) {
         if (!isAdded()) return;
-        ((ConfigListener) requireParentFragment()).setConfig(Config.find(uri.toString(), type));
+        ((ConfigListener) requireParentFragment()).setConfig(Config.find(UrlUtil.toLocalUrl(uri), type));
         dismiss();
     }
 }
