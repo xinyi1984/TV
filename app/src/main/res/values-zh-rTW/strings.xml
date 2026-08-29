@@ -339,6 +339,7 @@
 
     <!-- Dialog -->
     <string name="dialog_edit">修改</string>
+    <string name="dialog_import">匯入</string>
     <string name="dialog_positive">確定</string>
     <string name="dialog_negative">取消</string>
     <string name="dialog_select_edition">選擇標題</string>
