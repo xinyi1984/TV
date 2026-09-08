@@ -170,6 +170,7 @@ test("displayed Proxy tuple preserves the QuickJS and Python bridge order", asyn
 test("local API renders every section and valid JSON form values", async () => {
   const { localSections } = await import("../app/local-api.ts");
   const html = await render("/local");
+  assert.match(html, /<title>本地 API · 影視TV<\/title>/);
   for (const [id] of localSections) assert.ok(html.includes(`id="${id}"`), id);
   assert.match(html, /text\/plain/);
   const blocks = [...html.matchAll(/<pre[^>]*><code>([\s\S]*?)<\/code><\/pre>/g)];

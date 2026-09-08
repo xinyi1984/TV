@@ -15,7 +15,7 @@ import {
 } from "../local-api";
 
 export const metadata: Metadata = {
-  title: "本地 API · 影視TV",
+  title: "本地 API",
   description:
     "影視TV 本地 HTTP API：播放控制、裝置資訊、檔案管理、快取與同步的參數及範例。",
 };
