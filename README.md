@@ -39,6 +39,7 @@ TV/
 ├── catvod/         爬蟲抽象層（Spider 介面、OkHttp 網路棧）
 ├── quickjs/        QuickJS JavaScript 引擎
 ├── chaquo/         Chaquopy Python 引擎
+├── website/        靜態使用與開發文件網站
 ```
 
 `app/src/main/` 為兩個版本共用的業務邏輯，`app/src/leanback/` 與 `app/src/mobile/` 各自實作對應 UI。
@@ -84,7 +85,7 @@ TV/
 - JavaScript（QuickJS）
 - Python（Chaquopy）
 
-透過 `api` 欄位指定爬蟲，`ext` 欄位傳入初始化參數。完整 API 規格見 [SPIDER.md](docs/SPIDER.md)。
+透過 `api` 欄位指定爬蟲，`ext` 欄位傳入初始化參數。完整 API 規格見 [爬蟲介接指南](https://fongmi.github.io/TV/spider/)。
 
 ---
 
@@ -121,7 +122,7 @@ TV/
 
 ## 遠端控制
 
-應用啟動後綁定本地 HTTP 伺服器（NanoHTTPD），埠號從 **9978** 起自動偵測至 **9998**，可用於播放控制、推送字幕 / 彈幕、多裝置同步等。完整端點說明見 [LOCAL.md](docs/LOCAL.md)。
+應用啟動後綁定本地 HTTP 伺服器（NanoHTTPD），埠號從 **9978** 起自動偵測至 **9998**，可用於播放控制、推送字幕 / 彈幕、多裝置同步等。完整端點說明見 [本地 HTTP API](https://fongmi.github.io/TV/local/)。
 
 ---
 
@@ -133,7 +134,7 @@ Vod 配置為應用主要入口，透過 URL 或本地路徑載入，頂層欄�
 - 直播來源（`lives`）
 - 網路設定（`doh`、`proxy`、`hosts`、`ads`）
 
-Live 配置可內嵌或獨立存放。完整欄位說明見 [CONFIG.md](docs/CONFIG.md)。
+Live 配置可內嵌或獨立存放。完整欄位說明見 [配置字典](https://fongmi.github.io/TV/config/)。
 
 ---
 
@@ -141,7 +142,9 @@ Live 配置可內嵌或獨立存放。完整欄位說明見 [CONFIG.md](docs/CON
 
 | 文件                          | 說明                   |
 |-----------------------------|----------------------|
-| [CONFIG.md](docs/CONFIG.md) | Vod / Live 完整配置欄位說明  |
-| [SPIDER.md](docs/SPIDER.md) | Spider 所有方法規格與回傳格式   |
-| [LOCAL.md](docs/LOCAL.md)   | 本地 HTTP API 所有端點完整說明 |
-| [LIVE.md](docs/LIVE.md)     | 直播來源格式完整說明           |
+| [配置字典](https://fongmi.github.io/TV/config/) | Vod / Live 完整配置欄位說明  |
+| [爬蟲介接](https://fongmi.github.io/TV/spider/) | Spider 方法規格、三語言 Demo 與回傳格式   |
+| [本地 API](https://fongmi.github.io/TV/local/) | 播放控制、檔案、快取、裝置與同步端點 |
+| [直播格式](https://fongmi.github.io/TV/config/#formats) | 直播配置與來源格式說明 |
+| [App 功能](https://fongmi.github.io/TV/features/) | 使用者功能指南 |
+| [網站維護](website/README.md) | 本機建置、測試與 GitHub Pages 發布 |
