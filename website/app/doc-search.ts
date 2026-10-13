@@ -1,8 +1,11 @@
 import { configFieldGroups } from "./config-fields.ts";
-import { methods, objectGroups, resultFields } from "./spider-fields.ts";
+import { methods, networkMethods, objectGroups, resultFields } from "./spider-fields.ts";
 import { features } from "./feature-content.ts";
+import { playbackProperties } from "./playback-commands.ts";
 import {
   localActions,
+  localRemoteControls,
+  localRemoteFields,
   localMediaFields,
   localDeviceFields,
 } from "./local-api.ts";
@@ -22,14 +25,37 @@ const entries: Entry[] = [
     href: "/spider#start",
   },
   {
+    title: "三語言 Demo",
+    description: "Java、Python、JavaScript 範例",
+    href: "/spider#demo",
+    names: ["self.page", "page", "Result.page"],
+    keywords: "CatVodSpider examples/python/spider.py examples/javascript/spider.js Demo.java 分頁",
+  },
+  {
+    title: "爬蟲共用網路",
+    description: "Python、QuickJS、Java 的 HTTP、Cookie、TTL 快取、批次請求與下載",
+    href: "/spider#network",
+    names: networkMethods.flatMap(([name]) => name.split(" / ").map((method) => `net.${method}`)),
+    keywords: networkMethods.flat().join(" ") + " self.net stale persist",
+  },
+  {
     title: "Node.js 載入",
     description: "index.js.md5、bundle 與 HTTP 站點路由",
     href: "/spider#node",
   },
   {
-    title: "三語言 Demo",
-    description: "Java、Python、JavaScript 範例",
-    href: "/spider#demo",
+    title: "爬蟲 Local 設定",
+    description: "按站點隔離的 JSON 設定讀寫與刪除",
+    href: "/spider#network",
+    names: ["self.local", "local.get", "local.set", "local.delete"],
+    keywords: "Python QuickJS Java get set delete JSON 本地儲存",
+  },
+  {
+    title: "演員與分類超連結",
+    description: "用共用 link 格式連到分類與篩選",
+    href: "/spider#objects",
+    names: ["self.link", "link", "Json.link"],
+    keywords: "vod_actor 演員 id name type_flag filter",
   },
   {
     title: "完整配置範例",
@@ -49,6 +75,13 @@ const entries: Entry[] = [
     href: "/spider#skips",
     names: ["skips", "SkipSegment"],
     keywords: "opening middle ending start end 片頭片尾 片中跳過 自動 手動 關閉",
+  },
+  {
+    title: "開網頁與登入",
+    description: "action 回應的 web JSON、獨立視窗與多組 Cookie",
+    href: "/spider#web",
+    names: ["web", "action"],
+    keywords: "QuickJS Python Java JAR Node.js JSON url mode view browser keys cookie 登入 全螢幕 返回",
   },
   {
     title: "Result 回傳欄位",
@@ -124,6 +157,22 @@ const entries: Entry[] = [
     names: ["do=sync", "targets", "configs"],
   },
   {
+    title: "網頁播放遙控 /remote",
+    description: "影片封面、拖曳跳轉、圖示遙控、切換項目與單集循環",
+    href: "/local#remote",
+    names: ["/remote", "/remote/artwork", "artwork", "repeat_on", "repeat_off", "repeatOne", "seek", "canSeek", "?tab=play"],
+    keywords: localRemoteControls.flat().join(" ") + " " + localRemoteFields
+      .map(({ name, description }) => `${name} ${description}`)
+      .join(" "),
+  },
+  {
+    title: "日誌與診斷分享",
+    description: "查看日誌、停止擷取、分享裝置資訊與播放狀態",
+    href: "/local#logs",
+    names: ["/logs.html", "/diagnostics"],
+    keywords: "應用日誌 logcat 分享診斷 裝置命名 別名 循環播放",
+  },
+  {
     title: "播放狀態 /media",
     description: "播放狀態碼、位置、速率、媒體資訊與 JSON 回應",
     href: "/local#media",
@@ -159,6 +208,34 @@ const entries: Entry[] = [
     href: "/local#internal",
     names: ["/proxy", "/parse", "/image", "/tvbus"],
   },
+  {
+    title: "Exo 播放指令",
+    description: "新增播放指令按鈕、支援範圍與可複製的 mpv 指令範例",
+    href: "/commands#start",
+    names: ["Exo", "mpv"],
+    keywords: "播放指令 按鈕 Lua 腳本 mp.commandv 新增",
+  },
+  {
+    title: "cycle-values 輪流切換",
+    description: "倍速、音量、延遲、循環與縮放的順序及反向切換",
+    href: "/commands#cycle-values",
+    names: ["cycle-values", "!reverse"],
+    keywords: "set add cycle pause 輪切 回繞 下一個 數值",
+  },
+  {
+    title: "seek 跳轉位置",
+    description: "相對、絕對、百分比與影片結束前的位置",
+    href: "/commands#seek",
+    names: ["seek", "absolute", "relative", "absolute-percent", "relative-percent"],
+    keywords: "快轉 倒退 跳轉 秒 百分比 片長",
+  },
+  ...playbackProperties.map((property) => ({
+    title: `${property.name} 播放指令`,
+    description: property.description,
+    href: `/commands#${property.name}`,
+    names: [property.name, ...property.modes.map((mode) => `${mode} ${property.name}`)],
+    keywords: property.values,
+  })),
   ...features.map(([title, meta, copy]) => ({
     title,
     description: meta,
