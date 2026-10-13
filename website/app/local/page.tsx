@@ -6,6 +6,8 @@ import {
   localSections,
   localActions,
   localControls,
+  localRemoteControls,
+  localRemoteFields,
   localRefresh,
   localFileEndpoints,
   localCacheActions,
@@ -238,6 +240,99 @@ curl -G "http://127.0.0.1:9978/action" --data-urlencode "do=file" --data-urlenco
               觀看紀錄使用 <code>type=history</code>、單一 <code>config</code>{" "}
               與 History 陣列；合併會比較同名項目的
               createTime，不是盲目覆寫全部紀錄。同步可能載入另一份配置，請先備份個人資料。
+            </p>
+          </section>
+
+          <section id="remote">
+            <h2>/remote：網頁播放遙控</h2>
+            <p>
+              在瀏覽器開啟 App 的服務網址。「播放」頁顯示封面、標題與進度，
+              可控制播放、切換集數或頻道、單集循環與跳轉。
+              預設開啟「輸入」頁，提供搜尋與網址推送，各自保留輸入內容。
+            </p>
+            <p>
+              拖曳進度滑桿預覽時間，放手後跳轉；方向鍵每次調整五秒。
+              直播隱藏進度與循環控制，不能跳轉的影片停用滑桿。
+            </p>
+            <p>
+              <code>?tab=play</code> 開啟播放頁；<code>?tab=1</code> 與 <code>?tab=2</code>
+              都開啟輸入頁，既有 QR Code 仍可使用。<code>?tab=3</code>、<code>?tab=4</code>
+              與 <code>?tab=5</code> 分別開啟彈幕、設定及本地頁。
+            </p>
+            <h3>查詢與控制</h3>
+            <p>
+              GET 查詢狀態，POST 以表單欄位 <code>type</code> 送出指令。
+              成功回傳 JSON（application/json），禁止快取；沒有本機播放時回傳
+              <code>{'{"active":false}'}</code>。
+              網頁僅在播放頁位於前景時約每秒查詢，返回播放頁立即更新。
+            </p>
+            <CodeBlock label="HTTP" path="查詢、設定循環與跳轉">
+              {`curl "http://127.0.0.1:9978/remote"
+curl --data-urlencode "type=repeat_on" "http://127.0.0.1:9978/remote"
+curl --data-urlencode "type=repeat_off" "http://127.0.0.1:9978/remote"
+curl --data-urlencode "type=seek" --data-urlencode "position=120000" "http://127.0.0.1:9978/remote"`}
+            </CodeBlock>
+            <ReferenceTable
+              label="網頁遙控指令"
+              columns={["type", "用途"]}
+              rows={localRemoteControls}
+            />
+            <FieldTable label="Remote" fields={localRemoteFields} />
+            <p>
+              <code>artwork</code> 指向同一服務的 <code>/remote/artwork?key=…</code>，
+              成功回傳 PNG；瀏覽器不需傳送來源網址、Referer 或 Cookie。
+              key 須對應目前封面；更換封面或停止播放後，舊 key 回傳 404。
+              缺少或格式不正確的 key 為 400；載入逾時為 503，載入或編碼失敗為 500。
+            </p>
+            <p>
+              既有 <code>/action?do=control&amp;type=repeat</code> 仍為切換循環。
+              上一項、下一項及停止可能先派送至播放介面，應以後續 GET 確認結果。
+            </p>
+            <p>
+              <code>seek</code> 的 <code>position</code> 是非負整數毫秒，超過總長時跳到結尾；
+              缺少、格式錯誤或超過 64 位元整數範圍時回傳 400。
+              <code>canSeek</code> 為 false 時回傳 409。
+            </p>
+            <p>
+              缺少或未知指令回傳 400，跨來源的瀏覽器控制請求回傳 403；
+              無可控制的播放、直播循環或不支援上一項／下一項回傳 409。
+              不支援的 HTTP 方法回傳 405，主執行緒忙碌或請求中斷回傳 503。
+            </p>
+          </section>
+
+          <section id="logs">
+            <h2>日誌與診斷分享</h2>
+            <p>
+              開啟 <code>/logs.html</code> 查看日誌，自動擷取最長 60 分鐘。
+              「停止擷取」停止來源裝置的收集；「暫停顯示」只暫停畫面更新。
+            </p>
+            <p>
+              按「分享診斷」匯出版本、裝置資訊、播放狀態與本頁保留的日誌。
+              瀏覽器支援檔案分享時開啟分享面板，否則下載文字檔。
+            </p>
+            <p>
+              搜尋與等級篩選不影響匯出內容。檔案上限 512 KiB，
+              超過時保留較新日誌並標示缺漏；記錄匯出時間與裝置狀態的取得時間。
+            </p>
+            <p>
+              手機版的裝置清單提供「操作」與「日誌」按鈕，長按裝置名稱可命名。
+              別名只存於目前手機，依有效裝置識別碼保留，不受 IP 改變影響；清空即恢復原名。
+            </p>
+            <h3>診斷 API</h3>
+            <CodeBlock label="HTTP" path="取得診斷資訊">
+              {`curl "http://127.0.0.1:9978/diagnostics"`}
+            </CodeBlock>
+            <ReferenceTable
+              label="診斷回應欄位"
+              columns={["欄位", "用途"]}
+              rows={[
+                ["version / versionCode / variant / buildType", "應用版本與建置資訊。"],
+                ["device / android / sdk / abis", "裝置與 Android 資訊。"],
+                ["playback", "播放狀態，不含 artwork。"],
+              ]}
+            />
+            <p>
+              GET 回傳 JSON，不含播放或封面 URL、UUID、序號或 MAC。
             </p>
           </section>
 
